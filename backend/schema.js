@@ -2,9 +2,9 @@ const Joi = require("joi");
 
 const categories = [
   "Trending",
-  "Rooms",
-  "Iconic cities",
   "Mountains",
+  "Beaches",
+  "Rooms",
   "Castles",
   "Amazing pools",
   "Camping",
@@ -12,6 +12,13 @@ const categories = [
   "Arctic",
   "Domes",
   "Boats",
+  "Treehouses",
+  "Desert",
+  "Lakefront",
+  "Heritage",
+  "Luxury Villas",
+  "Tropical",
+  "Iconic cities",
 ];
 
 module.exports.listingSchema = Joi.object({

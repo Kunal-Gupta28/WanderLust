@@ -70,58 +70,14 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
-const fs = require("fs");
-const path = require("path");
-const inquiriesFile = path.join(__dirname, "data/contact-inquiries.json");
-
-app.post("/api/contact", (req, res) => {
-  const { firstName, lastName, email, subject, message } = req.body;
-  if (!email || !message) {
-    return res.status(400).json({ error: "Email and message are required." });
-  }
-
-  const newInquiry = {
-    id: `INQ-${Date.now()}`,
-    name: `${firstName || ""} ${lastName || ""}`.trim() || "Anonymous Traveler",
-    email,
-    subject: subject || "General Inquiry",
-    message,
-    date: new Date().toISOString().split("T")[0],
-    time: new Date().toLocaleTimeString(),
-    status: "UNREAD",
-  };
-
-  try {
-    let list = [];
-    if (fs.existsSync(inquiriesFile)) {
-      list = JSON.parse(fs.readFileSync(inquiriesFile, "utf-8"));
-    }
-    list.unshift(newInquiry);
-    fs.mkdirSync(path.dirname(inquiriesFile), { recursive: true });
-    fs.writeFileSync(inquiriesFile, JSON.stringify(list, null, 2));
-  } catch (err) {
-    console.error("Error saving contact inquiry:", err.message);
-  }
-
-  console.log(`[CONTACT INQUIRY] From: ${newInquiry.name} (${email}) | Subject: ${subject} | Message: ${message}`);
-  res.json({ ok: true, message: "Thank you! Your message has been received by the WanderLust team.", inquiry: newInquiry });
-});
-
-app.get("/api/contact/inquiries", (req, res) => {
-  try {
-    if (fs.existsSync(inquiriesFile)) {
-      return res.json(JSON.parse(fs.readFileSync(inquiriesFile, "utf-8")));
-    }
-  } catch {}
-  res.json([]);
-});
-
+const contactRouter = require("./routes/contact.js");
 const paymentRouter = require("./routes/payment.js");
 const messageRouter = require("./routes/message.js");
 
 app.use("/api/listings", listingRouter);
 app.use("/api/listings/:id/reviews", reviewsRouter);
 app.use("/api/auth", userRouter);
+app.use("/api/contact", contactRouter);
 app.use("/api/payments", paymentRouter);
 app.use("/api/messages", messageRouter);
 
