@@ -721,17 +721,15 @@ export default function TravelAnimation({ onSelectDestination, triggerRef }) {
           </div>
 
           <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                const q = encodeURIComponent(luckyStay.name);
-                const cat = encodeURIComponent(luckyStay.category);
-                window.location.href = `/explore?q=${q}&category=${cat}`;
-              }}
-              className="rounded-xl bg-clay hover:bg-[#9e442b] text-white px-3 py-1.5 font-bold transition shadow-sm"
+            <Link
+              href={`/listings/${luckyStay.id}`}
+              className="rounded-xl bg-clay hover:bg-[#9e442b] text-white px-3 py-1.5 font-bold transition shadow-sm inline-flex items-center gap-1.5"
             >
-              Explore This Stay
-            </button>
+              <span>Explore This Stay</span>
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-[2]">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
             <Link
               href={`/listings/${luckyStay.id}`}
               className="rounded-xl bg-sand/80 hover:bg-sand text-ink px-3 py-1.5 font-bold transition"

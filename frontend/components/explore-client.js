@@ -67,6 +67,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [stayType, setStayType] = useState("Any");
+  const [selectedStayId, setSelectedStayId] = useState(null);
   const listings = initialData?.listings || fallbackListings;
   const featuredStays = listings.slice(0, 4);
   const containerRef = useIntersectionObserver();
@@ -75,6 +76,24 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
   async function search(event) {
     if (event) event.preventDefault();
     if (!query.trim()) return;
+
+    // 1. Direct Redirection: If a specific stay was selected via Surprise Stay
+    if (selectedStayId) {
+      router.push(`/listings/${selectedStayId}`);
+      return;
+    }
+
+    // 2. Direct Redirection: Check if query matches any stay title or ID exactly
+    const matchedStay = listings.find(
+      (l) => l.title?.toLowerCase() === query.trim().toLowerCase() ||
+             l.id?.toLowerCase() === query.trim().toLowerCase()
+    );
+    if (matchedStay) {
+      router.push(`/listings/${matchedStay.id}`);
+      return;
+    }
+
+    // 3. Fallback: Generic category / query exploration
     const params = new URLSearchParams();
     params.set("q", query.trim());
     if (stayType && stayType !== "Any") {
@@ -109,9 +128,10 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
         {/* Cute Travel & Playing Journey Animation */}
         <TravelAnimation
           triggerRef={surpriseRef}
-          onSelectDestination={(val, category) => {
+          onSelectDestination={(val, category, stayId) => {
             setQuery(val);
             if (category) setStayType(category);
+            if (stayId) setSelectedStayId(stayId);
           }}
         />
 
@@ -155,7 +175,10 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
             {query && (
               <button 
                 type="button" 
-                onClick={() => setQuery("")}
+                onClick={() => {
+                  setQuery("");
+                  setSelectedStayId(null);
+                }}
                 className="p-1.5 rounded-full text-ink/40 hover:text-ink hover:bg-sand/80 transition-all shrink-0 cursor-pointer"
                 title="Clear destination"
               >
@@ -225,7 +248,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
           {[
             {
               name: "Manali Sanctuary",
-              q: "Manali",
+              id: "alpine-retreat",
               icon: (
                 <svg className="w-3.5 h-3.5 text-clay" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
@@ -234,7 +257,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
             },
             {
               name: "Coorg Coffee Estate",
-              q: "Coorg",
+              id: "forest-pool",
               icon: (
                 <svg className="w-3.5 h-3.5 text-moss" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
@@ -244,7 +267,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
             },
             {
               name: "Goa Cliffside Villa",
-              q: "Goa",
+              id: "coastal-cove",
               icon: (
                 <svg className="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 12c2.5 0 3-2 5.5-2s3 2 5.5 2 3-2 5.5-2 3 2 5.5 2" />
@@ -254,7 +277,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
             },
             {
               name: "Jaisalmer Domes",
-              q: "Jaisalmer",
+              id: "desert-dome",
               icon: (
                 <svg className="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
@@ -268,10 +291,9 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
               type="button"
               key={tag.name}
               onClick={() => {
-                setQuery(tag.q);
-                window.location.href = `/explore?q=${encodeURIComponent(tag.q)}`;
+                router.push(`/listings/${tag.id}`);
               }}
-              className="flex items-center gap-1.5 rounded-full bg-sand/50 px-3 py-1.5 font-bold text-ink/75 hover:bg-clay hover:text-white transition duration-200"
+              className="flex items-center gap-1.5 rounded-full bg-sand/50 px-3 py-1.5 font-bold text-ink/75 hover:bg-clay hover:text-white transition duration-200 cursor-pointer"
             >
               <span className="shrink-0">{tag.icon}</span>
               <span>{tag.name}</span>
