@@ -250,7 +250,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* Featured Stays */}
-    <section className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-16">
+    <section id="featured-stays" className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-16">
       <div className="section-reveal mb-12 flex flex-wrap items-end justify-between gap-5">
         <h2 className="font-display text-[clamp(2.75rem,5vw,4.5rem)] leading-[1] tracking-[-.04em]">Featured <em className="font-normal text-clay">stays</em></h2>
         <Link href="/explore" className="group flex items-center gap-2 text-sm font-bold transition hover:text-clay">View all stays <span className="transition-transform group-hover:translate-x-1"><Arrow /></span></Link>

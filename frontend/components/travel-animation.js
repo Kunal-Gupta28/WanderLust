@@ -1,82 +1,127 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
-// Curated Travel Biome Themes
-const THEMES = [
+// 4 Distinct Terrains / Biomes with unique roadside objects & landscape
+const BIOMES = [
   {
-    id: "sunset",
-    name: "Golden Hour",
-    skyGradient: "linear-gradient(180deg, #fceddf 0%, #fae5d3 40%, #e9e2d4 100%)",
-    mountainColor1: "#c4b5a2",
-    mountainColor2: "#d8ccba",
-    roadColor: "#2d3a33",
-    dashColor: "#fef08a",
+    id: "forest",
+    name: "Emerald Forest",
+    subtitle: "Lush Canopies & Hills",
+    daySky: "linear-gradient(180deg, #dcfce7 0%, #bbf7d0 45%, #86efac 100%)",
+    nightSky: "linear-gradient(180deg, #052e16 0%, #0f3d24 55%, #14532d 100%)",
+    hillsColor1: "#15803d",
+    hillsColor2: "#16a34a",
+    roadColor: "#14532d",
+    dashColor: "#bbf7d0",
     vanTop: "#f7f5ef",
-    vanBottom: "#b95738",
-    sunColor: "#ffb703",
-    sunGlow: "0 0 30px rgba(255, 183, 3, 0.7)",
-    dest: { name: "Manali Pine Sanctuary", type: "Mountains", tag: "Cozy Wood Cabin" }
+    vanBottom: "#15803d",
+    treeType: "oak",
   },
   {
-    id: "alpine",
-    name: "Alpine Mist",
-    skyGradient: "linear-gradient(180deg, #e0f2fe 0%, #bae6fd 45%, #93c5fd 100%)",
-    mountainColor1: "#64748b",
-    mountainColor2: "#94a3b8",
+    id: "mountains",
+    name: "Pine Highlands",
+    subtitle: "Alpine Peaks & Conifers",
+    daySky: "linear-gradient(180deg, #e0f2fe 0%, #bae6fd 45%, #93c5fd 100%)",
+    nightSky: "linear-gradient(180deg, #082f49 0%, #0c4a6e 55%, #164e63 100%)",
+    hillsColor1: "#475569",
+    hillsColor2: "#64748b",
     roadColor: "#1e293b",
     dashColor: "#e2e8f0",
     vanTop: "#ffffff",
     vanBottom: "#0284c7",
-    sunColor: "#e0f2fe",
-    sunGlow: "0 0 25px rgba(224, 242, 254, 0.9)",
-    dest: { name: "Zanskar Valley Loft", type: "Mountains", tag: "Off-Grid Solitude" }
-  },
-  {
-    id: "forest",
-    name: "Emerald Forest",
-    skyGradient: "linear-gradient(180deg, #ecfdf5 0%, #d1fae5 45%, #a7f3d0 100%)",
-    mountainColor1: "#2d6a4f",
-    mountainColor2: "#40916c",
-    roadColor: "#1b4332",
-    dashColor: "#d8f3dc",
-    vanTop: "#f7f5ef",
-    vanBottom: "#2d6a4f",
-    sunColor: "#fef08a",
-    sunGlow: "0 0 25px rgba(254, 240, 138, 0.8)",
-    dest: { name: "Coorg Mist Estate", type: "Farms", tag: "Coffee Plantation" }
+    treeType: "pine",
   },
   {
     id: "desert",
     name: "Dune Oasis",
-    skyGradient: "linear-gradient(180deg, #fef3c7 0%, #fde68a 40%, #fed7aa 100%)",
-    mountainColor1: "#b45309",
-    mountainColor2: "#d97706",
+    subtitle: "Golden Sands & Cacti",
+    daySky: "linear-gradient(180deg, #fef3c7 0%, #fde68a 45%, #fed7aa 100%)",
+    nightSky: "linear-gradient(180deg, #451a03 0%, #78350f 55%, #9a3412 100%)",
+    hillsColor1: "#b45309",
+    hillsColor2: "#d97706",
     roadColor: "#451a03",
-    dashColor: "#fef08a",
+    dashColor: "#fde68a",
     vanTop: "#fffbeb",
     vanBottom: "#b45309",
-    sunColor: "#f97316",
-    sunGlow: "0 0 35px rgba(249, 115, 22, 0.8)",
-    dest: { name: "Jaisalmer Starlit Dome", type: "Domes", tag: "Desert Glamping" }
+    treeType: "cactus",
   },
   {
-    id: "night",
-    name: "Cosmic Night",
-    skyGradient: "linear-gradient(180deg, #090d16 0%, #111827 50%, #1e293b 100%)",
-    mountainColor1: "#0f172a",
-    mountainColor2: "#1e293b",
-    roadColor: "#020617",
-    dashColor: "#93c5fd",
-    vanTop: "#f8fafc",
-    vanBottom: "#6366f1",
-    sunColor: "#f8fafc",
-    sunGlow: "0 0 25px rgba(248, 250, 252, 0.85)",
-    dest: { name: "Goa Cliffside Haven", type: "Rooms", tag: "Oceanfront Glasshouse" }
-  }
+    id: "coast",
+    name: "Coastal Haven",
+    subtitle: "Ocean Breeze & Palms",
+    daySky: "linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 45%, #fbcfe8 100%)",
+    nightSky: "linear-gradient(180deg, #1e1b4b 0%, #2e1065 55%, #3b0764 100%)",
+    hillsColor1: "#0284c7",
+    hillsColor2: "#0ea5e9",
+    roadColor: "#0f172a",
+    dashColor: "#38bdf8",
+    vanTop: "#fdf2f8",
+    vanBottom: "#db2777",
+    treeType: "palm",
+  },
 ];
 
-// Clean SVG Icons (Zero Emojis)
+// Curated surprise stays from the WanderLust collection
+const SURPRISE_STAYS = [
+  {
+    id: "alpine-retreat",
+    name: "A-frame beneath the pines",
+    location: "Manali, Himachal Pradesh",
+    price: "₹8,400",
+    rating: "4.98",
+    tag: "Mountain Solitude",
+    category: "Mountains",
+  },
+  {
+    id: "coastal-cove",
+    name: "A salt-washed house by the sea",
+    location: "Varkala, Kerala",
+    price: "₹11,200",
+    rating: "4.95",
+    tag: "Ocean Cliffside",
+    category: "Trending",
+  },
+  {
+    id: "desert-dome",
+    name: "Stargazing dome in the desert",
+    location: "Jaisalmer, Rajasthan",
+    price: "₹6,800",
+    rating: "4.92",
+    tag: "Dune Glamping",
+    category: "Domes",
+  },
+  {
+    id: "lake-cabin",
+    name: "Still water cabin",
+    location: "Nainital, Uttarakhand",
+    price: "₹9,200",
+    rating: "4.97",
+    tag: "Lakeside Retreat",
+    category: "Rooms",
+  },
+  {
+    id: "fort-house",
+    name: "An old fort, made intimate",
+    location: "Udaipur, Rajasthan",
+    price: "₹15,800",
+    rating: "4.99",
+    tag: "Heritage Haveli",
+    category: "Castles",
+  },
+  {
+    id: "forest-pool",
+    name: "A pool in the wild",
+    location: "Wayanad, Kerala",
+    price: "₹12,700",
+    rating: "4.96",
+    tag: "Rainforest Canopy",
+    category: "Amazing pools",
+  },
+];
+
+// Clean SVG Icons
 function HornIcon({ className = "w-3.5 h-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -104,53 +149,60 @@ function TurboZapIcon({ className = "w-3.5 h-3.5" }) {
   );
 }
 
-function CompassIcon({ className = "w-3.5 h-3.5" }) {
+function TerrainIcon({ className = "w-3.5 h-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="10" />
-      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" opacity="0.3" />
-      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
     </svg>
   );
 }
 
-function SparklesIcon({ className = "w-3.5 h-3.5" }) {
+function TicketIcon({ className = "w-3.5 h-3.5" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" fill="currentColor" opacity="0.2" />
-      <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
+      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+      <path d="M13 5v2" />
+      <path d="M13 17v2" />
+      <path d="M13 11v2" />
     </svg>
   );
 }
 
-function PaletteIcon({ className = "w-3.5 h-3.5" }) {
+function StarIcon({ className = "w-3 h-3" }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2Z" />
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
     </svg>
   );
 }
 
 export default function TravelAnimation({ onSelectDestination }) {
-  const [themeIndex, setThemeIndex] = useState(0);
+  // 1. Day / Night Atmospheric state (controlled ONLY by Sun / Moon button)
+  const [isNight, setIsNight] = useState(false);
+
+  // 2. Terrain / Biome state (controlled ONLY by Landscape Biome button)
+  const [biomeIndex, setBiomeIndex] = useState(0);
+
+  // 3. Speed mode state (controlled ONLY by Cruise / Turbo button)
   const [speed, setSpeed] = useState("normal"); // "normal" | "fast"
+
+  // 4. Honk interaction state
   const [honking, setHonking] = useState(false);
   const [honkText, setHonkText] = useState("");
-  const [activeSurprise, setActiveSurprise] = useState(null);
 
-  const currentTheme = THEMES[themeIndex];
-  const isNight = currentTheme.id === "night";
+  // 5. Surprise Stay / Adventure Lottery state (controlled ONLY by Surprise Stay button)
+  const [luckyStay, setLuckyStay] = useState(null);
+  const [ticketNotice, setTicketNotice] = useState(false);
+
+  const currentBiome = BIOMES[biomeIndex];
+  const skyBackground = isNight ? currentBiome.nightSky : currentBiome.daySky;
 
   const HONK_MESSAGES = [
     "BEEP BEEP",
-    "LET'S HIT THE ROAD",
     "ADVENTURE AWAITS",
-    "NEXT STOP: PARADISE",
+    "HIT THE OPEN ROAD",
     "SLOW TRAVEL VIBES",
+    "WANDER FREELY",
   ];
 
   function triggerHonk() {
@@ -160,37 +212,36 @@ export default function TravelAnimation({ onSelectDestination }) {
     setTimeout(() => setHonking(false), 1400);
   }
 
-  // Speed Toggle: Switch between Cruise & Turbo with theme transition
-  function toggleSpeed() {
-    if (speed === "normal") {
-      setSpeed("fast");
-    } else {
-      setSpeed("normal");
-    }
+  // --- BUTTON 1: Sun / Moon Celestial Button ---
+  // Strictly toggles Day & Night atmosphere!
+  function toggleDayNight() {
+    setIsNight((prev) => !prev);
   }
 
-  // Surprise Stay: Switch theme & pick destination
-  function handleSurprise() {
-    const nextIdx = (themeIndex + 1) % THEMES.length;
-    setThemeIndex(nextIdx);
-    const selectedTheme = THEMES[nextIdx];
-    setActiveSurprise(selectedTheme.dest);
+  // --- BUTTON 2: Landscape / Biome Button ("Emerald Forest", etc.) ---
+  // Strictly cycles through the 4 scenic terrain environments!
+  function cycleBiome() {
+    setBiomeIndex((prev) => (prev + 1) % BIOMES.length);
+  }
+
+  // --- BUTTON 3: Surprise Stay Button ---
+  // Strictly rolls a lucky stay lottery ticket with destination card & search autofill!
+  function rollSurpriseStay() {
     triggerHonk();
-    if (onSelectDestination) {
-      onSelectDestination(selectedTheme.dest.name);
-    }
-  }
+    // Pick a random stay from the collection
+    const randomPick = SURPRISE_STAYS[Math.floor(Math.random() * SURPRISE_STAYS.length)];
+    setLuckyStay(randomPick);
+    setTicketNotice(true);
 
-  // Direct Theme Cycle
-  function cycleTheme() {
-    const nextIdx = (themeIndex + 1) % THEMES.length;
-    setThemeIndex(nextIdx);
+    if (onSelectDestination) {
+      onSelectDestination(randomPick.name);
+    }
   }
 
   return (
     <div
-      className="relative w-full select-none overflow-hidden rounded-t-3xl border-t border-x border-white/60 transition-all duration-700 shadow-sm"
-      style={{ background: currentTheme.skyGradient }}
+      className="relative w-full select-none overflow-hidden rounded-t-3xl border-t border-x border-white/60 transition-colors duration-700 shadow-sm"
+      style={{ background: skyBackground }}
     >
       <style jsx>{`
         @keyframes roadMove {
@@ -199,7 +250,7 @@ export default function TravelAnimation({ onSelectDestination }) {
         }
         @keyframes cloudFloat {
           0% { transform: translateX(0); }
-          50% { transform: translateX(18px); }
+          50% { transform: translateX(20px); }
           100% { transform: translateX(0); }
         }
         @keyframes balloonBob {
@@ -244,6 +295,10 @@ export default function TravelAnimation({ onSelectDestination }) {
           0% { transform: translateY(0) scale(0.8); opacity: 1; }
           100% { transform: translateY(-24px) scale(1.2); opacity: 0; }
         }
+        @keyframes treeSlide {
+          0% { transform: translateX(800px); }
+          100% { transform: translateX(-150px); }
+        }
 
         .anim-road {
           animation: roadMove ${speed === "fast" ? "0.5s" : "1.3s"} linear infinite;
@@ -267,36 +322,47 @@ export default function TravelAnimation({ onSelectDestination }) {
         .anim-cloud-slow {
           animation: cloudFloat 7s ease-in-out infinite;
         }
+        .anim-tree-1 {
+          animation: treeSlide ${speed === "fast" ? "2.5s" : "5.5s"} linear infinite;
+        }
+        .anim-tree-2 {
+          animation: treeSlide ${speed === "fast" ? "2.5s" : "5.5s"} 2.8s linear infinite;
+        }
       `}</style>
 
-      {/* Sky & Animated Landscape Canvas */}
+      {/* Sky Canvas */}
       <div className="relative h-28 sm:h-36 w-full pt-2">
+        
         {/* Background elements */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Celestial Body: Sun or Moon */}
-          <div
-            className="absolute top-3 right-8 sm:right-16 w-10 h-10 rounded-full transition-all duration-700 flex items-center justify-center cursor-pointer pointer-events-auto shadow-lg hover:scale-110 active:scale-95"
+          
+          {/* BUTTON 1: Sun / Moon Celestial Toggle (Top Right) */}
+          <button
+            type="button"
+            onClick={toggleDayNight}
+            className="absolute top-3 right-6 sm:right-14 w-10 h-10 rounded-full transition-all duration-700 flex items-center justify-center cursor-pointer pointer-events-auto shadow-lg hover:scale-110 active:scale-95 z-20"
             style={{
-              backgroundColor: currentTheme.sunColor,
-              boxShadow: currentTheme.sunGlow,
+              backgroundColor: isNight ? "#f8fafc" : "#ffb703",
+              boxShadow: isNight ? "0 0 25px rgba(248, 250, 252, 0.85)" : "0 0 30px rgba(255, 183, 3, 0.75)",
             }}
-            onClick={cycleTheme}
-            title={`Current Theme: ${currentTheme.name}. Click to change!`}
+            title={isNight ? "Switch to Daytime / Golden Hour" : "Switch to Starry Night"}
           >
             {isNight ? (
+              /* Crescent Moon for Night */
               <svg className="w-5 h-5 text-slate-800" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
               </svg>
             ) : (
+              /* Radiant Sun for Day */
               <svg className="w-5 h-5 text-amber-800 animate-spin" style={{ animationDuration: "20s" }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="4" fill="currentColor" opacity="0.3" />
                 <circle cx="12" cy="12" r="3" stroke="currentColor" />
                 <path strokeLinecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
               </svg>
             )}
-          </div>
+          </button>
 
-          {/* Twinkling Stars in Cosmic Night */}
+          {/* Twinkling Stars in Night Mode */}
           {isNight && (
             <div className="absolute inset-0 transition-opacity duration-500">
               <span className="absolute top-4 left-1/4 w-1.5 h-1.5 bg-white rounded-full animate-ping" />
@@ -307,26 +373,18 @@ export default function TravelAnimation({ onSelectDestination }) {
             </div>
           )}
 
-          {/* High-speed motion streaks when Turbo is active */}
+          {/* Speed Streaks in Turbo Mode */}
           {speed === "fast" && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
               <div className="absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white to-transparent" style={{ animation: "speedStreak 0.6s linear infinite" }} />
               <div className="absolute top-14 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-amber-200 to-transparent" style={{ animation: "speedStreak 0.45s 0.2s linear infinite" }} />
-              <div className="absolute top-20 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white to-transparent" style={{ animation: "speedStreak 0.5s 0.35s linear infinite" }} />
             </div>
           )}
 
-          {/* Hot Air Balloon */}
+          {/* Floating Hot Air Balloon */}
           <div className="anim-balloon absolute top-2 left-6 sm:left-14 w-10 sm:w-12 h-14 sm:h-16">
             <svg viewBox="0 0 60 80" className="w-full h-full drop-shadow-md">
-              <defs>
-                <linearGradient id={`balloon-${themeIndex}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor={currentTheme.vanBottom} />
-                  <stop offset="50%" stopColor={currentTheme.vanTop} />
-                  <stop offset="100%" stopColor={currentTheme.vanBottom} />
-                </linearGradient>
-              </defs>
-              <ellipse cx="30" cy="30" rx="24" ry="28" fill={`url(#balloon-${themeIndex})`} />
+              <ellipse cx="30" cy="30" rx="24" ry="28" fill={currentBiome.vanBottom} />
               <path d="M 20 5 Q 30 30 20 57" stroke="#ffffff" strokeWidth="1.2" fill="none" opacity="0.6" />
               <path d="M 40 5 Q 30 30 40 57" stroke="#ffffff" strokeWidth="1.2" fill="none" opacity="0.6" />
               <line x1="20" y1="57" x2="25" y2="67" stroke="#334155" strokeWidth="1.2" />
@@ -342,16 +400,92 @@ export default function TravelAnimation({ onSelectDestination }) {
             </svg>
           </div>
 
-          {/* Dynamic Mountain & Landscape Silhouette tailored to theme */}
-          <div className="absolute bottom-6 left-0 right-0 h-16 pointer-events-none opacity-50 transition-colors duration-700">
+          {/* Biome Landscape Silhouettes (Mountains vs Dunes vs Coastal Waves vs Forest Hills) */}
+          <div className="absolute bottom-6 left-0 right-0 h-16 pointer-events-none opacity-50 transition-all duration-700">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-full">
-              <polygon points="0,120 180,30 360,120 540,40 760,120 980,20 1200,120" fill={currentTheme.mountainColor1} />
-              <polygon points="120,120 300,55 480,120 680,60 900,120 1100,45 1200,120" fill={currentTheme.mountainColor2} opacity="0.6" />
+              {currentBiome.treeType === "pine" ? (
+                /* High Jagged Peaks */
+                <>
+                  <polygon points="0,120 160,20 320,120 480,35 680,120 880,15 1060,120 1200,30 1200,120" fill={currentBiome.hillsColor1} />
+                  <polygon points="80,120 240,45 400,120 580,50 780,120 980,40 1200,120" fill={currentBiome.hillsColor2} opacity="0.6" />
+                </>
+              ) : currentBiome.treeType === "cactus" ? (
+                /* Smooth Desert Dunes */
+                <>
+                  <path d="M 0 120 Q 200 40 450 120 Q 750 30 1050 120 L 1200 120 L 1200 120 Z" fill={currentBiome.hillsColor1} />
+                  <path d="M 100 120 Q 400 60 700 120 Q 950 50 1200 120 Z" fill={currentBiome.hillsColor2} opacity="0.6" />
+                </>
+              ) : currentBiome.treeType === "palm" ? (
+                /* Ocean Waves / Coastal Bluffs */
+                <>
+                  <path d="M 0 120 Q 150 70 300 120 T 600 120 T 900 120 T 1200 120 Z" fill={currentBiome.hillsColor1} />
+                  <polygon points="0,120 250,50 500,120 850,45 1200,120" fill={currentBiome.hillsColor2} opacity="0.5" />
+                </>
+              ) : (
+                /* Rolling Forest Hills */
+                <>
+                  <polygon points="0,120 180,30 360,120 540,40 760,120 980,20 1200,120" fill={currentBiome.hillsColor1} />
+                  <polygon points="120,120 300,55 480,120 680,60 900,120 1100,45 1200,120" fill={currentBiome.hillsColor2} opacity="0.6" />
+                </>
+              )}
             </svg>
+          </div>
+
+          {/* Animated Roadside Biome Objects Sliding By (Pines / Palms / Cacti / Oaks) */}
+          <div className="absolute bottom-3 left-0 right-0 h-12 overflow-hidden pointer-events-none">
+            {/* Tree 1 */}
+            <div className="anim-tree-1 absolute bottom-0">
+              {currentBiome.treeType === "pine" && (
+                <svg className="w-6 h-10 text-slate-700" viewBox="0 0 24 36" fill="currentColor">
+                  <polygon points="12,2 2,16 6,16 1,26 8,26 8,36 16,36 16,26 23,26 18,16 22,16" />
+                </svg>
+              )}
+              {currentBiome.treeType === "palm" && (
+                <svg className="w-8 h-12 text-teal-800" viewBox="0 0 32 40" fill="currentColor">
+                  <path d="M 14 40 Q 16 20 18 10 Q 8 6 2 12 Q 16 12 18 10 Q 18 0 28 4 Q 20 10 18 10 Q 28 16 32 24 Q 22 18 18 10 L 16 40 Z" />
+                </svg>
+              )}
+              {currentBiome.treeType === "cactus" && (
+                <svg className="w-6 h-10 text-amber-900" viewBox="0 0 24 36" fill="currentColor">
+                  <path d="M 10 36 L 10 6 A 2 2 0 0 1 14 6 L 14 14 L 18 14 A 2 2 0 0 1 20 16 L 20 22 L 18 22 L 18 18 L 14 18 L 14 36 Z M 10 16 L 6 16 A 2 2 0 0 0 4 18 L 4 24 L 6 24 L 6 20 L 10 20 Z" />
+                </svg>
+              )}
+              {currentBiome.treeType === "oak" && (
+                <svg className="w-7 h-11 text-emerald-900" viewBox="0 0 28 38" fill="currentColor">
+                  <circle cx="14" cy="14" r="12" />
+                  <rect x="12" y="24" width="4" height="14" fill="#5c382e" />
+                </svg>
+              )}
+            </div>
+
+            {/* Tree 2 */}
+            <div className="anim-tree-2 absolute bottom-0">
+              {currentBiome.treeType === "pine" && (
+                <svg className="w-5 h-8 text-slate-600" viewBox="0 0 24 36" fill="currentColor">
+                  <polygon points="12,2 2,16 6,16 1,26 8,26 8,36 16,36 16,26 23,26 18,16 22,16" />
+                </svg>
+              )}
+              {currentBiome.treeType === "palm" && (
+                <svg className="w-7 h-10 text-teal-700" viewBox="0 0 32 40" fill="currentColor">
+                  <path d="M 14 40 Q 16 20 18 10 Q 8 6 2 12 Q 16 12 18 10 Q 18 0 28 4 Q 20 10 18 10 Q 28 16 32 24 Q 22 18 18 10 L 16 40 Z" />
+                </svg>
+              )}
+              {currentBiome.treeType === "cactus" && (
+                <svg className="w-5 h-8 text-amber-800" viewBox="0 0 24 36" fill="currentColor">
+                  <path d="M 10 36 L 10 6 A 2 2 0 0 1 14 6 L 14 14 L 18 14 A 2 2 0 0 1 20 16 L 20 22 L 18 22 L 18 18 L 14 18 L 14 36 Z M 10 16 L 6 16 A 2 2 0 0 0 4 18 L 4 24 L 6 24 L 6 20 L 10 20 Z" />
+                </svg>
+              )}
+              {currentBiome.treeType === "oak" && (
+                <svg className="w-6 h-9 text-emerald-800" viewBox="0 0 28 38" fill="currentColor">
+                  <circle cx="14" cy="14" r="11" />
+                  <rect x="12" y="23" width="4" height="13" fill="#5c382e" />
+                </svg>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Playful Interactive Speech Bubble on Honk */}
+        {/* Speech Bubble on Honk */}
         {honking && (
           <div className="absolute top-1 left-1/2 -translate-x-1/2 z-30 px-3.5 py-1 rounded-full bg-clay text-white text-[0.7rem] sm:text-xs font-bold tracking-wider shadow-lg flex items-center gap-1.5 animate-bounce">
             <HornIcon className="w-3.5 h-3.5 text-white animate-pulse" />
@@ -367,10 +501,11 @@ export default function TravelAnimation({ onSelectDestination }) {
           </div>
         )}
 
-        {/* Traveling Van & Road Canvas */}
+        {/* Van & Road Canvas */}
         <div className="absolute bottom-0 left-0 right-0 h-10 flex flex-col justify-end">
           
           <div className="relative mx-auto w-[min(94%,72rem)] h-full">
+            
             {/* The Camper Van */}
             <div
               onClick={triggerHonk}
@@ -379,7 +514,7 @@ export default function TravelAnimation({ onSelectDestination }) {
             >
               <div className="relative w-28 sm:w-36 h-14 sm:h-16">
                 
-                {/* Expanding Soundwave Ring on Honk */}
+                {/* Soundwave Ring on Honk */}
                 {honking && (
                   <div
                     className="absolute -right-4 top-4 w-10 h-10 rounded-full border-2 border-clay pointer-events-none"
@@ -405,7 +540,6 @@ export default function TravelAnimation({ onSelectDestination }) {
 
                 {/* Van SVG */}
                 <svg viewBox="0 0 160 85" className="w-full h-full drop-shadow-md">
-                  {/* Roof Rack & Adventure Gear */}
                   <line x1="30" y1="20" x2="115" y2="20" stroke="#334155" strokeWidth="2.5" strokeLinecap="round" />
                   <line x1="42" y1="20" x2="42" y2="26" stroke="#334155" strokeWidth="2.5" />
                   <line x1="72" y1="20" x2="72" y2="26" stroke="#334155" strokeWidth="2.5" />
@@ -416,19 +550,19 @@ export default function TravelAnimation({ onSelectDestination }) {
                   <line x1="45" y1="9" x2="45" y2="20" stroke="#fef08a" strokeWidth="1" />
                   <line x1="57" y1="9" x2="57" y2="20" stroke="#fef08a" strokeWidth="1" />
                   
-                  {/* Adventure Roll */}
+                  {/* Bedroll */}
                   <ellipse cx="90" cy="14" rx="22" ry="5" fill="#405446" stroke="#253329" strokeWidth="1" />
                   <line x1="72" y1="14" x2="108" y2="14" stroke="#e9e2d4" strokeWidth="1.2" />
 
-                  {/* Fluttering Flag */}
-                  <path d="M 28 20 L 28 4 L 14 11 Z" fill={currentTheme.vanBottom} style={{ animation: "flagWiggle 1s ease-in-out infinite" }} />
+                  {/* Flag */}
+                  <path d="M 28 20 L 28 4 L 14 11 Z" fill={currentBiome.vanBottom} style={{ animation: "flagWiggle 1s ease-in-out infinite" }} />
                   <line x1="28" y1="4" x2="28" y2="22" stroke="#475569" strokeWidth="1.5" />
 
                   {/* Van Top */}
-                  <path d="M 24 45 L 24 30 Q 24 25 32 25 L 120 25 Q 134 25 142 36 L 148 45 Z" fill={currentTheme.vanTop} stroke="#17221d" strokeWidth="2.5" />
+                  <path d="M 24 45 L 24 30 Q 24 25 32 25 L 120 25 Q 134 25 142 36 L 148 45 Z" fill={currentBiome.vanTop} stroke="#17221d" strokeWidth="2.5" />
                   
-                  {/* Van Bottom (Themed) */}
-                  <path d="M 24 45 L 152 45 Q 155 45 155 52 L 155 64 Q 155 68 150 68 L 138 68 Q 138 56 122 56 Q 106 56 106 68 L 56 68 Q 56 56 40 56 Q 24 56 24 68 L 18 68 Q 14 68 14 62 L 14 52 Q 14 45 24 45 Z" fill={currentTheme.vanBottom} stroke="#17221d" strokeWidth="2.5" />
+                  {/* Van Bottom */}
+                  <path d="M 24 45 L 152 45 Q 155 45 155 52 L 155 64 Q 155 68 150 68 L 138 68 Q 138 56 122 56 Q 106 56 106 68 L 56 68 Q 56 56 40 56 Q 24 56 24 68 L 18 68 Q 14 68 14 62 L 14 52 Q 14 45 24 45 Z" fill={currentBiome.vanBottom} stroke="#17221d" strokeWidth="2.5" />
 
                   {/* Windows */}
                   <path d="M 124 29 L 140 38 L 140 43 L 122 43 Z" fill="#93c5fd" opacity="0.85" stroke="#17221d" strokeWidth="1.5" />
@@ -440,7 +574,7 @@ export default function TravelAnimation({ onSelectDestination }) {
                   <ellipse cx="94" cy="44" rx="6" ry="3.5" fill="#17221d" />
                   <circle cx="106" cy="35" r="2.5" fill="#f59e0b" />
 
-                  {/* Trim & Door Handle */}
+                  {/* Trim & Handle */}
                   <line x1="24" y1="46" x2="152" y2="46" stroke="#ffffff" strokeWidth="2" />
                   <rect x="66" y="49" width="7" height="2.5" rx="1" fill="#cbd5e1" stroke="#334155" strokeWidth="0.8" />
 
@@ -453,20 +587,19 @@ export default function TravelAnimation({ onSelectDestination }) {
                   <rect x="146" y="62" width="12" height="5" rx="2.5" fill="#e2e8f0" stroke="#17221d" strokeWidth="1.5" />
                   <rect x="10" y="62" width="8" height="5" rx="2.5" fill="#e2e8f0" stroke="#17221d" strokeWidth="1.5" />
 
-                  {/* Rear Wheel */}
+                  {/* Wheels */}
                   <g className="anim-wheel" style={{ transformOrigin: "40px 68px" }}>
                     <circle cx="40" cy="68" r="11" fill="#1f2937" stroke="#111827" strokeWidth="2" />
                     <circle cx="40" cy="68" r="5" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
-                    <circle cx="40" cy="68" r="1.5" fill={currentTheme.vanBottom} />
+                    <circle cx="40" cy="68" r="1.5" fill={currentBiome.vanBottom} />
                     <line x1="40" y1="63" x2="40" y2="73" stroke="#94a3b8" strokeWidth="1" />
                     <line x1="35" y1="68" x2="45" y2="68" stroke="#94a3b8" strokeWidth="1" />
                   </g>
 
-                  {/* Front Wheel */}
                   <g className="anim-wheel" style={{ transformOrigin: "122px 68px" }}>
                     <circle cx="122" cy="68" r="11" fill="#1f2937" stroke="#111827" strokeWidth="2" />
                     <circle cx="122" cy="68" r="5" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
-                    <circle cx="122" cy="68" r="1.5" fill={currentTheme.vanBottom} />
+                    <circle cx="122" cy="68" r="1.5" fill={currentBiome.vanBottom} />
                     <line x1="122" y1="63" x2="122" y2="73" stroke="#94a3b8" strokeWidth="1" />
                     <line x1="117" y1="68" x2="127" y2="68" stroke="#94a3b8" strokeWidth="1" />
                   </g>
@@ -474,39 +607,39 @@ export default function TravelAnimation({ onSelectDestination }) {
               </div>
             </div>
 
-            {/* Interactive Control Buttons (Pure Vector SVG Icons, Zero Emojis) */}
+            {/* CONTROL CONSOLE (Each button has a COMPLETELY UNIQUE role) */}
             <div className="absolute right-2 sm:right-6 bottom-2 flex items-center gap-1.5 sm:gap-2 z-20">
               
-              {/* Theme Cycle Button */}
+              {/* BUTTON 2: Scenic Terrain Switcher ("Emerald Forest", "Pine Highlands", etc.) */}
               <button
                 type="button"
-                onClick={cycleTheme}
-                className="hidden sm:flex items-center gap-1.5 rounded-full bg-white/90 hover:bg-white text-ink text-[0.7rem] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 shadow-sm border border-black/10 hover:border-clay hover:text-clay transition active:scale-95"
-                title={`Theme: ${currentTheme.name}. Click to switch theme.`}
+                onClick={cycleBiome}
+                className="flex items-center gap-1.5 rounded-full bg-white/95 hover:bg-white text-ink text-[0.7rem] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 shadow-sm border border-black/10 hover:border-moss hover:text-moss transition active:scale-95"
+                title={`Terrain: ${currentBiome.name} (${currentBiome.subtitle}). Click to cycle scenery.`}
               >
-                <PaletteIcon className="w-3.5 h-3.5 text-clay" />
-                <span className="hidden md:inline">{currentTheme.name}</span>
+                <TerrainIcon className="w-3.5 h-3.5 text-moss" />
+                <span>{currentBiome.name}</span>
               </button>
 
-              {/* Honk Button with SVG Horn */}
+              {/* Honk Horn Button */}
               <button
                 type="button"
                 onClick={triggerHonk}
-                className="flex items-center gap-1.5 rounded-full bg-white/90 hover:bg-white text-ink text-[0.7rem] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 shadow-sm border border-black/10 hover:border-clay hover:text-clay transition active:scale-95"
+                className="flex items-center gap-1.5 rounded-full bg-white/95 hover:bg-white text-ink text-[0.7rem] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 shadow-sm border border-black/10 hover:border-clay hover:text-clay transition active:scale-95"
                 title="Honk the horn!"
               >
                 <HornIcon className="w-3.5 h-3.5 text-clay" />
                 <span>Honk</span>
               </button>
 
-              {/* Speed Mode Toggle with SVG Speedometer / Turbo */}
+              {/* Speed Mode Toggle */}
               <button
                 type="button"
-                onClick={toggleSpeed}
+                onClick={() => setSpeed(speed === "normal" ? "fast" : "normal")}
                 className={`flex items-center gap-1.5 rounded-full text-[0.7rem] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 shadow-sm border transition active:scale-95 ${
                   speed === "fast"
                     ? "bg-clay text-white border-clay shadow-clay/30"
-                    : "bg-white/90 hover:bg-white text-ink border-black/10 hover:border-clay"
+                    : "bg-white/95 hover:bg-white text-ink border-black/10 hover:border-clay"
                 }`}
                 title="Toggle Speed"
               >
@@ -523,31 +656,31 @@ export default function TravelAnimation({ onSelectDestination }) {
                 )}
               </button>
 
-              {/* Surprise Adventure Generator with SVG Compass / Sparkle */}
+              {/* BUTTON 3: Surprise Stay Lottery Button */}
               <button
                 type="button"
-                onClick={handleSurprise}
-                className="flex items-center gap-1.5 rounded-full bg-moss hover:bg-[#2e3e34] text-sand text-[0.7rem] sm:text-xs font-bold px-3 sm:px-4 py-1.5 shadow-sm border border-moss/30 transition hover:scale-105 active:scale-95"
-                title="Surprise me with a new destination and landscape theme!"
+                onClick={rollSurpriseStay}
+                className="flex items-center gap-1.5 rounded-full bg-ink hover:bg-black text-sand text-[0.7rem] sm:text-xs font-bold px-3 sm:px-4 py-1.5 shadow-sm border border-white/20 transition hover:scale-105 active:scale-95"
+                title="Draw a lucky stay lottery ticket with direct booking link!"
               >
-                <SparklesIcon className="w-3.5 h-3.5 text-sand" />
+                <TicketIcon className="w-3.5 h-3.5 text-sand" />
                 <span>Surprise Stay</span>
               </button>
 
             </div>
           </div>
 
-          {/* Endless Moving Road Strip (Themed) */}
+          {/* Road Strip */}
           <div
             className="relative w-full h-3 overflow-hidden border-t border-black/30 transition-colors duration-700"
-            style={{ backgroundColor: currentTheme.roadColor }}
+            style={{ backgroundColor: currentBiome.roadColor }}
           >
             <div className="anim-road flex w-[200%] h-full items-center">
               {[...Array(24)].map((_, i) => (
                 <div key={i} className="flex-1 flex justify-center">
                   <div
                     className="w-8 sm:w-14 h-1 rounded-full opacity-80"
-                    style={{ backgroundColor: currentTheme.dashColor }}
+                    style={{ backgroundColor: currentBiome.dashColor }}
                   />
                 </div>
               ))}
@@ -557,23 +690,62 @@ export default function TravelAnimation({ onSelectDestination }) {
         </div>
       </div>
 
-      {/* Surprise Stay Announcement Banner */}
-      {activeSurprise && (
-        <div className="bg-white/90 backdrop-blur-md px-4 py-2 border-t border-ink/10 flex items-center justify-between text-xs text-ink/80 transition-all">
-          <div className="flex items-center gap-2 truncate">
-            <CompassIcon className="w-4 h-4 text-clay shrink-0" />
-            <span className="font-bold text-clay uppercase tracking-wider text-[0.65rem]">Theme: {currentTheme.name}</span>
-            <span className="text-ink/30">•</span>
-            <span className="font-bold text-ink">{activeSurprise.name}</span>
-            <span className="hidden sm:inline text-ink/60">({activeSurprise.tag})</span>
+      {/* Lucky Stay Boarding Pass / Discovery Ticket Card (Triggered by BUTTON 3) */}
+      {ticketNotice && luckyStay && (
+        <div className="bg-white/95 backdrop-blur-md px-4 py-3 border-t border-ink/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs transition-all animate-fadeIn">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-clay text-white shrink-0">
+              <TicketIcon className="w-4 h-4" />
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-[0.65rem] uppercase tracking-wider text-clay bg-clay/10 px-2 py-0.5 rounded-full">
+                  Lucky Match
+                </span>
+                <span className="font-bold text-ink text-sm">{luckyStay.name}</span>
+                <span className="flex items-center gap-0.5 text-amber-500 font-bold text-[0.7rem]">
+                  <StarIcon className="w-3 h-3 fill-current" />
+                  {luckyStay.rating}
+                </span>
+              </div>
+              <p className="text-ink/65 text-[0.75rem] mt-0.5">
+                {luckyStay.location} • <strong className="text-ink">{luckyStay.price}</strong> / night • {luckyStay.tag}
+              </p>
+            </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setActiveSurprise(null)}
-            className="text-ink/40 hover:text-ink font-bold px-1.5 text-sm ml-2"
-          >
-            ✕
-          </button>
+
+          <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+            <button
+              type="button"
+              onClick={() => {
+                if (onSelectDestination) {
+                  onSelectDestination(luckyStay.location.split(",")[0]);
+                }
+                const exploreEl = document.getElementById("featured-stays");
+                if (exploreEl) {
+                  exploreEl.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="rounded-xl bg-clay hover:bg-[#9e442b] text-white px-3 py-1.5 font-bold transition shadow-sm"
+            >
+              Explore This Stay
+            </button>
+            <button
+              type="button"
+              onClick={rollSurpriseStay}
+              className="rounded-xl bg-sand/60 hover:bg-sand text-ink px-3 py-1.5 font-bold transition"
+            >
+              Roll Again
+            </button>
+            <button
+              type="button"
+              onClick={() => setTicketNotice(false)}
+              className="text-ink/40 hover:text-ink font-bold px-1.5 text-base"
+              title="Dismiss ticket"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       )}
     </div>
