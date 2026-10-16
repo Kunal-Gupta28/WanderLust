@@ -306,19 +306,19 @@ export default function AboutPage() {
                 name: "Elena Rostova", 
                 role: "Co-Founder & CEO", 
                 bio: "Architect & slow-travel advocate. Spends winters exploring mountain hamlets.",
-                img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600&h=600" 
+                initials: "ER"
               },
               { 
                 name: "Marcus Chen", 
                 role: "Head of Curation", 
                 bio: "Former travel writer with a passion for heritage restoration & sustainable stays.",
-                img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600&h=600" 
+                initials: "MC"
               },
               { 
                 name: "Sarah Jenkins", 
                 role: "Community Director", 
                 bio: "Dedicated to empowering independent hosts and supporting local artisan economies.",
-                img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600&h=600" 
+                initials: "SJ"
               }
             ].map((member, i) => (
               <div 
@@ -327,8 +327,8 @@ export default function AboutPage() {
                 className="bg-paper p-8 rounded-2xl border border-ink/10 shadow-sm text-center opacity-0 translate-y-8 transition-all duration-1000 ease-out hover:border-clay/40 transition-colors"
                 style={{ transitionDelay: `${i * 150}ms` }}
               >
-                <div className="relative w-36 h-36 mx-auto mb-6 rounded-full overflow-hidden border-4 border-sand shadow-inner">
-                  <Image src={member.img} alt={member.name} fill className="object-cover" />
+                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-sand/60 text-clay border border-ink/10 flex items-center justify-center font-display text-xl font-bold tracking-tight shadow-sm">
+                  {member.initials}
                 </div>
                 <h3 className="font-display text-2xl font-bold text-ink">{member.name}</h3>
                 <p className="text-clay font-bold text-xs uppercase tracking-wider mt-1 mb-4">{member.role}</p>
