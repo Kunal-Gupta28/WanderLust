@@ -151,7 +151,7 @@ export default function CareersPage() {
               <input type="text" placeholder="Full Name" required className="p-3 bg-sand/30 border border-ink/10 rounded-xl focus:outline-none focus:border-clay" />
               <input type="email" placeholder="Email Address" required className="p-3 bg-sand/30 border border-ink/10 rounded-xl focus:outline-none focus:border-clay" />
               <input type="url" placeholder="LinkedIn or Portfolio URL" className="p-3 bg-sand/30 border border-ink/10 rounded-xl focus:outline-none focus:border-clay" />
-              <textarea placeholder="Why WanderLust?" rows={4} required className="p-3 bg-sand/30 border border-ink/10 rounded-xl focus:outline-none focus:border-clay resize-none"></textarea>
+              <textarea placeholder="Why WanderLust?" rows={4} required className="p-3 bg-sand/30 border border-ink/10 rounded-xl focus:outline-none focus:border-clay resize-none overflow-x-hidden break-words"></textarea>
               <button type="submit" className="px-6 py-3 bg-clay text-paper rounded-xl font-medium mt-2 hover:bg-clay/90 transition-colors">
                 Submit Application
               </button>

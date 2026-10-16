@@ -375,7 +375,7 @@ export default function Navbar({ transparent = false }) {
                   placeholder="Describe your stay, unique amenities, ambiance, and view..."
                   value={listingForm.description}
                   onChange={(e) => setListingForm({ ...listingForm, description: e.target.value })}
-                  className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm outline-none focus:border-clay"
+                  className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm outline-none focus:border-clay overflow-x-hidden break-words resize-none"
                 />
               </div>
 

@@ -544,7 +544,7 @@ export default function AdminCRMPage() {
                   rows={2}
                   value={broadcastMessage}
                   onChange={(e) => setBroadcastMessage(e.target.value)}
-                  className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm font-medium outline-none focus:border-clay"
+                  className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm font-medium outline-none focus:border-clay overflow-x-hidden break-words resize-none"
                 />
               </div>
 

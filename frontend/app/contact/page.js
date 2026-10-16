@@ -265,7 +265,7 @@ export default function ContactPage() {
                 rows={5} 
                 required 
                 placeholder="How can we assist your journey?"
-                className="p-3.5 bg-sand/20 border border-ink/15 rounded-xl focus:outline-none focus:border-clay focus:ring-1 focus:ring-clay text-sm text-ink resize-none transition"
+                className="p-3.5 bg-sand/20 border border-ink/15 rounded-xl focus:outline-none focus:border-clay focus:ring-1 focus:ring-clay text-sm text-ink resize-none transition overflow-x-hidden break-words"
               ></textarea>
             </div>
 

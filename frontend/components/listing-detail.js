@@ -505,7 +505,7 @@ export default function ListingDetail({ listing }) {
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Share details of your stay, location vibe, and hospitality..."
-                  className="w-full px-4 py-3 bg-white border border-ink/15 rounded-xl text-sm outline-none focus:border-clay"
+                  className="w-full px-4 py-3 bg-white border border-ink/15 rounded-xl text-sm outline-none focus:border-clay overflow-x-hidden break-words resize-none"
                 />
               </div>
 

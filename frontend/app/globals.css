@@ -15,6 +15,14 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: #f7f5ef; color: #17221d; font-family: var(--font-sans), sans-serif; }
 button, input { font: inherit; }
+textarea {
+  font: inherit;
+  overflow-x: hidden !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
 ::selection { background: #b95738; color: #fffaf2; }
 *:focus-visible { outline: 2px solid #b95738; outline-offset: 2px; }
 input:focus, input:focus-visible, textarea:focus, textarea:focus-visible, select:focus, select:focus-visible {
