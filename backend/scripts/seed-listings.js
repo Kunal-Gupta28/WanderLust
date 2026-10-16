@@ -28,7 +28,7 @@ const stays = [
   ["Domes", "Forest geodesic retreat", "Coorg", "India", 9800, "A round, quiet room in the trees with a sky-facing bed.", "photo-1449158743715-0a90ebb6d2d8"],
   ["Boats", "Houseboat on the backwaters", "Alappuzha", "India", 10900, "A floating stay with coconut palms passing gently by.", "photo-1510414842594-a61c69b5ae57"],
   ["Boats", "Sailing cabin in the Cyclades", "Paros", "Greece", 17800, "Wake up to a new blue horizon and breakfast on the deck.", "photo-1500534314209-a25ddb2bd429"],
-  ["Trending", "Earth home in the hills", "Kodaikanal", "India", 8100, "A low-impact retreat of local stone, timber, and quiet.", "photo-1520637836862-4d197d17c55a"],
+  ["Trending", "Earth home in the hills", "Kodaikanal", "India", 8100, "A low-impact retreat of local stone, timber, and quiet.", "photo-1587061949409-02df41d5e562"],
   ["Rooms", "Desert adobe guesthouse", "Pushkar", "India", 5300, "Textured plaster, woven rugs, and a peaceful courtyard.", "photo-1470770841072-f978cf4d019e"],
   ["Iconic cities", "Rooftop atelier", "Lisbon", "Portugal", 14200, "A creative hideout above tiled streets and late-night cafés.", "photo-1505693416388-ac5ce068fe85"],
   ["Mountains", "Snowline cabin", "Gulmarg", "India", 9700, "A timber cabin just below the treeline, made for winter.", "photo-1518022525094-218670c9b745"],

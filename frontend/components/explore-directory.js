@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState, useEffect } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
+import ListingImage from "./listing-image";
 import { categories, fallbackListings } from "../lib/api";
 
 const slug = (value) => value.toLowerCase().replaceAll(" ", "-");
@@ -88,7 +89,7 @@ export default function ExploreDirectory({ initialData, initialActive = "All", i
               <article key={stay.id} className="listing-reveal group" style={{ "--order": index }}>
                 <Link href={`/listings/${stay.id}`}>
                   <div className="image-zoom relative aspect-[1.05/1] overflow-hidden rounded-2xl bg-sand/70">
-                    <Image 
+                    <ListingImage 
                       src={stay.image?.url || fallbackListings[0].image.url} 
                       alt={stay.title} 
                       fill 

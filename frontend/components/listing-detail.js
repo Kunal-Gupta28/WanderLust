@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
+import ListingImage from "./listing-image";
 import { API_URL } from "../lib/api";
 
 function useIntersectionObserver(options = {}) {
@@ -314,7 +315,7 @@ export default function ListingDetail({ listing }) {
           }}
         >
           {image && (
-            <Image 
+            <ListingImage 
               src={image} 
               alt={listing.title} 
               fill 

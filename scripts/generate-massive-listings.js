@@ -58,7 +58,7 @@ const CATEGORIES_DATA = {
       "photo-1599661046827-dacff0c0f09a",
       "photo-1518780664697-55e3ad937233",
       "photo-1585543805890-6051f7829f98",
-      "photo-1524397031866-069f9d262fa2",
+      "photo-1544644181-1484b3fdfc62",
       "photo-1533158307587-828f0a76ef46"
     ],
     locations: [
@@ -267,7 +267,7 @@ const CATEGORIES_DATA = {
       "photo-1449158743715-0a90ebb6d2d8",
       "photo-1506744038136-46273834b3fb",
       "photo-1498503182468-3b51cbb6cb24",
-      "photo-1520637836862-4d197d17c55a"
+      "photo-1587061949409-02df41d5e562"
     ],
     locations: [
       { loc: "Nainital", country: "India", coords: [79.4598, 29.3919] },
@@ -404,7 +404,7 @@ const CATEGORIES_DATA = {
     imagePool: [
       "photo-1518022525094-218670c9b745",
       "photo-1499793983690-e29da59ef1c2",
-      "photo-1520637836862-4d197d17c55a",
+      "photo-1587061949409-02df41d5e562",
       "photo-1571896349842-33c89424de2d",
       "photo-1599661046827-dacff0c0f09a"
     ],

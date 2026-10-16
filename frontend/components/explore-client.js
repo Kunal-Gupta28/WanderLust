@@ -7,6 +7,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
 import TravelAnimation from "./travel-animation";
+import ListingImage from "./listing-image";
 import { API_URL, fallbackListings } from "../lib/api";
 
 function Mark() { return <span className="font-display text-[clamp(1.45rem,2.2vw,2rem)] leading-none tracking-[-.06em]">Wander<span className="text-clay">Lust</span></span>; }
@@ -337,7 +338,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
           <article key={stay.id} className="section-reveal group" style={{ "--order": index }}>
             <Link href={`/listings/${stay.id}`} className="block">
               <div className="image-zoom relative aspect-[4/5] overflow-hidden rounded-2xl bg-sand">
-                <Image src={stay.image?.url || fallbackListings[0].image.url} alt={stay.title} fill sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 23vw" className="object-cover" />
+                <ListingImage src={stay.image?.url || fallbackListings[0].image.url} alt={stay.title} fill sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 23vw" className="object-cover" />
                 <span className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1.5 text-xs font-bold text-ink backdrop-blur-sm">{stay.category}</span>
               </div>
               <div className="mt-5">
