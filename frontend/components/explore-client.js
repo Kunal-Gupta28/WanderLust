@@ -92,27 +92,96 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
       </div>
     </section>
 
-    {/* Search Bar */}
-    <section className="relative z-10 mx-auto -mt-12 w-[min(94%,72rem)]">
-      <form onSubmit={search} className="floating-search grid rounded-2xl bg-white p-3 border border-ink/10 shadow-[0_1.5rem_4rem_rgba(23,34,29,.18)] sm:grid-cols-[1fr_auto] items-center gap-2">
-        <label className="flex min-w-0 items-center gap-4 px-4 py-2 cursor-text">
-          <span className="flex items-center justify-center w-10 h-10 rounded-full bg-sand/40 text-clay shrink-0">
-            <Pin />
-          </span>
-          <div className="flex-1 min-w-0 flex flex-col justify-center">
-            <span className="block text-[.68rem] font-bold tracking-[.14em] text-moss uppercase leading-tight mb-1">Where to?</span>
-            <input 
-              value={query} 
-              onChange={(e) => setQuery(e.target.value)} 
-              className="w-full bg-transparent text-sm sm:text-base font-medium text-ink outline-none placeholder:text-ink/35 leading-normal" 
-              placeholder="Search cities, countries, or stays" 
-            />
+    {/* Interactive Travel Search & Concierge Bar */}
+    <section className="relative z-20 mx-auto -mt-14 w-[min(94%,76rem)]">
+      <div className="floating-search rounded-3xl bg-white/95 p-3 sm:p-4 shadow-[0_2rem_5rem_rgba(23,34,29,.22)] backdrop-blur-xl border border-white/60">
+        <form onSubmit={search} className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-2">
+          
+          {/* Destination Field */}
+          <div className="group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl hover:bg-sand/30 transition cursor-text">
+            <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-sand/60 text-clay group-hover:scale-105 group-hover:bg-clay group-hover:text-white transition-all shrink-0">
+              <Pin />
+            </span>
+            <div className="flex-1 min-w-0">
+              <span className="block text-[.68rem] font-bold tracking-[.15em] text-moss uppercase leading-tight mb-0.5">Destination</span>
+              <input 
+                value={query} 
+                onChange={(e) => setQuery(e.target.value)} 
+                className="w-full bg-transparent text-sm sm:text-base font-bold text-ink outline-none placeholder:text-ink/35 placeholder:font-normal leading-normal" 
+                placeholder="Where do you wish to wake up?" 
+              />
+            </div>
           </div>
-        </label>
-        <button className="flex items-center justify-center gap-2 rounded-xl bg-clay px-7 py-4 text-sm font-bold text-white transition hover:bg-[#9e442b] shrink-0 shadow-md" type="submit">
-          Find a stay <Arrow />
-        </button>
-      </form>
+
+          {/* Experience / Category Field */}
+          <div className="flex items-center gap-3.5 px-4 py-3 rounded-2xl hover:bg-sand/30 transition border-t md:border-t-0 md:border-l border-ink/10">
+            <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-sand/60 text-moss shrink-0">
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+            </span>
+            <div className="flex-1 min-w-0">
+              <span className="block text-[.68rem] font-bold tracking-[.15em] text-moss uppercase leading-tight mb-0.5">Stay Type</span>
+              <select 
+                onChange={(e) => {
+                  if (e.target.value && e.target.value !== "Any") {
+                    window.location.href = `/explore/${encodeURIComponent(e.target.value.toLowerCase())}`;
+                  }
+                }}
+                className="w-full bg-transparent text-sm sm:text-base font-bold text-ink outline-none cursor-pointer"
+                defaultValue="Any"
+              >
+                <option value="Any">Any Atmosphere</option>
+                <option value="Mountains">Mountain Cabins</option>
+                <option value="Castles">Historic Castles</option>
+                <option value="Domes">Geodesic Domes</option>
+                <option value="Farms">Quiet Farmstays</option>
+                <option value="Rooms">Cozy Suites</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Travel Dates / Duration */}
+          <div className="flex items-center gap-3.5 px-4 py-3 rounded-2xl hover:bg-sand/30 transition border-t md:border-t-0 md:border-l border-ink/10">
+            <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-sand/60 text-clay shrink-0">
+              <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]"><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /></svg>
+            </span>
+            <div className="flex-1 min-w-0">
+              <span className="block text-[.68rem] font-bold tracking-[.15em] text-moss uppercase leading-tight mb-0.5">When</span>
+              <span className="text-sm sm:text-base font-bold text-ink/80 block truncate">Anytime • Slow Travel</span>
+            </div>
+          </div>
+
+          {/* Search Action Button */}
+          <div className="p-1">
+            <button className="flex w-full md:w-auto items-center justify-center gap-2.5 rounded-2xl bg-clay px-8 py-4 text-sm font-bold text-white transition-all hover:bg-[#9e442b] hover:shadow-lg active:scale-[.98] shrink-0 shadow-md" type="submit">
+              <span>Explore Stays</span>
+              <Arrow />
+            </button>
+          </div>
+        </form>
+
+        {/* Quick Trending Destinations Pills */}
+        <div className="mt-3.5 hidden sm:flex items-center gap-2 px-3 pt-3 border-t border-ink/10 text-xs">
+          <span className="font-bold text-ink/50 uppercase tracking-widest text-[.65rem] mr-1">Curated Escapes:</span>
+          {[
+            { label: "🏔️ Manali Sanctuary", q: "Manali" },
+            { label: "☕ Coorg Coffee Estate", q: "Coorg" },
+            { label: "🌊 Goa Cliffside Villa", q: "Goa" },
+            { label: "🕌 Jaisalmer Domes", q: "Jaisalmer" },
+          ].map((tag) => (
+            <button
+              type="button"
+              key={tag.label}
+              onClick={() => {
+                setQuery(tag.q);
+                window.location.href = `/explore?q=${encodeURIComponent(tag.q)}`;
+              }}
+              className="rounded-full bg-sand/50 px-3.5 py-1.5 font-bold text-ink/75 hover:bg-clay hover:text-white transition duration-200"
+            >
+              {tag.label}
+            </button>
+          ))}
+        </div>
+      </div>
     </section>
 
     {/* Stats Bar */}
@@ -237,18 +306,6 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
             </div>
           ))}
         </div>
-      </div>
-    </section>
-
-    {/* Newsletter / CTA */}
-    <section className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-24 text-center">
-      <div className="section-reveal mx-auto max-w-2xl rounded-3xl bg-[#ede9df] p-12">
-        <h2 className="font-display text-[clamp(2rem,3vw,3rem)] leading-[1] tracking-[-.04em]">Join the <em className="font-normal text-clay">WanderLust</em> community</h2>
-        <p className="mx-auto mt-4 max-w-md text-ink/70">Sign up for our newsletter to discover new destinations, insider travel tips, and exclusive stays.</p>
-        <form className="mt-8 flex flex-col gap-3 sm:flex-row" onSubmit={(e) => e.preventDefault()}>
-          <input type="email" placeholder="Your email address" className="flex-1 rounded-xl border border-ink/10 bg-white px-5 py-3.5 outline-none focus:border-clay" required />
-          <button type="submit" className="rounded-xl bg-clay px-8 py-3.5 font-bold text-white transition hover:bg-[#9e442b]">Subscribe</button>
-        </form>
       </div>
     </section>
 
