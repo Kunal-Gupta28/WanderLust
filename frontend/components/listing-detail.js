@@ -12,6 +12,7 @@ import {
   verifyPayment,
   createReview,
   sendMessage,
+  getCurrentUser,
   apiClient,
 } from "../lib/api";
 import {
@@ -83,7 +84,8 @@ const AMENITIES = [
 export default function ListingDetail({ listing }) {
   const image = listing.image?.url;
   const [loaded, setLoaded] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Default session state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const [paymentLoading, setPaymentLoading] = useState(false);
@@ -124,9 +126,45 @@ export default function ListingDetail({ listing }) {
   useEffect(() => {
     setLoaded(true);
 
-    // Check if user is logged in
-    const role = localStorage.getItem("wanderlust_role");
-    if (role) setIsLoggedIn(true);
+    // Check if user is logged in via localStorage
+    const storedUser = typeof window !== "undefined" ? localStorage.getItem("wanderlust_user") : null;
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        if (parsed && (parsed.username || parsed.id || parsed._id)) {
+          setIsLoggedIn(true);
+          setCurrentUser(parsed);
+        } else {
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      } catch {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      }
+    } else {
+      setIsLoggedIn(false);
+      setCurrentUser(null);
+    }
+
+    // Verify session with backend API
+    getCurrentUser()
+      .then((user) => {
+        if (user) {
+          setIsLoggedIn(true);
+          setCurrentUser(user);
+          localStorage.setItem("wanderlust_user", JSON.stringify(user));
+        } else if (!storedUser) {
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      })
+      .catch(() => {
+        if (!storedUser) {
+          setIsLoggedIn(false);
+          setCurrentUser(null);
+        }
+      });
 
     // Load Razorpay Checkout Script
     const script = document.createElement("script");
@@ -142,7 +180,18 @@ export default function ListingDetail({ listing }) {
   }, []);
 
   const requireAuthAction = (actionCallback) => {
-    if (!isLoggedIn) {
+    const stored = typeof window !== "undefined" ? localStorage.getItem("wanderlust_user") : null;
+    let hasSession = false;
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.username || parsed.id || parsed._id)) {
+          hasSession = true;
+        }
+      } catch {}
+    }
+
+    if (!isLoggedIn && !hasSession) {
       setShowAuthModal(true);
       return;
     }
@@ -257,12 +306,30 @@ export default function ListingDetail({ listing }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+    const stored = typeof window !== "undefined" ? localStorage.getItem("wanderlust_user") : null;
+    let hasSession = false;
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.username || parsed.id || parsed._id)) {
+          hasSession = true;
+        }
+      } catch {}
+    }
+
+    if (!isLoggedIn && !hasSession) {
+      setShowChatModal(false);
+      setShowAuthModal(true);
+      return;
+    }
+
     if (!messageInput.trim()) return;
 
+    const senderDisplayName = currentUser?.username ? `${currentUser.username} (You)` : "You (Traveler)";
     const userMsg = {
       id: Date.now(),
       sender: "user",
-      senderName: "You (Traveler)",
+      senderName: senderDisplayName,
       text: messageInput.trim(),
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
@@ -277,7 +344,14 @@ export default function ListingDetail({ listing }) {
         listingId: listing.id,
         content: sentText,
       });
-    } catch {}
+    } catch (err) {
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        setIsLoggedIn(false);
+        setShowChatModal(false);
+        setShowAuthModal(true);
+        return;
+      }
+    }
 
     setTimeout(() => {
       setChatMessages((prev) => [
@@ -760,18 +834,33 @@ export default function ListingDetail({ listing }) {
               ))}
             </div>
 
-            <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-ink/10 flex gap-2">
-              <input 
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Type a message to the host..."
-                className="flex-1 px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm outline-none focus:border-clay"
-              />
-              <button type="submit" className="px-5 py-3 bg-moss text-paper font-bold text-sm rounded-xl hover:bg-moss/90 transition shadow-sm shrink-0">
-                Send
-              </button>
-            </form>
+            {isLoggedIn ? (
+              <form onSubmit={handleSendMessage} className="p-4 bg-white border-t border-ink/10 flex gap-2">
+                <input 
+                  type="text"
+                  value={messageInput}
+                  onChange={(e) => setMessageInput(e.target.value)}
+                  placeholder="Type a message to the host..."
+                  className="flex-1 px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm outline-none focus:border-clay"
+                />
+                <button type="submit" className="px-5 py-3 bg-moss text-paper font-bold text-sm rounded-xl hover:bg-moss/90 transition shadow-sm shrink-0 cursor-pointer">
+                  Send
+                </button>
+              </form>
+            ) : (
+              <div className="p-4 bg-sand/25 border-t border-ink/10 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-ink/70 text-xs font-medium">
+                  <LockIcon className="w-4 h-4 text-clay shrink-0" />
+                  <span>Host ko message karne ke liye pehle sign in karein.</span>
+                </div>
+                <Link
+                  href="/login"
+                  className="px-4 py-2 bg-clay text-white font-bold text-xs rounded-xl hover:bg-[#9e442b] transition shadow-sm shrink-0"
+                >
+                  Sign In / Login
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -785,9 +874,9 @@ export default function ListingDetail({ listing }) {
             </div>
             <div>
               <span className="text-xs font-bold text-clay uppercase tracking-widest">Authentication Required</span>
-              <h3 className="font-display text-2xl font-bold mt-1">Sign in to Continue</h3>
+              <h3 className="font-display text-2xl font-bold mt-1">Sign in to Message Host</h3>
               <p className="text-xs text-ink/70 mt-2 leading-relaxed">
-                To message property owners, make Razorpay reservations, or post guest reviews, please sign in or start a 1-click demo session.
+                Host ko direct message karne, reservations karne ya reviews post karne ke liye pehle sign in ya 1-click demo login karein.
               </p>
             </div>
 
