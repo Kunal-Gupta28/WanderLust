@@ -106,5 +106,17 @@ input:focus, input:focus-visible, textarea:focus, textarea:focus-visible, select
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
 }
+@keyframes mapRouteDash {
+  from { stroke-dashoffset: 48; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes breathPulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+@keyframes riverFlow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-40px); }
+}
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .philosophy-route { background-size: 100% 100%, auto; } .section-reveal { transition: none; opacity: 1; transform: none; } }
