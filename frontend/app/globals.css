@@ -17,7 +17,11 @@ html { scroll-behavior: smooth; }
 body { margin: 0; background: #f7f5ef; color: #17221d; font-family: var(--font-sans), sans-serif; }
 button, input { font: inherit; }
 ::selection { background: #b95738; color: #fffaf2; }
-*:focus-visible { outline: 3px solid #b95738; outline-offset: 3px; }
+*:focus-visible { outline: 2px solid #b95738; outline-offset: 2px; }
+input:focus, input:focus-visible, textarea:focus, textarea:focus-visible, select:focus, select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
 .hero-photo { animation: reveal-photo 1.1s cubic-bezier(.16,1,.3,1) both; }
 .hero-copy { animation: rise-in .85s .12s cubic-bezier(.16,1,.3,1) both; }
 .floating-search { animation: rise-in .9s .34s cubic-bezier(.16,1,.3,1) both; }
