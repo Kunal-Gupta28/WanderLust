@@ -306,19 +306,19 @@ export default function AboutPage() {
                 name: "Elena Rostova", 
                 role: "Co-Founder & CEO", 
                 bio: "Architect & slow-travel advocate. Spends winters exploring mountain hamlets.",
-                img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=400&h=400" 
+                img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600&h=600" 
               },
               { 
                 name: "Marcus Chen", 
                 role: "Head of Curation", 
                 bio: "Former travel writer with a passion for heritage restoration & sustainable stays.",
-                img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400" 
+                img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600&h=600" 
               },
               { 
                 name: "Sarah Jenkins", 
                 role: "Community Director", 
                 bio: "Dedicated to empowering independent hosts and supporting local artisan economies.",
-                img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=400&h=400" 
+                img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=600&h=600" 
               }
             ].map((member, i) => (
               <div 
