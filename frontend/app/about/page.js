@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
+import AboutTravelAnimation from "../../components/about-travel-animation";
 
 function LeafIcon() {
   return (
@@ -170,6 +171,9 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* Interactive Travel Expedition Route Animation */}
+      <AboutTravelAnimation />
 
       {/* Stats Section */}
       <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 max-w-[90rem] mx-auto">

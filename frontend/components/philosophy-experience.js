@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
+import PhilosophyTravelAnimation from "./philosophy-travel-animation";
 
 function SunIcon() {
   return (
@@ -196,6 +197,9 @@ export default function PhilosophyExperience() {
         </div>
         <div className="philosophy-orbit" aria-hidden="true" />
       </section>
+
+      {/* Interactive Slow Transit Scenic Railway Animation */}
+      <PhilosophyTravelAnimation />
 
       {/* Principles Grid */}
       <section className="border-y border-ink/12 bg-[#eee8dc] px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(6rem,12vw,12rem)]">
