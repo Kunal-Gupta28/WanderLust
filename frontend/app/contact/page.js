@@ -63,6 +63,23 @@ export default function ContactPage() {
 
       const data = await response.json();
 
+      const record = {
+        id: `INQ-${Date.now()}`,
+        name: `${formData.firstName} ${formData.lastName}`.trim() || "Traveler",
+        email: formData.email,
+        subject: formData.subject || "General Inquiry",
+        message: formData.message,
+        date: new Date().toISOString().split("T")[0],
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "UNREAD",
+      };
+
+      try {
+        const prev = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
+        prev.unshift(record);
+        localStorage.setItem("wanderlust_inquiries", JSON.stringify(prev));
+      } catch {}
+
       if (response.ok) {
         setStatusMsg({
           type: "success",
@@ -79,7 +96,7 @@ export default function ContactPage() {
         throw new Error(data.error || "Failed to submit message. Please try again.");
       }
     } catch (err) {
-      // Fallback for offline mode or network error
+      // Offline fallback
       setStatusMsg({
         type: "success",
         text: "Thank you! Your message has been submitted to the WanderLust team."

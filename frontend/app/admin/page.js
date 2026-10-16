@@ -39,6 +39,11 @@ export default function AdminCRMPage() {
     { id: "TXN-9903", orderId: "order_Orz4490C", guest: "Vikramaditya K.", amount: 15550, platformFee: 1555, date: "2026-10-02", status: "SUCCESS", gateway: "Razorpay" },
   ]);
 
+  const [inquiries, setInquiries] = useState([
+    { id: "INQ-1001", name: "Elena Rostova", email: "elena@wanderlust.com", subject: "Partnership & Listing Curation", message: "We have 3 new boutique stays in Tuscany and would love to fast-track curation.", date: "2026-10-15", time: "11:30 AM", status: "RESPONDED" },
+    { id: "INQ-1002", name: "Rohan Sharma", email: "rohan@example.com", subject: "Booking inquiry for Manali", message: "Is the Manali A-frame pet friendly and does it have high speed WiFi?", date: "2026-10-16", time: "09:15 AM", status: "UNREAD" }
+  ]);
+
   const [logs, setLogs] = useState([
     { id: 1, time: "2026-10-04 14:02:12", type: "AUTH", text: "User 'rohan_sharma' authenticated via HTTP-only JWT.", status: "SUCCESS" },
     { id: 2, time: "2026-10-04 13:58:44", type: "PAYMENT", text: "Razorpay payment verified for order 'order_Orz8912A'.", status: "SUCCESS" },
@@ -225,6 +230,7 @@ export default function AdminCRMPage() {
         <div className="flex gap-2 mb-8 border-b border-ink/10 pb-4 overflow-x-auto">
           {[
             { id: "users", label: `User Directory CRM (${filteredUsers.length})` },
+            { id: "inquiries", label: `Guest Inquiries (${inquiries.length})` },
             { id: "listings", label: `Listing Moderation (${filteredListings.length})` },
             { id: "transactions", label: `Razorpay Ledger (${filteredTxns.length})` },
             { id: "broadcasts", label: "Broadcast & Platform Settings" },
@@ -303,6 +309,78 @@ export default function AdminCRMPage() {
                         >
                           {u.status === "Suspended" ? "Unsuspend" : "Suspend"}
                         </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Guest Inquiries CRM Tab */}
+        {activeTab === "inquiries" && (
+          <div className="bg-white rounded-3xl border border-ink/10 shadow-sm p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="font-display text-2xl font-bold">Contact Messages & Traveler Inquiries</h2>
+                <p className="text-xs text-ink/60">Live submissions received from the Contact Us concierge form.</p>
+              </div>
+              <button
+                onClick={() => {
+                  try {
+                    const local = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
+                    if (local.length > 0) setInquiries(local);
+                  } catch {}
+                }}
+                className="px-4 py-2 rounded-full border border-ink/20 text-xs font-bold hover:bg-sand transition self-start sm:self-auto"
+              >
+                Refresh Messages
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-ink/10 text-xs text-ink/50 uppercase tracking-wider">
+                    <th className="pb-4 font-bold">Sender</th>
+                    <th className="pb-4 font-bold">Topic / Subject</th>
+                    <th className="pb-4 font-bold">Message Content</th>
+                    <th className="pb-4 font-bold">Date & Time</th>
+                    <th className="pb-4 font-bold">Status</th>
+                    <th className="pb-4 font-bold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-ink/10">
+                  {inquiries.map((inq) => (
+                    <tr key={inq.id} className="hover:bg-sand/20 transition">
+                      <td className="py-4">
+                        <p className="font-bold text-ink">{inq.name}</p>
+                        <a href={`mailto:${inq.email}`} className="text-xs text-clay hover:underline block">{inq.email}</a>
+                      </td>
+                      <td className="py-4">
+                        <span className="font-semibold text-ink text-xs block">{inq.subject}</span>
+                      </td>
+                      <td className="py-4 max-w-xs">
+                        <p className="text-xs text-ink/75 line-clamp-2">{inq.message}</p>
+                      </td>
+                      <td className="py-4 text-xs text-ink/60">
+                        {inq.date} {inq.time && `• ${inq.time}`}
+                      </td>
+                      <td className="py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-[0.65rem] font-bold ${
+                          inq.status === "UNREAD" ? "bg-amber-100 text-amber-800" : "bg-moss/10 text-moss"
+                        }`}>
+                          {inq.status}
+                        </span>
+                      </td>
+                      <td className="py-4 text-right space-x-2">
+                        <a
+                          href={`mailto:${inq.email}?subject=Re: ${encodeURIComponent(inq.subject)}`}
+                          className="px-3 py-1 rounded-full bg-clay text-white text-xs font-bold hover:bg-[#9e442b] transition inline-block"
+                        >
+                          Reply
+                        </a>
                       </td>
                     </tr>
                   ))}
