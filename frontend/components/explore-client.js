@@ -116,16 +116,14 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
         <div className="p-3 sm:p-4">
           <form onSubmit={search} className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-2">
           
-          {/* Destination Field (Interactive Display - Not an input field) */}
+          {/* Destination Field (Pure Display - Not Clickable) */}
           <div 
-            onClick={() => surpriseRef.current && surpriseRef.current()}
-            className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all cursor-pointer ${
-              query ? "bg-sand/30 hover:bg-sand/50 ring-1 ring-clay/20" : "hover:bg-sand/30"
+            className={`relative flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all cursor-default select-none ${
+              query ? "bg-sand/25 ring-1 ring-clay/20" : "bg-transparent"
             }`}
-            title={query ? "Destination selected. Click to re-roll a Surprise Stay." : "Click to draw a Surprise Stay destination"}
           >
             <span className={`flex items-center justify-center w-11 h-11 rounded-2xl transition-all shrink-0 ${
-              query ? "bg-clay text-white shadow-sm" : "bg-sand/60 text-clay group-hover:scale-105 group-hover:bg-clay group-hover:text-white"
+              query ? "bg-clay text-white shadow-sm" : "bg-sand/60 text-clay"
             }`}>
               <Pin />
             </span>
@@ -138,7 +136,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
                   </span>
                 ) : (
                   <span className="text-[.6rem] font-medium text-ink/40">
-                    (Surprise Stay)
+                    (Auto)
                   </span>
                 )}
               </div>
@@ -147,16 +145,16 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
                   {query}
                 </div>
               ) : (
-                <div className="text-sm sm:text-base font-medium text-ink/40 truncate leading-normal flex items-center gap-1">
-                  <span>Click &quot;Surprise Stay&quot; to roll</span>
+                <div className="text-sm sm:text-base font-medium text-ink/40 truncate leading-normal">
+                  <span>Click &quot;Surprise Stay&quot; above</span>
                 </div>
               )}
             </div>
             {query && (
               <button 
                 type="button" 
-                onClick={(e) => { e.stopPropagation(); setQuery(""); }}
-                className="p-1.5 rounded-full text-ink/40 hover:text-ink hover:bg-sand/80 transition-all shrink-0"
+                onClick={() => setQuery("")}
+                className="p-1.5 rounded-full text-ink/40 hover:text-ink hover:bg-sand/80 transition-all shrink-0 cursor-pointer"
                 title="Clear destination"
               >
                 <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5">
