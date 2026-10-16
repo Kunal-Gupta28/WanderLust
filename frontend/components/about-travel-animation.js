@@ -125,22 +125,40 @@ export default function AboutTravelAnimation() {
             </button>
 
             <button
-              onClick={() => setMapStyle(mapStyle === "contour" ? "elevation" : "contour")}
-              className="px-2.5 py-1 rounded-full text-[11px] font-medium border border-ink/10 text-ink/70 hover:text-ink hover:bg-paper transition"
+              onClick={() => setMapStyle(mapStyle === "contour" ? "blueprint" : "contour")}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold border transition active:scale-95 shadow-xs ${
+                mapStyle === "blueprint"
+                  ? "bg-[#0f172a] text-cyan-300 border-cyan-500/50"
+                  : "bg-paper text-ink border-ink/15 hover:bg-white"
+              }`}
             >
-              {mapStyle === "contour" ? "Contours" : "Relief Grids"}
+              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M9 21V9" />
+              </svg>
+              <span>{mapStyle === "blueprint" ? "Blueprint Grid" : "Field Contours"}</span>
             </button>
           </div>
         </div>
 
         {/* Map Canvas */}
-        <div className="relative h-[380px] sm:h-[440px] w-full bg-[#f8f4ea] overflow-hidden">
+        <div
+          className={`relative h-[380px] sm:h-[440px] w-full overflow-hidden transition-colors duration-700 ${
+            mapStyle === "blueprint" ? "bg-[#090d16]" : "bg-[#f8f4ea]"
+          }`}
+        >
           {/* Subtle Latitude / Longitude Grid */}
-          <div className="absolute inset-0 pointer-events-none opacity-20">
+          <div className="absolute inset-0 pointer-events-none opacity-30">
             <svg className="w-full h-full" width="100%" height="100%">
               <defs>
                 <pattern id="mapGrid" width="60" height="60" patternUnits="userSpaceOnUse">
-                  <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#78350f" strokeWidth="0.5" strokeDasharray="2 3" />
+                  <path
+                    d="M 60 0 L 0 0 0 60"
+                    fill="none"
+                    stroke={mapStyle === "blueprint" ? "#38bdf8" : "#78350f"}
+                    strokeWidth="0.6"
+                    strokeDasharray="2 3"
+                  />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#mapGrid)" />
@@ -153,52 +171,97 @@ export default function AboutTravelAnimation() {
             <path
               d="M -50 480 Q 200 400 350 460 T 700 420 T 1050 480"
               fill="none"
-              stroke="#b95738"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
               strokeWidth="1.2"
-              strokeOpacity="0.25"
+              strokeOpacity={mapStyle === "blueprint" ? "0.4" : "0.25"}
             />
             <path
               d="M -50 420 Q 180 320 380 390 T 750 340 T 1050 410"
               fill="none"
-              stroke="#b95738"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
               strokeWidth="1.2"
-              strokeOpacity="0.3"
+              strokeOpacity={mapStyle === "blueprint" ? "0.45" : "0.3"}
             />
             <path
               d="M -50 350 Q 150 250 400 310 T 780 260 T 1050 320"
               fill="none"
-              stroke="#b95738"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
               strokeWidth="1.2"
-              strokeOpacity="0.35"
+              strokeOpacity={mapStyle === "blueprint" ? "0.5" : "0.35"}
             />
             <path
               d="M -50 270 Q 130 180 430 220 T 800 170 T 1050 240"
               fill="none"
-              stroke="#b95738"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
               strokeWidth="1.5"
-              strokeOpacity="0.4"
+              strokeOpacity={mapStyle === "blueprint" ? "0.6" : "0.4"}
             />
             <path
               d="M 50 160 Q 220 90 450 140 T 840 90 T 1050 150"
               fill="none"
-              stroke="#78350f"
+              stroke={mapStyle === "blueprint" ? "#0284c7" : "#78350f"}
               strokeWidth="1"
-              strokeOpacity="0.3"
+              strokeOpacity={mapStyle === "blueprint" ? "0.5" : "0.3"}
             />
             {/* High Peak Rings */}
-            <ellipse cx="440" cy="190" rx="90" ry="40" fill="none" stroke="#b95738" strokeWidth="1" strokeOpacity="0.35" />
-            <ellipse cx="440" cy="190" rx="45" ry="20" fill="none" stroke="#b95738" strokeWidth="1.2" strokeOpacity="0.45" />
-            <circle cx="440" cy="190" r="2" fill="#b95738" opacity="0.6" />
-            <text x="448" y="193" fill="#b95738" fontSize="10" fontFamily="monospace" opacity="0.6">▲ Peak 3,420m</text>
+            <ellipse
+              cx="440"
+              cy="190"
+              rx="90"
+              ry="40"
+              fill="none"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
+              strokeWidth="1"
+              strokeOpacity="0.4"
+            />
+            <ellipse
+              cx="440"
+              cy="190"
+              rx="45"
+              ry="20"
+              fill="none"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
+              strokeWidth="1.2"
+              strokeOpacity="0.5"
+            />
+            <circle cx="440" cy="190" r="2" fill={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"} opacity="0.8" />
+            <text
+              x="448"
+              y="193"
+              fill={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
+              fontSize="10"
+              fontFamily="monospace"
+              opacity="0.8"
+            >
+              ▲ Peak 3,420m
+            </text>
 
-            <ellipse cx="880" cy="140" rx="70" ry="32" fill="none" stroke="#15803d" strokeWidth="1" strokeOpacity="0.35" />
-            <ellipse cx="880" cy="140" rx="35" ry="16" fill="none" stroke="#15803d" strokeWidth="1.2" strokeOpacity="0.45" />
+            <ellipse
+              cx="880"
+              cy="140"
+              rx="70"
+              ry="32"
+              fill="none"
+              stroke={mapStyle === "blueprint" ? "#4ade80" : "#15803d"}
+              strokeWidth="1"
+              strokeOpacity="0.4"
+            />
+            <ellipse
+              cx="880"
+              cy="140"
+              rx="35"
+              ry="16"
+              fill="none"
+              stroke={mapStyle === "blueprint" ? "#4ade80" : "#15803d"}
+              strokeWidth="1.2"
+              strokeOpacity="0.5"
+            />
 
             {/* Dotted Expedition Journey Trail connecting all 4 waypoints */}
             <path
               d="M 180 360 Q 300 240 440 190 T 680 310 T 880 140"
               fill="none"
-              stroke="#b95738"
+              stroke={mapStyle === "blueprint" ? "#38bdf8" : "#b95738"}
               strokeWidth="2.5"
               strokeDasharray="6 6"
               className="animate-[mapRouteDash_2.5s_linear_infinite]"
@@ -206,22 +269,36 @@ export default function AboutTravelAnimation() {
           </svg>
 
           {/* Interactive Vintage Brass Surveyor's Compass (Top Left) */}
-          <div className="absolute top-4 left-4 z-10 bg-[#faf6ed]/90 backdrop-blur-sm p-3 rounded-2xl border border-ink/10 shadow-md pointer-events-none flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full border-2 border-clay/60 bg-[#fffdfa] shadow-inner relative grid place-items-center">
+          <div
+            className={`absolute top-4 left-4 z-10 backdrop-blur-sm p-3 rounded-2xl border shadow-md pointer-events-none flex items-center gap-3 transition-colors ${
+              mapStyle === "blueprint"
+                ? "bg-[#0f172a]/90 border-cyan-500/30 text-white"
+                : "bg-[#faf6ed]/90 border-ink/10 text-ink"
+            }`}
+          >
+            <div
+              className={`w-12 h-12 rounded-full border-2 relative grid place-items-center transition-colors ${
+                mapStyle === "blueprint" ? "border-cyan-400 bg-slate-900" : "border-clay/60 bg-[#fffdfa]"
+              }`}
+            >
               {/* Compass Cardinal Marks */}
-              <span className="absolute top-0.5 text-[8px] font-bold text-clay font-mono">N</span>
+              <span className={`absolute top-0.5 text-[8px] font-bold font-mono ${mapStyle === "blueprint" ? "text-cyan-300" : "text-clay"}`}>N</span>
               <span className="absolute bottom-0.5 text-[8px] font-bold text-ink/40 font-mono">S</span>
               <span className="absolute left-1 text-[8px] font-bold text-ink/40 font-mono">W</span>
               <span className="absolute right-1 text-[8px] font-bold text-ink/40 font-mono">E</span>
               {/* Wobbling Magnetic Needle */}
               <div className="w-1 h-9 animate-[compassWobble_4s_ease-in-out_infinite] relative">
-                <div className="w-full h-1/2 bg-clay rounded-t-sm" />
+                <div className={`w-full h-1/2 rounded-t-sm ${mapStyle === "blueprint" ? "bg-cyan-400" : "bg-clay"}`} />
                 <div className="w-full h-1/2 bg-ink/40 rounded-b-sm" />
               </div>
             </div>
             <div>
-              <span className="block text-[10px] font-mono uppercase tracking-wider text-moss font-bold">Expedition Heading</span>
-              <span className="font-mono text-xs text-ink font-semibold">{activeMilestone.coord}</span>
+              <span className={`block text-[10px] font-mono uppercase tracking-wider font-bold ${mapStyle === "blueprint" ? "text-cyan-400" : "text-moss"}`}>
+                Expedition Heading
+              </span>
+              <span className={`font-mono text-xs font-semibold ${mapStyle === "blueprint" ? "text-cyan-100" : "text-ink"}`}>
+                {activeMilestone.coord}
+              </span>
             </div>
           </div>
 
