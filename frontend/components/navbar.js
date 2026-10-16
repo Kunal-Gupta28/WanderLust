@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { API_URL, getCurrentUser, logoutUser, apiClient } from "../lib/api";
+import { CloseIcon } from "./icons";
 
 export default function Navbar({ transparent = false }) {
   const pathname = usePathname();
@@ -264,9 +265,10 @@ export default function Navbar({ transparent = false }) {
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-ink/50 hover:text-ink text-xl font-bold p-1"
+                className="text-ink/50 hover:text-ink p-1"
+                aria-label="Close modal"
               >
-                ✕
+                <CloseIcon className="w-5 h-5" />
               </button>
             </div>
 

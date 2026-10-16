@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "../../../components/navbar";
 import Footer from "../../../components/footer";
 import { API_URL } from "../../../lib/api";
+import { StarIcon, CheckIcon, CloseIcon } from "../../../components/icons";
 
 export default function HostDashboardPage() {
   const [activeTab, setActiveTab] = useState("overview"); // overview | listings | bookings | calendar | payouts | inbox
@@ -211,7 +212,9 @@ export default function HostDashboardPage() {
 
           <div className="p-6 rounded-2xl bg-white border border-ink/10 shadow-sm">
             <span className="text-xs font-bold text-ink/50 uppercase tracking-wider block mb-1">Superhost Rating</span>
-            <p className="font-display text-3xl font-bold text-clay">4.96 ★</p>
+            <p className="font-display text-3xl font-bold text-clay flex items-center gap-1.5">
+              4.96 <StarIcon className="w-6 h-6 fill-current" />
+            </p>
             <span className="text-[.68rem] text-ink/50 font-semibold mt-2 inline-block">Based on 68 guest reviews</span>
           </div>
         </div>
@@ -441,8 +444,8 @@ export default function HostDashboardPage() {
                       <td className="py-4 px-4 text-xs font-semibold">{b.dates}</td>
                       <td className="py-4 px-4 font-bold text-clay">₹{b.amount.toLocaleString("en-IN")}</td>
                       <td className="py-4 px-4">
-                        <span className="px-3 py-1 rounded-full bg-moss text-paper text-[.65rem] font-bold">
-                          ✓ {b.status}
+                        <span className="px-3 py-1 rounded-full bg-moss text-paper text-[.65rem] font-bold flex items-center gap-1 w-fit">
+                          <CheckIcon className="w-3 h-3 stroke-[3]" /> {b.status}
                         </span>
                       </td>
                     </tr>
@@ -461,7 +464,9 @@ export default function HostDashboardPage() {
                 <h2 className="font-display text-2xl font-bold">Bank Payout Settings & Audit</h2>
                 <p className="text-xs text-ink/60">Automated Razorpay payouts directly to your registered bank account.</p>
               </div>
-              <span className="px-3 py-1 rounded-full bg-moss text-white text-xs font-bold">✓ Account Verified</span>
+              <span className="px-3 py-1 rounded-full bg-moss text-white text-xs font-bold flex items-center gap-1">
+                <CheckIcon className="w-3.5 h-3.5 stroke-[3]" /> Account Verified
+              </span>
             </div>
 
             <div className="p-5 rounded-2xl bg-sand/30 border border-ink/10 space-y-2">
@@ -478,8 +483,8 @@ export default function HostDashboardPage() {
                     <span className="font-bold block">{p.id} • ₹{p.amount.toLocaleString("en-IN")}</span>
                     <span className="text-xs text-ink/50">{p.date} • {p.bank}</span>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-moss/20 text-moss text-xs font-bold">
-                    ✓ {p.status}
+                  <span className="px-3 py-1 rounded-full bg-moss/20 text-moss text-xs font-bold flex items-center gap-1">
+                    <CheckIcon className="w-3 h-3 stroke-[3]" /> {p.status}
                   </span>
                 </div>
               ))}
@@ -521,7 +526,9 @@ export default function HostDashboardPage() {
           <div className="bg-paper w-full max-w-lg rounded-3xl shadow-2xl p-6 border border-ink/15 text-ink space-y-4">
             <div className="flex justify-between items-center border-b border-ink/10 pb-3">
               <h3 className="font-display text-xl font-bold">Edit Property Details</h3>
-              <button onClick={() => setEditingListing(null)} className="font-bold text-ink/50">✕</button>
+              <button onClick={() => setEditingListing(null)} className="text-ink/50 hover:text-ink p-1" aria-label="Close edit">
+                <CloseIcon className="w-4 h-4" />
+              </button>
             </div>
 
             <form onSubmit={handleEditSave} className="space-y-3">
@@ -560,8 +567,8 @@ export default function HostDashboardPage() {
                 <span className="text-xs font-bold text-clay uppercase tracking-widest">Property Host Portal</span>
                 <h2 className="font-display text-2xl font-bold mt-0.5">List a New Stay</h2>
               </div>
-              <button onClick={() => setShowCreateModal(false)} className="text-ink/50 hover:text-ink text-xl font-bold p-1">
-                ✕
+              <button onClick={() => setShowCreateModal(false)} className="text-ink/50 hover:text-ink p-1" aria-label="Close create stay">
+                <CloseIcon className="w-5 h-5" />
               </button>
             </div>
 

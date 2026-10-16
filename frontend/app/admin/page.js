@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
 import { API_URL, getCurrentUser } from "../../lib/api";
+import { LockIcon, ZapIcon, FlameIcon, StarIcon, CloseIcon } from "../../components/icons";
 
 export default function AdminCRMPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,7 +16,7 @@ export default function AdminCRMPage() {
   const [searchListingQuery, setSearchListingQuery] = useState("");
   const [searchTxnQuery, setSearchTxnQuery] = useState("");
 
-  const [broadcastMessage, setBroadcastMessage] = useState("🔥 Winter Travel Sale: Get 15% off Himalayan Stays this month!");
+  const [broadcastMessage, setBroadcastMessage] = useState("Winter Travel Sale: Get 15% off Himalayan Stays this month!");
   const [broadcastActive, setBroadcastActive] = useState(true);
 
   const [users, setUsers] = useState([
@@ -125,8 +126,8 @@ export default function AdminCRMPage() {
       <main className="min-h-screen bg-paper text-ink pt-24 pb-20">
         <Navbar />
         <div className="mx-auto max-w-md px-6 py-16 text-center space-y-6">
-          <div className="w-16 h-16 rounded-full bg-clay/15 text-clay mx-auto flex items-center justify-center font-bold text-2xl shadow-inner">
-            🔒
+          <div className="w-16 h-16 rounded-full bg-clay/15 text-clay mx-auto flex items-center justify-center shadow-inner">
+            <LockIcon className="w-8 h-8" />
           </div>
           <div>
             <span className="text-xs font-bold text-clay uppercase tracking-widest">Admin Security Protection</span>
@@ -139,9 +140,10 @@ export default function AdminCRMPage() {
           <div className="space-y-3">
             <button
               onClick={handleUnlockDemoAdmin}
-              className="w-full py-4 rounded-xl bg-clay text-white font-bold text-sm hover:bg-[#9e442b] transition shadow-md"
+              className="w-full py-4 rounded-xl bg-clay text-white font-bold text-sm hover:bg-[#9e442b] transition shadow-md flex items-center justify-center gap-1.5"
             >
-              Unlock Admin Demo Access ⚡
+              <span>Unlock Admin Demo Access</span>
+              <ZapIcon className="w-4 h-4 fill-current" />
             </button>
             <Link
               href="/login"
@@ -166,10 +168,13 @@ export default function AdminCRMPage() {
         {broadcastActive && (
           <div className="mb-6 p-4 rounded-2xl bg-moss text-paper flex items-center justify-between text-xs font-bold shadow-sm">
             <div className="flex items-center gap-2">
+              <FlameIcon className="w-4 h-4 text-sand fill-current" />
               <span className="w-2 h-2 rounded-full bg-sand animate-pulse" />
               <span>LIVE BROADCAST: {broadcastMessage}</span>
             </div>
-            <button onClick={() => setBroadcastActive(false)} className="text-sand hover:text-white font-bold">✕</button>
+            <button onClick={() => setBroadcastActive(false)} className="text-sand hover:text-white font-bold p-1" aria-label="Dismiss banner">
+              <CloseIcon className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -428,7 +433,9 @@ export default function AdminCRMPage() {
                       <td className="py-4 px-4 font-bold text-clay">₹{l.price.toLocaleString("en-IN")}</td>
                       <td className="py-4 px-4">
                         {l.featured ? (
-                          <span className="px-3 py-1 rounded-full bg-clay text-white text-[.65rem] font-bold">★ FEATURED</span>
+                          <span className="px-3 py-1 rounded-full bg-clay text-white text-[.65rem] font-bold flex items-center gap-1 w-fit">
+                            <StarIcon className="w-3 h-3 fill-current" /> FEATURED
+                          </span>
                         ) : (
                           <span className="px-3 py-1 rounded-full bg-sand text-ink/60 text-[.65rem] font-bold">Standard</span>
                         )}

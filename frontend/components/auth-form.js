@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { API_URL, loginUser, signupUser, demoLoginUser } from "../lib/api";
+import { ZapIcon } from "./icons";
 
 export default function AuthForm({ mode }) {
   const signup = mode === "signup";
@@ -150,8 +151,8 @@ export default function AuthForm({ mode }) {
               </svg>
               <span>{demoLoading ? "Starting Demo Session…" : "1-Click Demo Login"}</span>
             </button>
-            <p className="mt-1.5 text-center text-[.7rem] font-semibold text-moss">
-              ⚡ Instant Recruiter Access — zero registration required
+            <p className="mt-1.5 text-center text-[.7rem] font-semibold text-moss flex items-center justify-center gap-1">
+              <ZapIcon className="w-3.5 h-3.5 fill-current" /> Instant Recruiter Access — zero registration required
             </p>
           </div>
 

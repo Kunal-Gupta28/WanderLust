@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { MusicNoteIcon, CloseIcon } from "./icons";
 
 // 4 Distinct Terrains / Biomes with unique roadside objects & landscape
 const BIOMES = [
@@ -501,9 +502,13 @@ export default function TravelAnimation({ onSelectDestination, triggerRef }) {
 
         {/* Floating Music Notes on Honk */}
         {honking && (
-          <div className="absolute bottom-16 left-28 sm:left-48 pointer-events-none z-30">
-            <span className="absolute text-clay font-bold text-xs" style={{ animation: "noteFloat 0.8s ease-out forwards", left: "0px" }}>♪</span>
-            <span className="absolute text-moss font-bold text-sm" style={{ animation: "noteFloat 1s 0.15s ease-out forwards", left: "14px" }}>♫</span>
+          <div className="absolute bottom-16 left-28 sm:left-48 pointer-events-none z-30 flex items-center gap-2">
+            <span className="text-clay" style={{ animation: "noteFloat 0.8s ease-out forwards" }}>
+              <MusicNoteIcon className="w-3.5 h-3.5" />
+            </span>
+            <span className="text-moss" style={{ animation: "noteFloat 1s 0.15s ease-out forwards" }}>
+              <MusicNoteIcon className="w-4 h-4" />
+            </span>
           </div>
         )}
 
@@ -746,10 +751,11 @@ export default function TravelAnimation({ onSelectDestination, triggerRef }) {
             <button
               type="button"
               onClick={() => setTicketNotice(false)}
-              className="text-ink/40 hover:text-ink font-bold px-1.5 text-base"
+              className="text-ink/40 hover:text-ink p-1 transition-colors"
               title="Dismiss ticket"
+              aria-label="Dismiss ticket"
             >
-              ✕
+              <CloseIcon className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>

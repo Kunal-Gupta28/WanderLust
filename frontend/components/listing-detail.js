@@ -14,6 +14,14 @@ import {
   sendMessage,
   apiClient,
 } from "../lib/api";
+import {
+  LockIcon,
+  ShieldCheckIcon,
+  SparkleIcon,
+  StarIcon,
+  CheckIcon,
+  CloseIcon,
+} from "./icons";
 
 function useIntersectionObserver(options = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -312,8 +320,8 @@ export default function ListingDetail({ listing }) {
                 <span className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest">
                   {listing.category}
                 </span>
-                <span className="px-3 py-1.5 rounded-full bg-moss text-paper text-xs font-bold uppercase tracking-widest flex items-center gap-1">
-                  ✓ Verified WanderLust Stay
+                <span className="px-3 py-1.5 rounded-full bg-moss text-paper text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
+                  <CheckIcon className="w-3.5 h-3.5 stroke-[3]" /> Verified WanderLust Stay
                 </span>
               </div>
               <h1 className="font-display text-4xl md:text-6xl lg:text-[4.8rem] text-white leading-[1.05] tracking-[-.03em] max-w-4xl">
@@ -327,7 +335,9 @@ export default function ListingDetail({ listing }) {
 
             {/* Quick Rating Badge */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl text-white text-right shrink-0 hidden sm:block">
-              <span className="font-display text-3xl font-bold block text-sand">4.96 ★</span>
+              <span className="font-display text-3xl font-bold flex items-center justify-end gap-1.5 text-sand">
+                4.96 <StarIcon className="w-6 h-6 text-sand fill-current" />
+              </span>
               <span className="text-xs text-white/80">Superhost • {reviewsList.length} Verified Reviews</span>
             </div>
           </div>
@@ -347,7 +357,7 @@ export default function ListingDetail({ listing }) {
                     {listing.owner?.username ? listing.owner.username.charAt(0).toUpperCase() : "E"}
                   </div>
                   <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-clay text-white text-xs font-bold flex items-center justify-center shadow">
-                    ✓
+                    <CheckIcon className="w-3.5 h-3.5 stroke-[3]" />
                   </span>
                 </div>
                 <div>
@@ -385,19 +395,25 @@ export default function ListingDetail({ listing }) {
             <h2 className="font-display text-3xl md:text-4xl mb-8">WanderLust Trust & Protection</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="p-6 rounded-2xl bg-white border border-ink/10 shadow-sm">
-                <span className="text-2xl mb-3 block">🔒</span>
+                <div className="w-10 h-10 rounded-xl bg-clay/10 text-clay flex items-center justify-center mb-3">
+                  <LockIcon className="w-5 h-5" />
+                </div>
                 <h3 className="font-bold text-base mb-1">100% Protected Payment</h3>
                 <p className="text-xs text-ink/65 leading-relaxed">Encrypted 256-bit Razorpay Gateway with instant payment receipt.</p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-ink/10 shadow-sm">
-                <span className="text-2xl mb-3 block">🛡️</span>
+                <div className="w-10 h-10 rounded-xl bg-moss/10 text-moss flex items-center justify-center mb-3">
+                  <ShieldCheckIcon className="w-5 h-5" />
+                </div>
                 <h3 className="font-bold text-base mb-1">WanderLust Cover</h3>
                 <p className="text-xs text-ink/65 leading-relaxed">Free stay rescheduling guarantee & 24/7 dedicated guest support line.</p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-ink/10 shadow-sm">
-                <span className="text-2xl mb-3 block">✨</span>
+                <div className="w-10 h-10 rounded-xl bg-sand text-ink flex items-center justify-center mb-3">
+                  <SparkleIcon className="w-5 h-5" />
+                </div>
                 <h3 className="font-bold text-base mb-1">Verified Clean & Safe</h3>
                 <p className="text-xs text-ink/65 leading-relaxed">Inspected for safety, high-speed WiFi, and professional hygiene protocols.</p>
               </div>
@@ -447,8 +463,8 @@ export default function ListingDetail({ listing }) {
           <AnimatedSection>
             <div className="flex items-center justify-between mb-8">
               <h2 className="font-display text-3xl md:text-4xl">Guest Reviews</h2>
-              <span className="text-sm font-bold text-clay bg-sand/60 px-3 py-1 rounded-full">
-                ★ 4.96 ({reviewsList.length} reviews)
+              <span className="text-sm font-bold text-clay bg-sand/60 px-3 py-1 rounded-full flex items-center gap-1.5">
+                <StarIcon className="w-4 h-4 fill-current" /> 4.96 ({reviewsList.length} reviews)
               </span>
             </div>
 
@@ -659,8 +675,8 @@ export default function ListingDetail({ listing }) {
                 </button>
               )}
 
-              <p className="text-xs text-center text-ink/50 font-medium">
-                🔒 Protected by WanderLust Guest Guarantee & Razorpay
+              <p className="text-xs text-center text-ink/50 font-medium flex items-center justify-center gap-1.5">
+                <LockIcon className="w-3.5 h-3.5" /> Protected by WanderLust Guest Guarantee & Razorpay
               </p>
             </div>
 
@@ -682,8 +698,8 @@ export default function ListingDetail({ listing }) {
                   <p className="text-[.68rem] text-sand uppercase tracking-wider font-semibold">Host • Direct Conversation</p>
                 </div>
               </div>
-              <button onClick={() => setShowChatModal(false)} className="text-white/70 hover:text-white p-1">
-                ✕
+              <button onClick={() => setShowChatModal(false)} className="text-white/70 hover:text-white p-1" aria-label="Close chat">
+                <CloseIcon className="w-5 h-5" />
               </button>
             </div>
 
@@ -719,8 +735,8 @@ export default function ListingDetail({ listing }) {
       {showAuthModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm">
           <div className="bg-paper w-full max-w-md rounded-3xl shadow-2xl p-8 border border-ink/15 text-center text-ink space-y-6">
-            <div className="w-16 h-16 rounded-full bg-clay/15 text-clay mx-auto flex items-center justify-center font-bold text-2xl">
-              🔒
+            <div className="w-16 h-16 rounded-full bg-clay/15 text-clay mx-auto flex items-center justify-center shadow-inner">
+              <LockIcon className="w-7 h-7" />
             </div>
             <div>
               <span className="text-xs font-bold text-clay uppercase tracking-widest">Authentication Required</span>
