@@ -71,8 +71,9 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
 
   async function search(event) {
     if (event) event.preventDefault();
+    if (!query.trim()) return;
     const params = new URLSearchParams();
-    if (query.trim()) params.set("q", query.trim());
+    params.set("q", query.trim());
     if (stayType && stayType !== "Any") {
       params.set("category", stayType);
     }
@@ -178,7 +179,16 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
 
           {/* Search Action Button */}
           <div className="p-1">
-            <button className="flex w-full md:w-auto items-center justify-center gap-2.5 rounded-2xl bg-clay px-8 py-4 text-sm font-bold text-white transition-all hover:bg-[#9e442b] hover:shadow-lg active:scale-[.98] shrink-0 shadow-md" type="submit">
+            <button 
+              type="submit" 
+              disabled={!query.trim()}
+              title={!query.trim() ? "Enter a destination to explore stays" : "Explore Stays"}
+              className={`flex w-full md:w-auto items-center justify-center gap-2.5 rounded-2xl px-8 py-4 text-sm font-bold transition-all shrink-0 ${
+                !query.trim()
+                  ? "bg-ink/10 text-ink/35 cursor-not-allowed shadow-none"
+                  : "bg-clay text-white hover:bg-[#9e442b] hover:shadow-lg active:scale-[.98] cursor-pointer shadow-md"
+              }`}
+            >
               <span>Explore Stays</span>
               <Arrow />
             </button>
