@@ -35,26 +35,12 @@ export default function ExploreDirectory({ initialData, initialActive = "All", i
     return matchesCategory && matchesQuery;
   }), [active, listings, query]);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-        }
-      });
-    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-    
-    document.querySelectorAll('.animate-on-scroll, .listing-reveal').forEach(el => observer.observe(el));
-    
-    return () => observer.disconnect();
-  }, [visible, active]);
-
   return (
     <main className="min-h-[100svh] flex flex-col bg-paper text-ink pt-16">
       <Navbar />
 
       <section className="bg-gradient-to-b from-[#ede9df]/50 to-transparent">
-        <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-10 pt-[clamp(3rem,7vw,7rem)] animate-on-scroll [opacity:0] [&.is-visible]:animate-[rise-in_1s_ease-out_forwards]">
+        <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-10 pt-[clamp(3rem,7vw,7rem)] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
           <p className="text-sm font-bold tracking-[.14em] text-clay uppercase">The WanderLust collection</p>
           <div className="mt-5 flex flex-wrap items-end justify-between gap-8">
             <h1 className="max-w-4xl font-display text-[clamp(3.6rem,7vw,7.5rem)] leading-[.84] tracking-[-.07em]">
@@ -65,7 +51,7 @@ export default function ExploreDirectory({ initialData, initialActive = "All", i
             </p>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-center justify-between gap-5 border-y border-ink/12 py-5 animate-on-scroll [opacity:0] [&.is-visible]:animate-[rise-in_1s_ease-out_0.2s_forwards]">
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-5 border-y border-ink/12 py-5 animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_0.08s_both]">
             <p className="text-sm text-ink/55 transition-all duration-300">
               <span className="font-bold text-ink">{visible.length}</span> places to linger
             </p>
@@ -83,14 +69,13 @@ export default function ExploreDirectory({ initialData, initialActive = "All", i
       </section>
 
       <section className="mx-auto w-full max-w-[90rem] flex-1 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)]">
-        <div className="-mx-1 mb-10 flex gap-2 overflow-x-auto px-1 pb-3 [scrollbar-width:none]">
-          {categories.map((category, idx) => (
+        <div className="-mx-1 mb-10 flex gap-2 overflow-x-auto px-1 pb-3 [scrollbar-width:none] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_0.16s_both]">
+          {categories.map((category) => (
             <Link 
               key={category} 
               href={category === "All" ? "/explore" : `/explore/${slug(category)}`} 
               onClick={() => setActive(category)} 
-              className={`animate-on-scroll shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition [opacity:0] [&.is-visible]:animate-[rise-in_0.6s_ease-out_forwards] ${active.toLowerCase() === category.toLowerCase() ? "bg-ink text-white" : "bg-[#ede9df] hover:bg-sand"}`}
-              style={{ animationDelay: `${idx * 0.05}s` }}
+              className={`shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${active.toLowerCase() === category.toLowerCase() ? "bg-ink text-white shadow-sm" : "bg-[#ede9df] text-ink/75 hover:bg-sand hover:text-ink"}`}
             >
               {category}
             </Link>
@@ -102,11 +87,12 @@ export default function ExploreDirectory({ initialData, initialActive = "All", i
             {visible.map((stay, index) => (
               <article key={stay.id} className="listing-reveal group" style={{ "--order": index }}>
                 <Link href={`/listings/${stay.id}`}>
-                  <div className="image-zoom relative aspect-[1.05/1] overflow-hidden rounded-2xl bg-sand">
+                  <div className="image-zoom relative aspect-[1.05/1] overflow-hidden rounded-2xl bg-sand/70">
                     <Image 
                       src={stay.image?.url || fallbackListings[0].image.url} 
                       alt={stay.title} 
                       fill 
+                      priority={index < 4}
                       sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 30vw" 
                       className="object-cover transition-transform duration-700 ease-out group-hover:scale-105" 
                     />
@@ -134,7 +120,7 @@ export default function ExploreDirectory({ initialData, initialActive = "All", i
             ))}
           </div>
         ) : (
-          <div className="animate-on-scroll py-20 text-center [opacity:0] [&.is-visible]:animate-[rise-in_0.8s_ease-out_forwards]">
+          <div className="py-20 text-center animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
             <p className="font-display text-4xl">No place matches that search.</p>
             <button 
               onClick={() => { setQuery(""); setActive("All"); }} 
