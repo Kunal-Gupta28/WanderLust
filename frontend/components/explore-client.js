@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState, useEffect, useRef } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
@@ -63,6 +64,7 @@ function AnimatedCounter({ end, suffix = "", duration = 2000 }) {
 }
 
 export default function ExploreClient({ initialData, initialActive = "All" }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [stayType, setStayType] = useState("Any");
   const listings = initialData?.listings || fallbackListings;
@@ -79,7 +81,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
       params.set("category", stayType);
     }
     const qs = params.toString();
-    window.location.href = `/explore${qs ? `?${qs}` : ""}`;
+    router.push(`/explore${qs ? `?${qs}` : ""}`);
   }
 
   return <main ref={containerRef} className="overflow-hidden bg-paper">
