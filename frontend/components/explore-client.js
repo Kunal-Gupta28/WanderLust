@@ -305,10 +305,10 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
       </div>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:grid-rows-2">
         {[
-          { name: "Kyoto, Japan", img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800", span: "col-span-2 row-span-2 aspect-square md:aspect-auto" },
-          { name: "Tuscany, Italy", img: "https://images.unsplash.com/photo-1516483638261-f408892285e6?q=80&w=800", span: "col-span-1 row-span-1 aspect-square" },
-          { name: "Bali, Indonesia", img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=800", span: "col-span-1 row-span-1 aspect-square" },
-          { name: "Santorini, Greece", img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=800", span: "col-span-2 row-span-1 aspect-[2/1]" }
+          { name: "Kyoto, Japan", img: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&q=80&w=800", span: "col-span-2 row-span-2 aspect-square md:aspect-auto" },
+          { name: "Tuscany, Italy", img: "https://images.unsplash.com/photo-1528114039593-4366cc08227d?auto=format&fit=crop&q=80&w=800", span: "col-span-1 row-span-1 aspect-square" },
+          { name: "Bali, Indonesia", img: "https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=800", span: "col-span-1 row-span-1 aspect-square" },
+          { name: "Santorini, Greece", img: "https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=800", span: "col-span-2 row-span-1 aspect-[2/1]" }
         ].map((dest, i) => (
           <div key={dest.name} className={`section-reveal destination-card relative group ${dest.span}`} style={{ "--order": i }}>
             <Image src={dest.img} alt={dest.name} fill className="object-cover" />
