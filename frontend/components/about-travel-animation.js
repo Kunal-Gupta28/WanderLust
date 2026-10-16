@@ -94,26 +94,34 @@ export default function AboutTravelAnimation() {
               {/* Crescent Moon */}
               <div className="absolute top-6 right-12 w-9 h-9 rounded-full shadow-[inset_3px_2px_0_0_#fde68a] transform -rotate-12" />
             </div>
-          ) : (
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Hot Air Balloon floating */}
-              <div className="absolute top-7 left-[15%] sm:left-[22%] animate-[balloonBob_5s_ease-in-out_infinite] flex flex-col items-center">
-                <svg viewBox="0 0 40 55" className="w-8 h-11 text-clay drop-shadow-md">
-                  <path d="M20 2 C9 2 2 11 2 22 C2 33 14 43 18 48 L22 48 C26 43 38 33 38 22 C38 11 31 2 20 2 Z" fill="#b95738" />
-                  <path d="M14 2 C9 12 9 32 17 48" fill="none" stroke="#fff" strokeWidth="1.5" opacity="0.6" />
-                  <path d="M26 2 C31 12 31 32 23 48" fill="none" stroke="#fff" strokeWidth="1.5" opacity="0.6" />
-                  <rect x="17" y="50" width="6" height="5" rx="1" fill="#78350f" />
-                  <line x1="17" y1="48" x2="17" y2="50" stroke="#78350f" strokeWidth="1" />
-                  <line x1="23" y1="48" x2="23" y2="50" stroke="#78350f" strokeWidth="1" />
-                </svg>
-              </div>
+          ) : null}
 
-              {/* Gentle Fluffy Clouds */}
-              <div className="absolute top-10 right-[25%] opacity-70 animate-[cloudFloat_16s_ease-in-out_infinite]">
-                <svg viewBox="0 0 100 40" className="w-20 h-8 fill-white/80">
-                  <path d="M20 30 a16 16 0 0 1 30 -6 a18 18 0 0 1 30 6 z" />
-                </svg>
-              </div>
+          {/* Hot Air Balloon floating and drifting across sky */}
+          {!isNight && (
+            <div 
+              className="absolute top-5 flex flex-col items-center pointer-events-none"
+              style={{ animation: "balloonDriftAcross 22s ease-in-out infinite alternate" }}
+            >
+              <svg viewBox="0 0 40 55" className="w-8 h-11 text-clay drop-shadow-md">
+                <path d="M20 2 C9 2 2 11 2 22 C2 33 14 43 18 48 L22 48 C26 43 38 33 38 22 C38 11 31 2 20 2 Z" fill="#b95738" />
+                <path d="M14 2 C9 12 9 32 17 48" fill="none" stroke="#fff" strokeWidth="1.5" opacity="0.6" />
+                <path d="M26 2 C31 12 31 32 23 48" fill="none" stroke="#fff" strokeWidth="1.5" opacity="0.6" />
+                <rect x="17" y="50" width="6" height="5" rx="1" fill="#78350f" />
+                <line x1="17" y1="48" x2="17" y2="50" stroke="#78350f" strokeWidth="1" />
+                <line x1="23" y1="48" x2="23" y2="50" stroke="#78350f" strokeWidth="1" />
+              </svg>
+            </div>
+          )}
+
+          {/* Gentle Fluffy Clouds drifting */}
+          {!isNight && (
+            <div 
+              className="absolute top-8 opacity-75 pointer-events-none"
+              style={{ animation: "cloudFloatAcross 32s linear infinite" }}
+            >
+              <svg viewBox="0 0 100 40" className="w-24 h-9 fill-white/80">
+                <path d="M20 30 a16 16 0 0 1 30 -6 a18 18 0 0 1 30 6 z" />
+              </svg>
             </div>
           )}
 
@@ -129,7 +137,7 @@ export default function AboutTravelAnimation() {
             />
           </svg>
 
-          {/* Traveling Camper Van / Expedition Vehicle on the Road */}
+          {/* Traveling Camper Van / Expedition Vehicle driving along the Road */}
           <div className="absolute bottom-3 inset-x-0 h-10 border-t border-black/20 flex items-center bg-[#292524] overflow-hidden">
             {/* Animated Road Dashes */}
             <div className={`flex w-[200%] h-1 items-center ${journeyPace === "unhurried" ? "animate-[roadMove_4s_linear_infinite]" : "animate-[roadMove_2s_linear_infinite]"}`}>
@@ -140,8 +148,13 @@ export default function AboutTravelAnimation() {
               ))}
             </div>
 
-            {/* Traveling Van */}
-            <div className="absolute left-[38%] sm:left-[45%] bottom-1 animate-[vanBob_1.8s_ease-in-out_infinite] flex items-center">
+            {/* Traveling Van with real horizontal driving motion */}
+            <div 
+              className="absolute bottom-1 flex items-center pointer-events-none"
+              style={{
+                animation: `vanDriveAcross ${journeyPace === "unhurried" ? "14s" : "7s"} linear infinite`
+              }}
+            >
               {/* Dust puffs behind */}
               <div className="mr-1 flex flex-col gap-0.5 opacity-60">
                 <span className="w-1.5 h-1.5 rounded-full bg-sand/80 animate-ping" />

@@ -46,4 +46,43 @@ input:focus, input:focus-visible, textarea:focus, textarea:focus-visible, select
 .destination-card { overflow: hidden; border-radius: 1rem; }
 .destination-card img { transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
 .destination-card:hover img { transform: scale(1.05); }
+
+/* Traveling Animations & Vehicle Movement */
+@keyframes vanDriveAcross {
+  0% { transform: translateX(-160px); }
+  100% { transform: translateX(calc(100vw + 160px)); }
+}
+@keyframes trainGlideAcross {
+  0% { transform: translateX(-280px); }
+  100% { transform: translateX(calc(100vw + 280px)); }
+}
+@keyframes balloonDriftAcross {
+  0% { transform: translate(-80px, 0) rotate(1deg); }
+  50% { transform: translate(calc(45vw), -22px) rotate(-2deg); }
+  100% { transform: translate(calc(100vw + 80px), 0) rotate(1deg); }
+}
+@keyframes cloudFloatAcross {
+  0% { transform: translateX(-120px); }
+  100% { transform: translateX(calc(100vw + 120px)); }
+}
+@keyframes gliderFly {
+  0% { transform: translate(-100px, 15px) rotate(4deg); opacity: 0; }
+  15% { opacity: 0.85; }
+  85% { opacity: 0.85; }
+  100% { transform: translate(calc(100vw + 100px), -20px) rotate(8deg); opacity: 0; }
+}
+@keyframes campfireFlicker {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 0.9; }
+  50% { transform: scale(1.15, 0.9) translateY(-2px); opacity: 1; }
+}
+@keyframes compassWobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(20deg); }
+  75% { transform: rotate(-15deg); }
+}
+@keyframes routePulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .philosophy-route { background-size: 100% 100%, auto; } .section-reveal { transition: none; opacity: 1; transform: none; } }

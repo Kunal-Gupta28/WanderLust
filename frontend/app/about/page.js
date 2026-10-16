@@ -123,8 +123,18 @@ export default function AboutPage() {
         </p>
       </section>
 
-      {/* Hero Visual Image Banner */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-24 max-w-[90rem] mx-auto">
+      {/* Hero Visual Image Banner with Waypoint Badge */}
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-24 max-w-[90rem] mx-auto relative">
+        {/* Subtle soaring glider in sky */}
+        <div className="absolute -top-12 left-0 right-0 overflow-hidden pointer-events-none h-16">
+          <div className="w-8 h-8 text-clay/70" style={{ animation: "gliderFly 22s linear infinite" }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="m3 3 18 9-18 9 3-9-3-9Z" />
+              <path d="M6 12h15" />
+            </svg>
+          </div>
+        </div>
+
         <div ref={addToRefs} className="relative h-[clamp(24rem,50vh,38rem)] w-full rounded-3xl overflow-hidden shadow-2xl opacity-0 translate-y-8 transition-all duration-1000 ease-out">
           <Image 
             src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&q=90&w=2000" 
@@ -133,6 +143,13 @@ export default function AboutPage() {
             priority
             className="object-cover"
           />
+
+          {/* Floating Waypoint Beacon */}
+          <div className="absolute top-6 left-6 z-10 bg-black/50 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/20 flex items-center gap-2 text-xs text-white">
+            <span className="w-2 h-2 rounded-full bg-clay animate-[routePulse_2s_ease-in-out_infinite]" />
+            <span className="font-mono text-[11px] tracking-wide">Basecamp Sanctuary • 32.2°N</span>
+          </div>
+
           <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent flex items-end p-8 md:p-14">
             <p className="text-paper text-sm md:text-lg max-w-xl font-display italic">
               "We don't collect locations on a map; we curate memory-rich sanctuaries where time moves a little slower."
@@ -161,13 +178,26 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          <div ref={addToRefs} className="relative h-[550px] w-full rounded-2xl overflow-hidden shadow-xl opacity-0 translate-y-8 transition-all duration-1000 delay-200 ease-out">
+          <div ref={addToRefs} className="relative h-[550px] w-full rounded-2xl overflow-hidden shadow-xl opacity-0 translate-y-8 transition-all duration-1000 delay-200 ease-out group">
             <Image 
               src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&q=85&w=1200" 
               alt="Architectural cabin interior"
               fill
               className="object-cover"
             />
+            {/* Animated Floating Compass Widget */}
+            <div className="absolute bottom-6 right-6 z-10 bg-white/92 backdrop-blur-md px-3.5 py-2.5 rounded-2xl shadow-lg border border-white/60 flex items-center gap-2.5 text-xs font-bold text-ink transition-transform group-hover:scale-105">
+              <div className="w-8 h-8 rounded-full bg-sand/60 text-clay grid place-items-center animate-[compassWobble_4s_ease-in-out_infinite]">
+                <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="#b95738" />
+                </svg>
+              </div>
+              <div>
+                <span className="block text-[10px] text-moss uppercase tracking-wider">Compass Bearing</span>
+                <span className="text-ink font-mono text-[11px]">32.23° N • 77.18° E</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>

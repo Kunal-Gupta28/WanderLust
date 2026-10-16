@@ -255,19 +255,19 @@ export default function TravelAnimation({ onSelectDestination, triggerRef }) {
           100% { transform: translateX(-50%); }
         }
         @keyframes cloudFloat {
-          0% { transform: translateX(0); }
-          50% { transform: translateX(20px); }
-          100% { transform: translateX(0); }
+          0% { transform: translateX(-40px); }
+          50% { transform: translateX(50px); }
+          100% { transform: translateX(-40px); }
         }
         @keyframes balloonBob {
-          0%, 100% { transform: translateY(0) rotate(1deg); }
-          50% { transform: translateY(-12px) rotate(-2deg); }
+          0%, 100% { transform: translate(0, 0) rotate(1deg); }
+          50% { transform: translate(35px, -14px) rotate(-2deg); }
         }
         @keyframes vanBounce {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          25% { transform: translateY(-2.5px) rotate(0.8deg); }
-          50% { transform: translateY(0.5px) rotate(-0.5deg); }
-          75% { transform: translateY(-2px) rotate(0.4deg); }
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(14px, -3px) rotate(0.8deg); }
+          50% { transform: translate(28px, 0.5px) rotate(-0.5deg); }
+          75% { transform: translate(16px, -2px) rotate(0.4deg); }
         }
         @keyframes vanHonkSquash {
           0% { transform: scale(1) translateY(0); }

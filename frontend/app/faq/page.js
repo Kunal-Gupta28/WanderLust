@@ -561,9 +561,16 @@ export default function FAQPage() {
       {/* Top Banner Stats */}
       <section className="bg-sand/35 border-b border-ink/10 py-3 px-4">
         <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-ink/75">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Comprehensive Help Center & Slow Travel Compendium</span>
+          <div className="flex items-center gap-2.5">
+            <span className="relative flex h-2.5 w-2.5 items-center justify-center">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-clay animate-[compassWobble_4s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" strokeDasharray="2 3" />
+              <polygon points="12 4 14 12 12 20 10 12" fill="currentColor" fillOpacity="0.35" />
+            </svg>
+            <span>Comprehensive Help Center &amp; Slow Travel Compendium</span>
           </div>
           <div className="flex items-center gap-6">
             <span className="flex items-center gap-1.5">

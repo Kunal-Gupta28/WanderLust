@@ -81,8 +81,11 @@ export default function PhilosophyTravelAnimation() {
             </div>
           )}
 
-          {/* Flying Birds in Distance */}
-          <div className="absolute top-12 right-[30%] opacity-60 flex gap-4 animate-[cloudFloat_18s_linear_infinite]">
+          {/* Flying Birds in Distance soaring across */}
+          <div 
+            className="absolute top-10 opacity-70 flex gap-4 pointer-events-none"
+            style={{ animation: "cloudFloatAcross 24s linear infinite" }}
+          >
             <svg viewBox="0 0 20 10" className="w-5 h-2.5 fill-current text-ink/70">
               <path d="M0 6 Q5 0 10 6 Q15 0 20 6 Q15 4 10 8 Q5 4 0 6 Z" />
             </svg>
@@ -108,8 +111,13 @@ export default function PhilosophyTravelAnimation() {
           {/* Rail Track Line */}
           <div className="absolute bottom-19 inset-x-0 h-1.5 bg-[#44403c] border-t border-amber-500/30" />
 
-          {/* Moving Scenic Alpine Train */}
-          <div className="absolute bottom-19 left-[30%] sm:left-[40%] flex items-end animate-[vanBob_2s_ease-in-out_infinite]">
+          {/* Moving Scenic Alpine Train gliding across stone viaduct */}
+          <div 
+            className="absolute bottom-19 flex items-end pointer-events-none"
+            style={{
+              animation: `trainGlideAcross ${transitSpeed === "slow" ? "18s" : "9s"} linear infinite`
+            }}
+          >
             {/* Steam puffs rising from chimney */}
             <div className="absolute -top-6 left-3 flex flex-col items-center">
               <span className="w-2.5 h-2.5 rounded-full bg-white/70 animate-ping" />

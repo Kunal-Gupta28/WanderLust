@@ -175,7 +175,17 @@ export default function PhilosophyExperience() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative mx-auto grid min-h-[85svh] max-w-[90rem] gap-12 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)] pt-[clamp(4rem,8vw,8rem)] lg:grid-cols-[1.2fr_.8fr] lg:items-end">
+      <section className="relative mx-auto grid min-h-[85svh] max-w-[90rem] gap-12 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)] pt-[clamp(4rem,8vw,8rem)] lg:grid-cols-[1.2fr_.8fr] lg:items-end overflow-hidden">
+        {/* Subtle soaring travel glider across hero */}
+        <div className="absolute top-12 left-0 right-0 overflow-hidden pointer-events-none h-14">
+          <div className="w-7 h-7 text-clay/60" style={{ animation: "gliderFly 24s linear infinite" }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="m3 3 18 9-18 9 3-9-3-9Z" />
+              <path d="M6 12h15" />
+            </svg>
+          </div>
+        </div>
+
         <div data-reveal className="philosophy-reveal">
           <span className="text-xs font-bold tracking-[.18em] text-clay uppercase block mb-4">
             The WanderLust Manifesto
@@ -308,7 +318,14 @@ export default function PhilosophyExperience() {
               }`}
             >
               <div className={index % 2 ? "lg:order-2" : ""}>
-                <span className="font-display text-2xl font-bold text-clay">0{index + 1}.</span>
+                <div className="inline-flex items-center gap-2.5 mb-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-clay opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-clay"></span>
+                  </span>
+                  <span className="font-display text-2xl font-bold text-clay">0{index + 1}.</span>
+                  <span className="text-xs uppercase tracking-[0.2em] font-semibold text-clay/70">Waypoint {index + 1}</span>
+                </div>
                 <h3 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] leading-[.88] tracking-[-.06em] mt-1">
                   {title}
                 </h3>
@@ -368,18 +385,27 @@ export default function PhilosophyExperience() {
 
           <div data-reveal className="philosophy-reveal bg-paper p-8 md:p-12 rounded-3xl border border-ink/10 shadow-lg">
             {viewMode === "slow" ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                  <h4 className="font-display text-2xl font-bold text-moss mb-2">Unhurried Pace</h4>
-                  <p className="text-sm leading-relaxed text-ink/75">Staying 3+ nights in one location, learning neighborhood bakeries, and sleeping without alarm clocks.</p>
+              <div className="space-y-6">
+                <div className="flex items-center gap-2.5 pb-4 border-b border-ink/10 text-xs uppercase tracking-wider font-bold text-moss">
+                  <svg className="w-5 h-5 text-moss animate-[campfireFlicker_3s_ease-in-out_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2c1 3 4 5 4 9a6 6 0 1 1-10-3c0 3 2 4 3 6 1-2 1-4 3-12z" fill="currentColor" fillOpacity="0.2" />
+                    <path d="M5 21h14M7 18l10 3M17 18l-10 3" strokeLinecap="round" />
+                  </svg>
+                  <span>Mindful Footprint & Gentle Hearth</span>
                 </div>
-                <div>
-                  <h4 className="font-display text-2xl font-bold text-moss mb-2">Tactile Solitude</h4>
-                  <p className="text-sm leading-relaxed text-ink/75">Staying in homes built with natural wood, stone courtyards, and open stargazing decks.</p>
-                </div>
-                <div>
-                  <h4 className="font-display text-2xl font-bold text-moss mb-2">Local Retention</h4>
-                  <p className="text-sm leading-relaxed text-ink/75">Your money goes straight to independent hosts, regional artisans, and village markets.</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div>
+                    <h4 className="font-display text-2xl font-bold text-moss mb-2">Unhurried Pace</h4>
+                    <p className="text-sm leading-relaxed text-ink/75">Staying 3+ nights in one location, learning neighborhood bakeries, and sleeping without alarm clocks.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-display text-2xl font-bold text-moss mb-2">Tactile Solitude</h4>
+                    <p className="text-sm leading-relaxed text-ink/75">Staying in homes built with natural wood, stone courtyards, and open stargazing decks.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-display text-2xl font-bold text-moss mb-2">Local Retention</h4>
+                    <p className="text-sm leading-relaxed text-ink/75">Your money goes straight to independent hosts, regional artisans, and village markets.</p>
+                  </div>
                 </div>
               </div>
             ) : (
