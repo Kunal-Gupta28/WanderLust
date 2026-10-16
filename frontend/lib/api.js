@@ -1,6 +1,5 @@
+import apiClient, { API_URL } from "./axios";
 import listingsData from "./listings-data.json";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 const ORIGINAL_STAYS = [
   { id: "alpine-retreat", title: "A-frame beneath the pines", location: "Manali", country: "India", price: 8400, category: "Mountains", image: { url: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=85" }, description: "A quiet timber hideaway for slow mornings and mountain air." },
@@ -14,37 +13,99 @@ const ORIGINAL_STAYS = [
 export const categories = listingsData.categories;
 export const fallbackListings = [...ORIGINAL_STAYS, ...listingsData.listings];
 
-async function request(path) {
-  const response = await fetch(`${API_URL}${path}`, {
-    next: { revalidate: 60 },
-    credentials: "include",
-  });
-  if (!response.ok) throw new Error("Could not reach WanderLust");
-  return response.json();
-}
+export async function getListings(options = "/listings") {
+  let path = "/listings";
+  let page = 1;
+  let limit = null;
+  let category = "All";
+  let q = "";
 
-export async function getListings(path = "/listings") {
+  if (typeof options === "string") {
+    path = options;
+  } else if (typeof options === "object" && options !== null) {
+    if (options.path) path = options.path;
+    if (options.page !== undefined) page = Math.max(1, parseInt(options.page, 10) || 1);
+    if (options.limit !== undefined) limit = Math.max(1, parseInt(options.limit, 10) || 12);
+    if (options.category) category = options.category;
+    if (options.q) q = options.q.trim();
+  }
+
+  const params = {};
+  if (page) params.page = page;
+  if (limit) params.limit = limit;
+
+  let requestUrl = path;
+  if (q) {
+    requestUrl = "/listings/search";
+    params.q = q;
+  } else if (category && category !== "All" && category !== "all") {
+    requestUrl = `/listings/category/${encodeURIComponent(category.toLowerCase())}`;
+  }
+
   try {
-    const data = await request(path);
-    if (!data.listings || data.listings.length < 100) {
-      const existingIds = new Set((data.listings || []).map((l) => l.id));
-      const combined = [
-        ...(data.listings || []),
-        ...fallbackListings.filter((l) => !existingIds.has(l.id)),
-      ];
-      return {
-        listings: combined,
-        categories: categories.slice(1),
-        selectedCategory: "all",
-        isFallback: false,
-      };
-    }
-    return data;
-  } catch {
+    const res = await apiClient.get(requestUrl, { params });
+    const data = res.data;
+
+    const total = data.total !== undefined ? data.total : (data.listings?.length || 0);
+    const totalPages = data.totalPages !== undefined ? data.totalPages : (limit ? Math.max(1, Math.ceil(total / limit)) : 1);
+
     return {
-      listings: fallbackListings,
+      listings: data.listings || [],
+      categories: data.categories || categories.slice(1),
+      selectedCategory: data.selectedCategory || category,
+      total,
+      page: data.page || page,
+      limit: data.limit || limit || total,
+      totalPages,
+      pagination: data.pagination || {
+        page: data.page || page,
+        limit: data.limit || limit || total,
+        total,
+        totalPages,
+        hasMore: (data.page || page) < totalPages,
+        hasPrev: (data.page || page) > 1,
+      },
+      isFallback: false,
+    };
+  } catch (err) {
+    console.warn("API request failed, falling back to local dataset:", err.message);
+
+    // Resilient local fallback filtering with pagination
+    let filtered = fallbackListings.filter((stay) => {
+      const matchesCategory =
+        !category ||
+        category === "All" ||
+        category === "all" ||
+        stay.category.toLowerCase() === category.toLowerCase();
+
+      const searchTarget = `${stay.title} ${stay.location} ${stay.country} ${stay.category} ${stay.description || ""}`.toLowerCase();
+      const matchesQuery = !q || searchTarget.includes(q.toLowerCase());
+
+      return matchesCategory && matchesQuery;
+    });
+
+    const total = filtered.length;
+    const effectiveLimit = limit || 12;
+    const totalPages = Math.max(1, Math.ceil(total / effectiveLimit));
+    const safePage = Math.min(Math.max(1, page), totalPages);
+    const paginated = limit ? filtered.slice((safePage - 1) * limit, safePage * limit) : filtered;
+
+    return {
+      listings: paginated,
       categories: categories.slice(1),
-      selectedCategory: "all",
+      selectedCategory: category || "all",
+      total,
+      page: safePage,
+      limit: effectiveLimit,
+      totalPages,
+      pagination: {
+        page: safePage,
+        limit: effectiveLimit,
+        total,
+        totalPages,
+        hasMore: safePage < totalPages,
+        hasPrev: safePage > 1,
+      },
       isFallback: true,
     };
   }
@@ -52,8 +113,10 @@ export async function getListings(path = "/listings") {
 
 export async function getListing(id) {
   try {
-    return await request(`/listings/${id}`);
-  } catch {
+    const res = await apiClient.get(`/listings/${id}`);
+    return res.data;
+  } catch (err) {
+    console.warn(`Could not fetch listing ${id}, falling back:`, err.message);
     return {
       listing: fallbackListings.find((listing) => listing.id === id) || fallbackListings[0],
       isFallback: true,
@@ -61,4 +124,65 @@ export async function getListing(id) {
   }
 }
 
-export { API_URL };
+export async function getCurrentUser() {
+  try {
+    const res = await apiClient.get("/auth/me");
+    return res.data?.user || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function logoutUser() {
+  const res = await apiClient.post("/auth/logout");
+  return res.data;
+}
+
+export async function loginUser(credentials) {
+  const res = await apiClient.post("/auth/login", credentials);
+  return res.data;
+}
+
+export async function signupUser(credentials) {
+  const res = await apiClient.post("/auth/signup", credentials);
+  return res.data;
+}
+
+export async function demoLoginUser() {
+  const res = await apiClient.post("/auth/demo-login");
+  return res.data;
+}
+
+export async function createReview(listingId, reviewData) {
+  const res = await apiClient.post(`/listings/${listingId}/reviews`, reviewData);
+  return res.data;
+}
+
+export async function createPaymentOrder(orderData) {
+  const res = await apiClient.post("/payments/create-order", orderData);
+  return res.data;
+}
+
+export async function verifyPayment(paymentData) {
+  const res = await apiClient.post("/payments/verify-payment", paymentData);
+  return res.data;
+}
+
+export async function sendMessage(messageData) {
+  const res = await apiClient.post("/messages", messageData);
+  return res.data;
+}
+
+export async function sendContactMessage(contactData) {
+  const res = await apiClient.post("/contact", contactData);
+  return res.data;
+}
+
+export async function createListing(formData) {
+  const res = await apiClient.post("/listings", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+}
+
+export { API_URL, apiClient };

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Footer from "../../components/footer";
 import Navbar from "../../components/navbar";
-import { API_URL } from "../../lib/api";
+import { API_URL, sendContactMessage } from "../../lib/api";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -55,13 +55,7 @@ export default function ContactPage() {
     setStatusMsg({ type: "", text: "" });
 
     try {
-      const response = await fetch(`${API_URL}/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
+      const data = await sendContactMessage(formData);
 
       const record = {
         id: `INQ-${Date.now()}`,

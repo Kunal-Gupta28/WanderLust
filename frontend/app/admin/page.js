@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
-import { API_URL } from "../../lib/api";
+import { API_URL, getCurrentUser } from "../../lib/api";
 
 export default function AdminCRMPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -60,10 +60,9 @@ export default function AdminCRMPage() {
       return;
     }
 
-    fetch(`${API_URL}/auth/me`, { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) setIsAuthenticated(true);
+    getCurrentUser()
+      .then((user) => {
+        if (user) setIsAuthenticated(true);
       })
       .catch(() => {})
       .finally(() => setCheckingAuth(false));

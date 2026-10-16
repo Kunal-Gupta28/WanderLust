@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { API_URL } from "../lib/api";
+import { API_URL, getCurrentUser, logoutUser, apiClient } from "../lib/api";
 
 export default function Navbar({ transparent = false }) {
   const pathname = usePathname();
@@ -37,13 +37,12 @@ export default function Navbar({ transparent = false }) {
       } catch {}
     }
 
-    // Check live session with backend
-    fetch(`${API_URL}/auth/me`, { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user) {
-          setCurrentUser(data.user);
-          localStorage.setItem("wanderlust_user", JSON.stringify(data.user));
+    // Check live session with backend via Axios
+    getCurrentUser()
+      .then((user) => {
+        if (user) {
+          setCurrentUser(user);
+          localStorage.setItem("wanderlust_user", JSON.stringify(user));
         }
       })
       .catch(() => {});
@@ -53,7 +52,7 @@ export default function Navbar({ transparent = false }) {
 
   const handleLogout = async () => {
     try {
-      await fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" });
+      await logoutUser();
     } catch {}
     localStorage.removeItem("wanderlust_user");
     localStorage.removeItem("wanderlust_role");
@@ -65,30 +64,23 @@ export default function Navbar({ transparent = false }) {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/listings`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: listingForm.title,
-          description: listingForm.description,
-          price: Number(listingForm.price),
-          location: listingForm.location,
-          country: listingForm.country,
-          category: listingForm.category,
-          imageUrl: listingForm.imageUrl || "https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=1200&q=80"
-        })
+      const res = await apiClient.post("/listings", {
+        title: listingForm.title,
+        description: listingForm.description,
+        price: Number(listingForm.price),
+        location: listingForm.location,
+        country: listingForm.country,
+        category: listingForm.category,
+        imageUrl:
+          listingForm.imageUrl ||
+          "https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=1200&q=80",
       });
-      const data = await res.json();
-      if (res.ok) {
-        setShowCreateModal(false);
-        if (data.listing?.id) {
-          window.location.href = `/listings/${data.listing.id}`;
-        } else {
-          window.location.reload();
-        }
+      const data = res.data;
+      setShowCreateModal(false);
+      if (data.listing?.id) {
+        window.location.href = `/listings/${data.listing.id}`;
       } else {
-        alert(data.error || "Could not publish stay. Please verify input.");
+        window.location.reload();
       }
     } catch (err) {
       alert("Stay published successfully!");

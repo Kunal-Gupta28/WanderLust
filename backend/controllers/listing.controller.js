@@ -33,18 +33,38 @@ const listingPayload = (body) => {
 module.exports.index = async (req, res) => {
   const { category } = req.params;
   const targetCategory = category && category !== "all" ? category.toLowerCase() : null;
+  const page = req.query.page ? Math.max(1, parseInt(req.query.page, 10) || 1) : null;
+  const limit = req.query.limit ? Math.max(1, parseInt(req.query.limit, 10) || 12) : null;
 
   try {
     const query = {};
     if (targetCategory) query.category = new RegExp(`^${category}$`, "i");
-    const allListings = await listingModel.find(query).populate("owner");
+    const total = await listingModel.countDocuments(query);
+    let mongoQuery = listingModel.find(query).populate("owner");
+    if (page && limit) {
+      mongoQuery = mongoQuery.skip((page - 1) * limit).limit(limit);
+    }
+    const allListings = await mongoQuery;
     if (allListings && allListings.length > 0) {
       const categories = await listingModel.distinct("category");
+      const totalPages = limit ? Math.max(1, Math.ceil(total / limit)) : 1;
       return res.json({
         listings: allListings.map(publicListing),
         selectedCategory: category || "all",
         categories: categories.length ? categories : CATEGORIES,
         allCategories: CATEGORIES,
+        page: page || 1,
+        limit: limit || allListings.length,
+        total,
+        totalPages,
+        pagination: page && limit ? {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasMore: page < totalPages,
+          hasPrev: page > 1,
+        } : null,
       });
     }
   } catch (err) {
@@ -57,30 +77,67 @@ module.exports.index = async (req, res) => {
     filtered = filtered.filter((l) => l.category.toLowerCase() === targetCategory);
   }
 
+  const total = filtered.length;
+  const totalPages = limit ? Math.max(1, Math.ceil(total / limit)) : 1;
+  const paginated = (page && limit) ? filtered.slice((page - 1) * limit, page * limit) : filtered;
+
   res.json({
-    listings: filtered,
+    listings: paginated,
     selectedCategory: category || "all",
     categories: CATEGORIES,
     allCategories: CATEGORIES,
+    page: page || 1,
+    limit: limit || total,
+    total,
+    totalPages,
+    pagination: page && limit ? {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasMore: page < totalPages,
+      hasPrev: page > 1,
+    } : null,
   });
 };
 
 module.exports.searchListings = async (req, res) => {
   const { q } = req.query;
+  const page = req.query.page ? Math.max(1, parseInt(req.query.page, 10) || 1) : null;
+  const limit = req.query.limit ? Math.max(1, parseInt(req.query.limit, 10) || 12) : null;
+
   try {
     const query = {};
     if (q) {
       const searchRegex = new RegExp(q, "i");
       query.$or = [{ title: searchRegex }, { location: searchRegex }, { country: searchRegex }, { category: searchRegex }];
     }
-    const listings = await listingModel.find(query).populate("owner");
+    const total = await listingModel.countDocuments(query);
+    let mongoQuery = listingModel.find(query).populate("owner");
+    if (page && limit) {
+      mongoQuery = mongoQuery.skip((page - 1) * limit).limit(limit);
+    }
+    const listings = await mongoQuery;
     if (listings && listings.length > 0) {
       const categories = await listingModel.distinct("category");
+      const totalPages = limit ? Math.max(1, Math.ceil(total / limit)) : 1;
       return res.json({
         listings: listings.map(publicListing),
         selectedCategory: "all",
         categories: categories.length ? categories : CATEGORIES,
         query: q || "",
+        page: page || 1,
+        limit: limit || listings.length,
+        total,
+        totalPages,
+        pagination: page && limit ? {
+          page,
+          limit,
+          total,
+          totalPages,
+          hasMore: page < totalPages,
+          hasPrev: page > 1,
+        } : null,
       });
     }
   } catch (err) {
@@ -94,11 +151,27 @@ module.exports.searchListings = async (req, res) => {
       )
     : listingsData.listings;
 
+  const total = filtered.length;
+  const totalPages = limit ? Math.max(1, Math.ceil(total / limit)) : 1;
+  const paginated = (page && limit) ? filtered.slice((page - 1) * limit, page * limit) : filtered;
+
   res.json({
-    listings: filtered,
+    listings: paginated,
     selectedCategory: "all",
     categories: CATEGORIES,
     query: q || "",
+    page: page || 1,
+    limit: limit || total,
+    total,
+    totalPages,
+    pagination: page && limit ? {
+      page,
+      limit,
+      total,
+      totalPages,
+      hasMore: page < totalPages,
+      hasPrev: page > 1,
+    } : null,
   });
 };
 

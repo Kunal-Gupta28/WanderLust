@@ -6,7 +6,14 @@ import { useEffect, useRef, useState } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
 import ListingImage from "./listing-image";
-import { API_URL } from "../lib/api";
+import {
+  API_URL,
+  createPaymentOrder,
+  verifyPayment,
+  createReview,
+  sendMessage,
+  apiClient,
+} from "../lib/api";
 
 function useIntersectionObserver(options = {}) {
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -135,19 +142,11 @@ export default function ListingDetail({ listing }) {
     requireAuthAction(async () => {
       setPaymentLoading(true);
       try {
-        const res = await fetch(`${API_URL}/payments/create-order`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            amount: grandTotal,
-            listingId: listing.id,
-            listingTitle: listing.title
-          })
+        const orderData = await createPaymentOrder({
+          amount: grandTotal,
+          listingId: listing.id,
+          listingTitle: listing.title,
         });
-
-        const orderData = await res.json();
-        if (!res.ok) throw new Error(orderData.error || "Failed to initiate payment");
 
         const options = {
           key: orderData.keyId || "rzp_test_wanderlust123",
@@ -158,29 +157,22 @@ export default function ListingDetail({ listing }) {
           image: "https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&w=150&q=80",
           order_id: orderData.order.id,
           handler: async function (response) {
-            const verifyRes = await fetch(`${API_URL}/payments/verify-payment`, {
-              method: "POST",
-              credentials: "include",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
+            try {
+              const verifyData = await verifyPayment({
                 razorpay_order_id: response.razorpay_order_id || orderData.order.id,
                 razorpay_payment_id: response.razorpay_payment_id || `pay_${Date.now()}`,
                 razorpay_signature: response.razorpay_signature || "demo_signature",
                 listingId: listing.id,
                 listingTitle: listing.title,
-                amount: grandTotal
-              })
-            });
-
-            const verifyData = await verifyRes.json();
-            if (verifyRes.ok) {
+                amount: grandTotal,
+              });
               setBookingConfirmation(verifyData.booking);
-            } else {
-              alert(verifyData.error || "Payment verification failed.");
+            } catch (err) {
+              alert(err.response?.data?.error || "Payment verification failed.");
             }
           },
           prefill: { name: "Traveler", email: "traveler@example.com", contact: "+919876543210" },
-          theme: { color: "#b95738" }
+          theme: { color: "#b95738" },
         };
 
         if (window.Razorpay) {
@@ -220,17 +212,11 @@ export default function ListingDetail({ listing }) {
       setReviewSubmitting(true);
 
       try {
-        const res = await fetch(`${API_URL}/listings/${listing.id}/reviews`, {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            review: { rating: Number(newRating), comment: newComment.trim() }
-          })
+        const data = await createReview(listing.id, {
+          review: { rating: Number(newRating), comment: newComment.trim() },
         });
 
-        const data = await res.json();
-        if (res.ok && data.listing?.reviews) {
+        if (data.listing?.reviews) {
           setReviewsList(data.listing.reviews);
           setNewComment("");
         } else {
@@ -275,15 +261,10 @@ export default function ListingDetail({ listing }) {
     setMessageInput("");
 
     try {
-      await fetch(`${API_URL}/messages`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          recipientName: listing.owner?.username || "Host",
-          listingId: listing.id,
-          content: sentText
-        })
+      await sendMessage({
+        recipientName: listing.owner?.username || "Host",
+        listingId: listing.id,
+        content: sentText,
       });
     } catch {}
 

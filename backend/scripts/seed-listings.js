@@ -46,21 +46,37 @@ async function seed() {
       crypto.randomBytes(32).toString("hex")
     );
   }
-  const operations = stays.map(([category, title, location, country, price, description, imageId], index) => ({
-    updateOne: {
-      filter: { title, location, country },
-      update: {
-        $set: {
-          category, title, location, country, price, description, owner: owner._id,
-          image: { url: `https://images.unsplash.com/${imageId}?auto=format&fit=crop&w=1400&q=85`, filename: `seed-${index + 1}` },
-          geometry: { type: "Point", coordinates: [77 + (index % 8), 8 + (index % 10)] },
-        },
-      },
-      upsert: true,
-    },
-  }));
-  const result = await Listing.bulkWrite(operations);
-  console.log(`Seed complete: ${stays.length} curated stays processed (${result.upsertedCount} new, ${result.modifiedCount} updated).`);
+  let extraOps = [];
+  try {
+    const fullData = require("../data/listings-data.json");
+    if (fullData && Array.isArray(fullData.listings)) {
+      extraOps = fullData.listings.map((item, idx) => ({
+        updateOne: {
+          filter: { title: item.title, location: item.location, country: item.country },
+          update: {
+            $set: {
+              category: item.category,
+              title: item.title,
+              location: item.location,
+              country: item.country,
+              price: item.price,
+              description: item.description,
+              owner: owner._id,
+              image: { url: item.image?.url || "https://images.unsplash.com/photo-1510798831971-661eb04b3739?auto=format&fit=crop&w=1200&q=85", filename: `seed-${idx + 1}` },
+              geometry: { type: "Point", coordinates: item.geometry?.coordinates || [77 + (idx % 10), 20 + (idx % 10)] }
+            }
+          },
+          upsert: true
+        }
+      }));
+    }
+  } catch (err) {
+    console.warn("Could not load full listings-data.json:", err.message);
+  }
+
+  const allOps = [...operations, ...extraOps];
+  const result = await Listing.bulkWrite(allOps);
+  console.log(`Seed complete: ${allOps.length} curated stays processed (${result.upsertedCount} new, ${result.modifiedCount} updated).`);
   await mongoose.disconnect();
 }
 

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { API_URL } from "../lib/api";
+import { API_URL, loginUser, signupUser, demoLoginUser } from "../lib/api";
 
 export default function AuthForm({ mode }) {
   const signup = mode === "signup";
@@ -18,18 +18,10 @@ export default function AuthForm({ mode }) {
     setFormLoading(true);
     setMessage("");
     const form = new FormData(event.currentTarget);
+    const payload = Object.fromEntries(form);
+
     try {
-      const response = await fetch(
-        `${API_URL}/auth/${signup ? "signup" : "login"}`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(Object.fromEntries(form)),
-        }
-      );
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      const data = signup ? await signupUser(payload) : await loginUser(payload);
       if (data.user) {
         localStorage.setItem("wanderlust_user", JSON.stringify(data.user));
         if (data.user.role) localStorage.setItem("wanderlust_role", data.user.role);
@@ -38,7 +30,7 @@ export default function AuthForm({ mode }) {
       setTimeout(() => router.push("/"), 800);
     } catch (error) {
       setMessage(
-        error.message || "We could not sign you in. Please check your credentials."
+        error.response?.data?.error || error.message || "We could not sign you in. Please check your credentials."
       );
     } finally {
       setFormLoading(false);
@@ -49,13 +41,7 @@ export default function AuthForm({ mode }) {
     setDemoLoading(true);
     setMessage("");
     try {
-      const response = await fetch(`${API_URL}/auth/demo-login`, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error);
+      const data = await demoLoginUser();
       const demoUser = data.user || { username: "demo_explorer", role: "traveler" };
       localStorage.setItem("wanderlust_user", JSON.stringify(demoUser));
       setMessage(data.message || "Welcome, demo explorer!");
