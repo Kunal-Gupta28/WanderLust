@@ -280,10 +280,22 @@ export default function AboutPage() {
       </section>
 
       {/* How We Curate Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 max-w-[90rem] mx-auto">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 max-w-[90rem] mx-auto relative overflow-hidden">
+        {/* Micro moving object: Gentle drifting leaf across section */}
+        <div className="absolute top-8 left-0 right-0 overflow-hidden pointer-events-none h-10">
+          <div className="w-5 h-5 text-moss/40" style={{ animation: "leafDrift 26s linear infinite" }}>
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.5 2 2 6.5 2 12c0 4.5 3 8 7 9.5 0-3 .5-6 2-8.5 1.5-2.5 3.5-4 6-5 1.5-1 3-3 4-5-2.5 0-5.5-.5-9-1z" />
+            </svg>
+          </div>
+        </div>
+
         <div ref={addToRefs} className="text-center max-w-2xl mx-auto mb-20 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
-          <span className="text-xs font-bold tracking-[.18em] text-clay uppercase">Quality & Care</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold tracking-[-.05em] text-ink mt-3">How We Select Every Stay</h2>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sand/60 border border-ink/10 text-xs font-semibold text-clay mb-3 animate-[markerBounce_3s_ease-in-out_infinite]">
+            <span className="w-2 h-2 rounded-full bg-clay animate-pulse" />
+            <span>Inspection Protocol</span>
+          </div>
+          <h2 className="font-display text-4xl md:text-5xl font-bold tracking-[-.05em] text-ink mt-1">How We Select Every Stay</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -327,11 +339,17 @@ export default function AboutPage() {
       </section>
 
       {/* Team & Curators Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 bg-sand/20 border-t border-ink/10">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 bg-sand/20 border-t border-ink/10 relative overflow-hidden">
         <div className="max-w-[90rem] mx-auto">
           <div ref={addToRefs} className="text-center max-w-xl mx-auto mb-20 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
-            <span className="text-xs font-bold tracking-[.18em] text-clay uppercase">People Behind WanderLust</span>
-            <h2 className="font-display text-4xl md:text-5xl font-bold text-ink tracking-[-.05em] mt-3">The Curators</h2>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-paper border border-ink/10 text-xs font-semibold text-moss mb-3">
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-moss animate-[compassWobble_4s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" strokeDasharray="2 2" />
+                <polygon points="12 4 14 12 12 20 10 12" fill="currentColor" fillOpacity="0.3" />
+              </svg>
+              <span>Field Architects & Researchers</span>
+            </div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold text-ink tracking-[-.05em] mt-1">The Curators</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">

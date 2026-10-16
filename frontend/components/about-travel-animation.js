@@ -113,15 +113,58 @@ export default function AboutTravelAnimation() {
             </div>
           )}
 
-          {/* Gentle Fluffy Clouds drifting */}
+          {/* Micro Moving Objects: Soaring Swallows in Sky */}
+          <div 
+            className="absolute top-7 opacity-70 flex gap-3 pointer-events-none"
+            style={{ animation: "cloudFloatAcross 19s linear infinite" }}
+          >
+            <svg viewBox="0 0 20 10" className="w-4 h-2 fill-current text-amber-900/60 animate-[birdFlap_1.3s_ease-in-out_infinite]">
+              <path d="M0 6 Q5 0 10 6 Q15 0 20 6 Q15 4 10 8 Q5 4 0 6 Z" />
+            </svg>
+            <svg viewBox="0 0 20 10" className="w-3 h-1.5 fill-current text-amber-900/50 mt-1 animate-[birdFlap_1.5s_ease-in-out_infinite]">
+              <path d="M0 6 Q5 0 10 6 Q15 0 20 6 Q15 4 10 8 Q5 4 0 6 Z" />
+            </svg>
+          </div>
+
+          {/* Gentle Fluffy Clouds drifting (Layer 1 - High) */}
           {!isNight && (
             <div 
-              className="absolute top-8 opacity-75 pointer-events-none"
-              style={{ animation: "cloudFloatAcross 32s linear infinite" }}
+              className="absolute top-5 opacity-75 pointer-events-none"
+              style={{ animation: "cloudFloatAcross 34s linear infinite" }}
             >
               <svg viewBox="0 0 100 40" className="w-24 h-9 fill-white/80">
                 <path d="M20 30 a16 16 0 0 1 30 -6 a18 18 0 0 1 30 6 z" />
               </svg>
+            </div>
+          )}
+
+          {/* Gentle Fluffy Clouds drifting (Layer 2 - Mid, Faster Parallax) */}
+          {!isNight && (
+            <div 
+              className="absolute top-12 opacity-50 pointer-events-none"
+              style={{ animation: "cloudFloatAcross 22s linear infinite" }}
+            >
+              <svg viewBox="0 0 80 32" className="w-16 h-7 fill-white/70">
+                <path d="M12 24 a12 12 0 0 1 24 -4 a16 16 0 0 1 24 4 z" />
+              </svg>
+            </div>
+          )}
+
+          {/* Floating Fireflies at Night */}
+          {isNight && (
+            <div className="absolute inset-0 pointer-events-none">
+              {[...Array(6)].map((_, i) => (
+                <div 
+                  key={i}
+                  className="absolute w-1.5 h-1.5 rounded-full bg-emerald-300 shadow-[0_0_8px_#86efac]"
+                  style={{
+                    top: `${40 + (i * 12) % 35}%`,
+                    left: `${12 + (i * 15) % 75}%`,
+                    animation: `fireflyFloat ${3 + (i % 2.5)}s ease-in-out infinite`,
+                    animationDelay: `${i * 500}ms`
+                  }}
+                />
+              ))}
             </div>
           )}
 

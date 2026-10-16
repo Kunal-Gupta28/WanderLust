@@ -302,8 +302,14 @@ export default function PhilosophyExperience() {
       <section className="relative mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(6rem,12vw,12rem)] border-t border-ink/10">
         <div className="philosophy-route" aria-hidden="true" />
         <div className="text-center max-w-xl mx-auto mb-20">
-          <span className="text-xs font-bold tracking-[.18em] text-clay uppercase">The Journey Arc</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold tracking-[-.05em] text-ink mt-2">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sand/70 border border-ink/10 text-xs font-semibold text-clay mb-3 animate-[markerBounce_3s_ease-in-out_infinite]">
+            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-clay animate-[compassWobble_4s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" strokeDasharray="2 2" />
+              <polygon points="12 4 14 12 12 20 10 12" fill="currentColor" fillOpacity="0.4" />
+            </svg>
+            <span className="tracking-wide">Journey Arc • 3 Continuous Milestones</span>
+          </div>
+          <h2 className="font-display text-4xl md:text-5xl font-bold tracking-[-.05em] text-ink mt-1">
             Three Phases of a Good Journey
           </h2>
         </div>

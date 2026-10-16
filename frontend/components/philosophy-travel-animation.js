@@ -81,18 +81,71 @@ export default function PhilosophyTravelAnimation() {
             </div>
           )}
 
-          {/* Flying Birds in Distance soaring across */}
+          {/* Micro Moving Objects: High-altitude soaring eagle */}
           <div 
-            className="absolute top-10 opacity-70 flex gap-4 pointer-events-none"
-            style={{ animation: "cloudFloatAcross 24s linear infinite" }}
+            className="absolute top-5 opacity-60 pointer-events-none"
+            style={{ animation: "cloudFloatAcross 36s linear infinite" }}
           >
-            <svg viewBox="0 0 20 10" className="w-5 h-2.5 fill-current text-ink/70">
+            <svg viewBox="0 0 26 12" className="w-6 h-3 text-ink/70 fill-current animate-[birdFlap_2.5s_ease-in-out_infinite]">
+              <path d="M0 6 Q6 0 13 5 Q20 0 26 6 Q20 3 13 8 Q6 3 0 6 Z" />
+            </svg>
+          </div>
+
+          {/* Micro Moving Objects: Flying Flock of Birds across mountain sky */}
+          <div 
+            className="absolute top-11 opacity-75 flex gap-3 pointer-events-none"
+            style={{ animation: "cloudFloatAcross 22s linear infinite" }}
+          >
+            <svg viewBox="0 0 20 10" className="w-5 h-2.5 fill-current text-ink/75 animate-[birdFlap_1.2s_ease-in-out_infinite]">
               <path d="M0 6 Q5 0 10 6 Q15 0 20 6 Q15 4 10 8 Q5 4 0 6 Z" />
             </svg>
-            <svg viewBox="0 0 20 10" className="w-4 h-2 fill-current text-ink/60 mt-1">
+            <svg viewBox="0 0 20 10" className="w-3.5 h-2 fill-current text-ink/60 mt-1 animate-[birdFlap_1.4s_ease-in-out_infinite]">
+              <path d="M0 6 Q5 0 10 6 Q15 0 20 6 Q15 4 10 8 Q5 4 0 6 Z" />
+            </svg>
+            <svg viewBox="0 0 20 10" className="w-4 h-2 fill-current text-ink/70 mt-0.5 animate-[birdFlap_1.1s_ease-in-out_infinite]">
               <path d="M0 6 Q5 0 10 6 Q15 0 20 6 Q15 4 10 8 Q5 4 0 6 Z" />
             </svg>
           </div>
+
+          {/* Micro Moving Objects: Drifting Alpine Clouds */}
+          {!isDusk && (
+            <>
+              <div 
+                className="absolute top-7 opacity-50 pointer-events-none"
+                style={{ animation: "cloudFloatAcross 38s linear infinite" }}
+              >
+                <svg viewBox="0 0 90 32" className="w-20 h-7 fill-white/80">
+                  <path d="M15 25 a12 12 0 0 1 25 -5 a15 15 0 0 1 25 5 z" />
+                </svg>
+              </div>
+              <div 
+                className="absolute top-14 opacity-35 pointer-events-none"
+                style={{ animation: "cloudFloatAcross 26s linear infinite" }}
+              >
+                <svg viewBox="0 0 80 28" className="w-16 h-6 fill-white/70">
+                  <path d="M10 22 a10 10 0 0 1 20 -4 a14 14 0 0 1 22 4 z" />
+                </svg>
+              </div>
+            </>
+          )}
+
+          {/* Micro Moving Objects: Dusk / Starlight Fireflies */}
+          {isDusk && (
+            <div className="absolute inset-0 pointer-events-none">
+              {[...Array(6)].map((_, i) => (
+                <div 
+                  key={i}
+                  className="absolute w-1.5 h-1.5 rounded-full bg-amber-300 shadow-[0_0_8px_#fef08a]"
+                  style={{
+                    top: `${35 + (i * 13) % 40}%`,
+                    left: `${10 + (i * 17) % 80}%`,
+                    animation: `fireflyFloat ${3 + (i % 3)}s ease-in-out infinite`,
+                    animationDelay: `${i * 600}ms`
+                  }}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Stone Viaduct Arches */}
           <div className="absolute bottom-7 inset-x-0 h-16 flex items-end">
@@ -111,52 +164,70 @@ export default function PhilosophyTravelAnimation() {
           {/* Rail Track Line */}
           <div className="absolute bottom-19 inset-x-0 h-1.5 bg-[#44403c] border-t border-amber-500/30" />
 
-          {/* Moving Scenic Alpine Train gliding across stone viaduct */}
+          {/* Moving Scenic Alpine Train gliding forward across stone viaduct (Locomotive leading to the right) */}
           <div 
             className="absolute bottom-19 flex items-end pointer-events-none"
             style={{
               animation: `trainGlideAcross ${transitSpeed === "slow" ? "18s" : "9s"} linear infinite`
             }}
           >
-            {/* Steam puffs rising from chimney */}
-            <div className="absolute -top-6 left-3 flex flex-col items-center">
+            {/* Steam puffs rising from chimney (positioned near front chimney on right) */}
+            <div className="absolute -top-7 right-4 flex flex-col items-center">
               <span className="w-2.5 h-2.5 rounded-full bg-white/70 animate-ping" />
               <span className="w-3.5 h-3.5 rounded-full bg-white/40 mt-1" />
             </div>
 
-            {/* Vintage Train Locomotive & Coach (SVG) */}
-            <svg viewBox="0 0 140 40" className="w-32 sm:w-44 h-9 sm:h-12 drop-shadow-md">
-              {/* Locomotive */}
-              <rect x="2" y="10" width="28" height="22" rx="2" fill="#b95738" />
-              <rect x="4" y="13" width="10" height="8" rx="1" fill="#fef08a" opacity="0.9" />
-              {/* Chimney */}
-              <rect x="24" y="3" width="5" height="9" fill="#1c1917" />
-              <polygon points="22,3 31,3 29,6 24,6" fill="#1c1917" />
-              {/* Locomotive Boiler & Cowcatcher */}
-              <path d="M30 14 L48 14 Q52 14 52 22 L52 32 L30 32 Z" fill="#78350f" />
-              <polygon points="50,32 56,32 54,26 50,26" fill="#1c1917" />
-              {/* Passenger Carriage 1 */}
-              <rect x="58" y="8" width="38" height="24" rx="2" fill="#15803d" />
-              <rect x="62" y="12" width="8" height="9" rx="1" fill="#fef08a" opacity="0.8" />
-              <rect x="73" y="12" width="8" height="9" rx="1" fill="#fef08a" opacity="0.8" />
-              <rect x="84" y="12" width="8" height="9" rx="1" fill="#fef08a" opacity="0.8" />
-              {/* Passenger Carriage 2 */}
-              <rect x="100" y="8" width="38" height="24" rx="2" fill="#15803d" />
-              <rect x="104" y="12" width="8" height="9" rx="1" fill="#fef08a" opacity="0.8" />
-              <rect x="115" y="12" width="8" height="9" rx="1" fill="#fef08a" opacity="0.8" />
-              <rect x="126" y="12" width="8" height="9" rx="1" fill="#fef08a" opacity="0.8" />
-              {/* Couplers */}
-              <rect x="29" y="24" width="30" height="3" fill="#1c1917" />
-              <rect x="95" y="24" width="6" height="3" fill="#1c1917" />
+            {/* Vintage Train: Carriage 2 (rear) -> Carriage 1 (mid) -> Locomotive (front) */}
+            <svg viewBox="0 0 152 40" className="w-36 sm:w-48 h-9 sm:h-12 drop-shadow-md">
+              {/* Carriage 2 (Rear) */}
+              <rect x="2" y="8" width="36" height="24" rx="2" fill="#15803d" />
+              <rect x="6" y="12" width="7" height="9" rx="1" fill="#fef08a" opacity="0.85" />
+              <rect x="16" y="12" width="7" height="9" rx="1" fill="#fef08a" opacity="0.85" />
+              <rect x="26" y="12" width="7" height="9" rx="1" fill="#fef08a" opacity="0.85" />
+
+              {/* Coupler 1 */}
+              <rect x="38" y="24" width="6" height="3" fill="#1c1917" />
+
+              {/* Carriage 1 (Middle) */}
+              <rect x="44" y="8" width="36" height="24" rx="2" fill="#15803d" />
+              <rect x="48" y="12" width="7" height="9" rx="1" fill="#fef08a" opacity="0.85" />
+              <rect x="58" y="12" width="7" height="9" rx="1" fill="#fef08a" opacity="0.85" />
+              <rect x="68" y="12" width="7" height="9" rx="1" fill="#fef08a" opacity="0.85" />
+
+              {/* Coupler 2 */}
+              <rect x="80" y="24" width="6" height="3" fill="#1c1917" />
+
+              {/* Locomotive (Leading Front, facing Right) */}
+              {/* Locomotive Engineer Cab */}
+              <rect x="86" y="8" width="22" height="24" rx="2" fill="#b95738" />
+              <rect x="89" y="12" width="9" height="9" rx="1" fill="#fef08a" opacity="0.9" />
+
+              {/* Locomotive Cylindrical Boiler */}
+              <path d="M108 14 L134 14 Q138 14 138 22 L138 32 L108 32 Z" fill="#78350f" />
+              <line x1="120" y1="14" x2="120" y2="32" stroke="#fbbf24" strokeWidth="1" opacity="0.6" />
+
+              {/* Smokestack / Chimney */}
+              <rect x="127" y="3" width="5" height="11" fill="#1c1917" />
+              <polygon points="125,3 134,3 132,6 127,6" fill="#1c1917" />
+
+              {/* Cowcatcher (Front Wedge pointing forward right) */}
+              <polygon points="137,32 144,32 140,26 137,26" fill="#1c1917" />
+
+              {/* Golden Headlamp at front */}
+              <rect x="137" y="20" width="3.5" height="5" rx="1" fill="#fde047" />
+              <polygon points="140,22.5 152,16 152,29" fill="#fef08a" opacity="0.45" />
 
               {/* Turning Train Wheels */}
               <g className={transitSpeed === "slow" ? "animate-[wheelSpin_1.2s_linear_infinite]" : "animate-[wheelSpin_0.6s_linear_infinite]"}>
+                {/* Carriage 2 wheels */}
                 <circle cx="10" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
-                <circle cx="22" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
-                <circle cx="42" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
-                <circle cx="68" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
-                <circle cx="86" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
-                <circle cx="110" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
+                <circle cx="28" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
+                {/* Carriage 1 wheels */}
+                <circle cx="52" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
+                <circle cx="70" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
+                {/* Locomotive driving wheels */}
+                <circle cx="96" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
+                <circle cx="112" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
                 <circle cx="128" cy="33" r="4.5" fill="#1c1917" stroke="#e7e5e4" strokeWidth="1.5" />
               </g>
             </svg>
