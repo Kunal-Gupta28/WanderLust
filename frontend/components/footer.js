@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
-export default function Footer() {
+export default function Footer({ className = "" }) {
   const footerRef = useRef(null);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="bg-ink text-white/80 py-16 md:py-24 px-[clamp(1.25rem,4vw,4.5rem)] section-reveal border-t border-white/10"
+      className={`bg-ink text-white/80 py-16 md:py-24 px-[clamp(1.25rem,4vw,4.5rem)] section-reveal border-t border-white/10 w-full mt-auto ${className}`}
     >
       <div className="max-w-[90rem] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">

@@ -123,9 +123,9 @@ export default function AdminCRMPage() {
   // Protection Gate if not authenticated
   if (!isAuthenticated) {
     return (
-      <main className="min-h-screen bg-paper text-ink pt-24 pb-20">
+      <main className="min-h-screen flex flex-col bg-paper text-ink pt-24">
         <Navbar />
-        <div className="mx-auto max-w-md px-6 py-16 text-center space-y-6">
+        <div className="mx-auto max-w-md px-6 py-16 text-center space-y-6 flex-1">
           <div className="w-16 h-16 rounded-full bg-clay/15 text-clay mx-auto flex items-center justify-center shadow-inner">
             <LockIcon className="w-8 h-8" />
           </div>
@@ -159,10 +159,10 @@ export default function AdminCRMPage() {
   }
 
   return (
-    <main className="min-h-screen bg-paper text-ink selection:bg-clay selection:text-white pt-24 pb-20">
+    <main className="min-h-screen flex flex-col bg-paper text-ink selection:bg-clay selection:text-white pt-24">
       <Navbar />
 
-      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)]">
+      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-20 flex-1">
         
         {/* Live Broadcast Banner Notice */}
         {broadcastActive && (

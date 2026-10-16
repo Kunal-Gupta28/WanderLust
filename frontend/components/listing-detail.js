@@ -291,7 +291,7 @@ export default function ListingDetail({ listing }) {
   };
 
   return (
-    <main className="min-h-[100svh] bg-paper text-ink selection:bg-clay selection:text-white pb-20 overflow-hidden pt-16">
+    <main className="min-h-[100svh] flex flex-col bg-paper text-ink selection:bg-clay selection:text-white overflow-hidden pt-16">
       <Navbar />
 
       {/* Hero Cover Banner */}
@@ -345,7 +345,7 @@ export default function ListingDetail({ listing }) {
       </section>
 
       {/* Main Content Layout */}
-      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] mt-16 md:mt-24 grid lg:grid-cols-[1.5fr_1fr] gap-16 lg:gap-24 relative">
+      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] mt-16 md:mt-24 pb-20 md:pb-28 grid lg:grid-cols-[1.5fr_1fr] gap-16 lg:gap-24 relative flex-1">
         <div className="space-y-20">
           
           {/* Host Profile & Trust Header */}
