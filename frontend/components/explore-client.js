@@ -168,21 +168,58 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
         <div className="mt-3.5 hidden sm:flex items-center gap-2 px-3 pt-3 border-t border-ink/10 text-xs">
           <span className="font-bold text-ink/50 uppercase tracking-widest text-[.65rem] mr-1">Curated Escapes:</span>
           {[
-            { label: "🏔️ Manali Sanctuary", q: "Manali" },
-            { label: "☕ Coorg Coffee Estate", q: "Coorg" },
-            { label: "🌊 Goa Cliffside Villa", q: "Goa" },
-            { label: "🕌 Jaisalmer Domes", q: "Jaisalmer" },
+            {
+              name: "Manali Sanctuary",
+              q: "Manali",
+              icon: (
+                <svg className="w-3.5 h-3.5 text-clay" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+                </svg>
+              ),
+            },
+            {
+              name: "Coorg Coffee Estate",
+              q: "Coorg",
+              icon: (
+                <svg className="w-3.5 h-3.5 text-moss" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                </svg>
+              ),
+            },
+            {
+              name: "Goa Cliffside Villa",
+              q: "Goa",
+              icon: (
+                <svg className="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 12c2.5 0 3-2 5.5-2s3 2 5.5 2 3-2 5.5-2 3 2 5.5 2" />
+                  <path d="M2 17c2.5 0 3-2 5.5-2s3 2 5.5 2 3-2 5.5-2 3 2 5.5 2" />
+                </svg>
+              ),
+            },
+            {
+              name: "Jaisalmer Domes",
+              q: "Jaisalmer",
+              icon: (
+                <svg className="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                  <path d="M2 12h20" />
+                </svg>
+              ),
+            },
           ].map((tag) => (
             <button
               type="button"
-              key={tag.label}
+              key={tag.name}
               onClick={() => {
                 setQuery(tag.q);
                 window.location.href = `/explore?q=${encodeURIComponent(tag.q)}`;
               }}
-              className="rounded-full bg-sand/50 px-3.5 py-1.5 font-bold text-ink/75 hover:bg-clay hover:text-white transition duration-200"
+              className="flex items-center gap-1.5 rounded-full bg-sand/50 px-3 py-1.5 font-bold text-ink/75 hover:bg-clay hover:text-white transition duration-200"
             >
-              {tag.label}
+              <span className="shrink-0">{tag.icon}</span>
+              <span>{tag.name}</span>
             </button>
           ))}
         </div>
