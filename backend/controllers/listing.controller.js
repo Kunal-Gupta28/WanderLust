@@ -1,19 +1,22 @@
 const listingModel = require("../models/listing.model.js");
 const { publicListing } = require("../utils/serialize.js");
 
-const CATEGORIES = [
-  "Trending",
-  "Rooms",
-  "Iconic cities",
-  "Mountains",
-  "Castles",
-  "Amazing pools",
-  "Camping",
-  "Farms",
-  "Arctic",
-  "Domes",
-  "Boats",
-];
+let listingsData;
+try {
+  listingsData = require("../data/listings-data.json");
+} catch {
+  listingsData = {
+    categories: [
+      "All", "Trending", "Mountains", "Beaches", "Rooms", "Castles",
+      "Amazing pools", "Camping", "Farms", "Arctic", "Domes", "Boats",
+      "Treehouses", "Desert", "Lakefront", "Heritage", "Luxury Villas",
+      "Tropical", "Iconic cities"
+    ],
+    listings: []
+  };
+}
+
+const CATEGORIES = listingsData.categories.slice(1);
 
 const listingPayload = (body) => {
   if (body.listing && typeof body.listing === "object") return body.listing;
@@ -29,31 +32,72 @@ const listingPayload = (body) => {
 
 module.exports.index = async (req, res) => {
   const { category } = req.params;
-  const query = {};
-  if (category && category !== "all") query.category = category;
-  const allListings = await listingModel.find(query).populate("owner");
-  const categories = await listingModel.distinct("category");
+  const targetCategory = category && category !== "all" ? category.toLowerCase() : null;
+
+  try {
+    const query = {};
+    if (targetCategory) query.category = new RegExp(`^${category}$`, "i");
+    const allListings = await listingModel.find(query).populate("owner");
+    if (allListings && allListings.length > 0) {
+      const categories = await listingModel.distinct("category");
+      return res.json({
+        listings: allListings.map(publicListing),
+        selectedCategory: category || "all",
+        categories: categories.length ? categories : CATEGORIES,
+        allCategories: CATEGORIES,
+      });
+    }
+  } catch (err) {
+    console.warn("MongoDB listing query fallback to in-memory listings:", err.message);
+  }
+
+  // Resilient in-memory fallback with 900+ curated stays
+  let filtered = listingsData.listings;
+  if (targetCategory) {
+    filtered = filtered.filter((l) => l.category.toLowerCase() === targetCategory);
+  }
+
   res.json({
-    listings: allListings.map(publicListing),
+    listings: filtered,
     selectedCategory: category || "all",
-    categories: categories.length ? categories : CATEGORIES,
+    categories: CATEGORIES,
     allCategories: CATEGORIES,
   });
 };
 
 module.exports.searchListings = async (req, res) => {
   const { q } = req.query;
-  const query = {};
-  if (q) {
-    const searchRegex = new RegExp(q, "i");
-    query.$or = [{ title: searchRegex }, { location: searchRegex }, { country: searchRegex }];
+  try {
+    const query = {};
+    if (q) {
+      const searchRegex = new RegExp(q, "i");
+      query.$or = [{ title: searchRegex }, { location: searchRegex }, { country: searchRegex }, { category: searchRegex }];
+    }
+    const listings = await listingModel.find(query).populate("owner");
+    if (listings && listings.length > 0) {
+      const categories = await listingModel.distinct("category");
+      return res.json({
+        listings: listings.map(publicListing),
+        selectedCategory: "all",
+        categories: categories.length ? categories : CATEGORIES,
+        query: q || "",
+      });
+    }
+  } catch (err) {
+    console.warn("MongoDB search fallback to in-memory:", err.message);
   }
-  const listings = await listingModel.find(query).populate("owner");
-  const categories = await listingModel.distinct("category");
+
+  const queryLower = (q || "").trim().toLowerCase();
+  const filtered = queryLower
+    ? listingsData.listings.filter((item) =>
+        `${item.title} ${item.location} ${item.country} ${item.category} ${item.description}`.toLowerCase().includes(queryLower)
+      )
+    : listingsData.listings;
+
   res.json({
-    listings: listings.map(publicListing),
+    listings: filtered,
     selectedCategory: "all",
-    categories: categories.length ? categories : CATEGORIES,
+    categories: CATEGORIES,
     query: q || "",
   });
 };
@@ -105,13 +149,25 @@ module.exports.showRoute = async (req, res, next) => {
       .populate({ path: "reviews", populate: { path: "author" } })
       .populate("owner");
 
-    if (!listing) {
-      return res.status(404).json({ error: "That stay is no longer listed." });
+    if (listing) {
+      return res.json({ listing: publicListing(listing) });
     }
-    res.json({ listing: publicListing(listing) });
   } catch (err) {
-    next(err);
+    // ID might not be a Mongo ObjectId
   }
+
+  const fallback = listingsData.listings.find((l) => l.id === req.params.id);
+  if (fallback) {
+    return res.json({
+      listing: {
+        ...fallback,
+        reviews: [],
+        owner: { username: "wanderlust-curator", role: "host" }
+      }
+    });
+  }
+
+  res.status(404).json({ error: "That stay is no longer listed." });
 };
 
 module.exports.updateRoute = async (req, res, next) => {
