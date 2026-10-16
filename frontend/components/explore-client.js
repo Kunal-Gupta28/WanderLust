@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState, useEffect, useRef } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
+import TravelAnimation from "./travel-animation";
 import { API_URL, fallbackListings } from "../lib/api";
 
 function Mark() { return <span className="font-display text-[clamp(1.45rem,2.2vw,2rem)] leading-none tracking-[-.06em]">Wander<span className="text-clay">Lust</span></span>; }
@@ -93,9 +94,13 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* Interactive Travel Search & Concierge Bar */}
-    <section className="relative z-20 mx-auto -mt-14 w-[min(94%,76rem)]">
-      <div className="floating-search rounded-3xl bg-white/95 p-3 sm:p-4 shadow-[0_2rem_5rem_rgba(23,34,29,.22)] backdrop-blur-xl border border-white/60">
-        <form onSubmit={search} className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-2">
+    <section className="relative z-20 mx-auto -mt-20 sm:-mt-24 w-[min(94%,76rem)]">
+      <div className="floating-search rounded-3xl bg-white/95 shadow-[0_2rem_5rem_rgba(23,34,29,.22)] backdrop-blur-xl border border-white/70 overflow-hidden">
+        {/* Cute Travel & Playing Journey Animation */}
+        <TravelAnimation onSelectDestination={(val) => setQuery(val)} />
+
+        <div className="p-3 sm:p-4">
+          <form onSubmit={search} className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-2">
           
           {/* Destination Field */}
           <div className="group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl hover:bg-sand/30 transition cursor-text">
@@ -180,6 +185,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
               {tag.label}
             </button>
           ))}
+        </div>
         </div>
       </div>
     </section>
