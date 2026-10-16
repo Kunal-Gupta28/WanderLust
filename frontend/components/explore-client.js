@@ -64,14 +64,20 @@ function AnimatedCounter({ end, suffix = "", duration = 2000 }) {
 
 export default function ExploreClient({ initialData, initialActive = "All" }) {
   const [query, setQuery] = useState("");
+  const [stayType, setStayType] = useState("Any");
   const listings = initialData?.listings || fallbackListings;
   const featuredStays = listings.slice(0, 4);
   const containerRef = useIntersectionObserver();
 
   async function search(event) {
-    event.preventDefault();
-    if (!query.trim()) return;
-    window.location.href = `/explore?q=${encodeURIComponent(query)}`;
+    if (event) event.preventDefault();
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    if (stayType && stayType !== "Any") {
+      params.set("category", stayType);
+    }
+    const qs = params.toString();
+    window.location.href = `/explore${qs ? `?${qs}` : ""}`;
   }
 
   return <main ref={containerRef} className="overflow-hidden bg-paper">
@@ -97,7 +103,12 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     <section className="relative z-20 mx-auto -mt-20 sm:-mt-24 w-[min(94%,76rem)]">
       <div className="floating-search rounded-3xl bg-white/95 shadow-[0_2rem_5rem_rgba(23,34,29,.22)] backdrop-blur-xl border border-white/70 overflow-hidden">
         {/* Cute Travel & Playing Journey Animation */}
-        <TravelAnimation onSelectDestination={(val) => setQuery(val)} />
+        <TravelAnimation
+          onSelectDestination={(val, category) => {
+            setQuery(val);
+            if (category) setStayType(category);
+          }}
+        />
 
         <div className="p-3 sm:p-4">
           <form onSubmit={search} className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-2">
@@ -126,13 +137,9 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
             <div className="flex-1 min-w-0">
               <span className="block text-[.68rem] font-bold tracking-[.15em] text-moss uppercase leading-tight mb-0.5">Stay Type</span>
               <select 
-                onChange={(e) => {
-                  if (e.target.value && e.target.value !== "Any") {
-                    window.location.href = `/explore/${encodeURIComponent(e.target.value.toLowerCase())}`;
-                  }
-                }}
+                value={stayType}
+                onChange={(e) => setStayType(e.target.value)}
                 className="w-full bg-transparent text-sm sm:text-base font-bold text-ink outline-none cursor-pointer"
-                defaultValue="Any"
               >
                 <option value="Any">Any Atmosphere</option>
                 <option value="Mountains">Mountain Cabins</option>
@@ -140,6 +147,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
                 <option value="Domes">Geodesic Domes</option>
                 <option value="Farms">Quiet Farmstays</option>
                 <option value="Rooms">Cozy Suites</option>
+                <option value="Amazing pools">Amazing Pools</option>
               </select>
             </div>
           </div>

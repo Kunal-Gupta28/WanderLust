@@ -9,15 +9,31 @@ import { categories, fallbackListings } from "../lib/api";
 
 const slug = (value) => value.toLowerCase().replaceAll(" ", "-");
 
-export default function ExploreDirectory({ initialData, initialActive = "All" }) {
+export default function ExploreDirectory({ initialData, initialActive = "All", initialQuery = "" }) {
   const [active, setActive] = useState(initialActive);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const listings = initialData.listings || fallbackListings;
   
-  const visible = useMemo(() => listings.filter((stay) => 
-    (active === "All" || stay.category === active) && 
-    `${stay.title} ${stay.location} ${stay.country}`.toLowerCase().includes(query.toLowerCase())
-  ), [active, listings, query]);
+  // Sync with URL query params (?q=... and ?category=...) on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const sp = new URLSearchParams(window.location.search);
+      const urlQuery = sp.get("q");
+      const urlCat = sp.get("category");
+      if (urlQuery) setQuery(urlQuery);
+      if (urlCat) {
+        const match = categories.find((c) => c.toLowerCase() === urlCat.toLowerCase());
+        if (match) setActive(match);
+      }
+    }
+  }, []);
+
+  const visible = useMemo(() => listings.filter((stay) => {
+    const matchesCategory = active === "All" || stay.category.toLowerCase() === active.toLowerCase();
+    const searchTarget = `${stay.title} ${stay.location} ${stay.country} ${stay.category} ${stay.description || ""}`.toLowerCase();
+    const matchesQuery = !query.trim() || searchTarget.includes(query.trim().toLowerCase());
+    return matchesCategory && matchesQuery;
+  }), [active, listings, query]);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -73,7 +89,7 @@ export default function ExploreDirectory({ initialData, initialActive = "All" })
               key={category} 
               href={category === "All" ? "/explore" : `/explore/${slug(category)}`} 
               onClick={() => setActive(category)} 
-              className={`animate-on-scroll shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition [opacity:0] [&.is-visible]:animate-[rise-in_0.6s_ease-out_forwards] ${active === category ? "bg-ink text-white" : "bg-[#ede9df] hover:bg-sand"}`}
+              className={`animate-on-scroll shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold transition [opacity:0] [&.is-visible]:animate-[rise-in_0.6s_ease-out_forwards] ${active.toLowerCase() === category.toLowerCase() ? "bg-ink text-white" : "bg-[#ede9df] hover:bg-sand"}`}
               style={{ animationDelay: `${idx * 0.05}s` }}
             >
               {category}

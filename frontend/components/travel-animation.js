@@ -234,7 +234,7 @@ export default function TravelAnimation({ onSelectDestination }) {
     setTicketNotice(true);
 
     if (onSelectDestination) {
-      onSelectDestination(randomPick.name);
+      onSelectDestination(randomPick.name, randomPick.category, randomPick.id);
     }
   }
 
@@ -718,18 +718,20 @@ export default function TravelAnimation({ onSelectDestination }) {
             <button
               type="button"
               onClick={() => {
-                if (onSelectDestination) {
-                  onSelectDestination(luckyStay.location.split(",")[0]);
-                }
-                const exploreEl = document.getElementById("featured-stays");
-                if (exploreEl) {
-                  exploreEl.scrollIntoView({ behavior: "smooth" });
-                }
+                const q = encodeURIComponent(luckyStay.name);
+                const cat = encodeURIComponent(luckyStay.category);
+                window.location.href = `/explore?q=${q}&category=${cat}`;
               }}
               className="rounded-xl bg-clay hover:bg-[#9e442b] text-white px-3 py-1.5 font-bold transition shadow-sm"
             >
               Explore This Stay
             </button>
+            <Link
+              href={`/listings/${luckyStay.id}`}
+              className="rounded-xl bg-sand/80 hover:bg-sand text-ink px-3 py-1.5 font-bold transition"
+            >
+              View Listing
+            </Link>
             <button
               type="button"
               onClick={rollSurpriseStay}
