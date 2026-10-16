@@ -21,6 +21,9 @@ import {
   StarIcon,
   CheckIcon,
   CloseIcon,
+  MinusIcon,
+  PlusIcon,
+  CreditCardIcon,
 } from "./icons";
 
 function useIntersectionObserver(options = {}) {
@@ -556,74 +559,112 @@ export default function ListingDetail({ listing }) {
           <div className="sticky top-28 space-y-6">
 
             {/* Dynamic Rent Calculator Card */}
-            <div className="p-8 rounded-[2rem] bg-white border border-ink/10 shadow-lg space-y-6">
+            <div className="p-7 md:p-8 rounded-[2rem] bg-white border border-ink/10 shadow-[0_20px_50px_rgba(23,34,29,0.08)] space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-ink/10">
                 <div>
-                  <span className="text-xs font-bold text-clay uppercase tracking-widest">Interactive Rent Estimator</span>
-                  <h3 className="font-display text-2xl font-bold">Calculate Your Rent</h3>
+                  <span className="text-[11px] font-bold text-clay uppercase tracking-widest">Interactive Rent Estimator</span>
+                  <h3 className="font-display text-2xl font-bold tracking-tight text-ink mt-0.5">Calculate Your Rent</h3>
                 </div>
-                <span className="text-xs font-bold text-moss bg-moss/10 px-3 py-1 rounded-full">
-                  Live Rates
-                </span>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-moss/10 text-moss text-xs font-bold border border-moss/20">
+                  <span className="w-2 h-2 rounded-full bg-moss animate-pulse" />
+                  <span>Live Rates</span>
+                </div>
               </div>
 
               {/* Calculator Inputs */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-ink/70">
+                  <label className="block text-xs font-bold uppercase tracking-wider mb-2 text-ink/70">
                     Stay Accommodations Type
                   </label>
-                  <select
-                    value={calcSpaceType}
-                    onChange={(e) => setCalcSpaceType(e.target.value)}
-                    className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm font-medium outline-none focus:border-clay"
-                  >
-                    <option value="entire">Whole House / Entire Villa (1.0x Base)</option>
-                    <option value="private_room">Single Private Room (0.65x Base)</option>
-                    <option value="suite">Luxury Multi-room Suite (1.45x Base)</option>
-                  </select>
+                  <div className="relative">
+                    <select
+                      value={calcSpaceType}
+                      onChange={(e) => setCalcSpaceType(e.target.value)}
+                      className="w-full appearance-none px-4 py-3.5 pr-10 bg-sand/25 hover:bg-sand/40 border border-ink/15 rounded-2xl text-sm font-semibold text-ink transition-colors cursor-pointer outline-none focus:border-clay focus:ring-2 focus:ring-clay/20 shadow-sm"
+                    >
+                      <option value="entire">Whole House / Entire Villa (1.0x Base)</option>
+                      <option value="private_room">Single Private Room (0.65x Base)</option>
+                      <option value="suite">Luxury Multi-room Suite (1.45x Base)</option>
+                    </select>
+                    <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-ink/60">
+                      <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-current fill-none stroke-[2.5]">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-ink/70">
-                      Stay Duration (Nights)
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={30}
-                      value={calcNights}
-                      onChange={(e) => setCalcNights(Math.max(1, Number(e.target.value)))}
-                      className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm font-bold outline-none focus:border-clay"
-                    />
+                <div className="grid grid-cols-2 gap-3.5">
+                  <div className="p-3.5 bg-sand/25 hover:bg-sand/35 border border-ink/15 rounded-2xl flex flex-col justify-between transition-colors">
+                    <span className="block text-[11px] font-bold uppercase tracking-wider text-ink/60">
+                      Stay Duration
+                    </span>
+                    <div className="flex items-center justify-between mt-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setCalcNights(Math.max(1, calcNights - 1))}
+                        disabled={calcNights <= 1}
+                        className="w-7 h-7 rounded-full bg-white border border-ink/15 flex items-center justify-center text-ink hover:bg-sand/60 hover:border-ink/30 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
+                        aria-label="Decrease nights"
+                      >
+                        <MinusIcon className="w-3 h-3" />
+                      </button>
+                      <span className="font-display font-bold text-sm md:text-base text-ink select-none px-1 text-center">
+                        {calcNights} {calcNights === 1 ? "Night" : "Nights"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCalcNights(Math.min(30, calcNights + 1))}
+                        disabled={calcNights >= 30}
+                        className="w-7 h-7 rounded-full bg-white border border-ink/15 flex items-center justify-center text-ink hover:bg-sand/60 hover:border-ink/30 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
+                        aria-label="Increase nights"
+                      >
+                        <PlusIcon className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider mb-1.5 text-ink/70">
-                      Number of Guests
-                    </label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={12}
-                      value={calcGuests}
-                      onChange={(e) => setCalcGuests(Math.max(1, Number(e.target.value)))}
-                      className="w-full px-4 py-3 bg-sand/30 border border-ink/15 rounded-xl text-sm font-bold outline-none focus:border-clay"
-                    />
+                  <div className="p-3.5 bg-sand/25 hover:bg-sand/35 border border-ink/15 rounded-2xl flex flex-col justify-between transition-colors">
+                    <span className="block text-[11px] font-bold uppercase tracking-wider text-ink/60">
+                      Guests
+                    </span>
+                    <div className="flex items-center justify-between mt-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setCalcGuests(Math.max(1, calcGuests - 1))}
+                        disabled={calcGuests <= 1}
+                        className="w-7 h-7 rounded-full bg-white border border-ink/15 flex items-center justify-center text-ink hover:bg-sand/60 hover:border-ink/30 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
+                        aria-label="Decrease guests"
+                      >
+                        <MinusIcon className="w-3 h-3" />
+                      </button>
+                      <span className="font-display font-bold text-sm md:text-base text-ink select-none px-1 text-center">
+                        {calcGuests} {calcGuests === 1 ? "Guest" : "Guests"}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setCalcGuests(Math.min(12, calcGuests + 1))}
+                        disabled={calcGuests >= 12}
+                        className="w-7 h-7 rounded-full bg-white border border-ink/15 flex items-center justify-center text-ink hover:bg-sand/60 hover:border-ink/30 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm cursor-pointer"
+                        aria-label="Increase guests"
+                      >
+                        <PlusIcon className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Price Calculation Breakdown Table */}
-              <div className="space-y-3 pt-4 border-t border-ink/10 text-sm text-ink/80 font-medium">
-                <div className="flex justify-between">
+              <div className="p-4 bg-sand/20 border border-ink/10 rounded-2xl space-y-2.5 text-xs md:text-sm font-medium">
+                <div className="flex justify-between text-ink/75">
                   <span>Nightly Rate ({calcSpaceType.replace("_", " ")})</span>
-                  <span>₹{dailyRate.toLocaleString("en-IN")}/night</span>
+                  <span className="font-semibold text-ink">₹{dailyRate.toLocaleString("en-IN")}/night</span>
                 </div>
-                <div className="flex justify-between">
-                  <span>₹{dailyRate.toLocaleString("en-IN")} × {calcNights} nights</span>
-                  <span>₹{staySubtotal.toLocaleString("en-IN")}</span>
+                <div className="flex justify-between text-ink/75">
+                  <span>₹{dailyRate.toLocaleString("en-IN")} × {calcNights} {calcNights === 1 ? "night" : "nights"}</span>
+                  <span className="font-semibold text-ink">₹{staySubtotal.toLocaleString("en-IN")}</span>
                 </div>
                 {extraGuestFee > 0 && (
                   <div className="flex justify-between text-clay font-bold">
@@ -631,24 +672,30 @@ export default function ListingDetail({ listing }) {
                     <span>+₹{extraGuestFee.toLocaleString("en-IN")}</span>
                   </div>
                 )}
-                <div className="flex justify-between">
+                <div className="flex justify-between text-ink/75">
                   <span>Cleaning & Sanitation Fee</span>
-                  <span>₹{cleaningFee.toLocaleString("en-IN")}</span>
+                  <span className="font-semibold text-ink">₹{cleaningFee.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-ink/75">
                   <span>Service Fee & Taxes (10%)</span>
-                  <span>₹{serviceFee.toLocaleString("en-IN")}</span>
+                  <span className="font-semibold text-ink">₹{serviceFee.toLocaleString("en-IN")}</span>
                 </div>
               </div>
 
-              <div className="flex justify-between font-display font-bold text-2xl pt-4 border-t border-ink/10 text-ink">
-                <span>Calculated Rent</span>
-                <span className="text-clay">₹{grandTotal.toLocaleString("en-IN")}</span>
+              <div className="flex items-baseline justify-between pt-2 text-ink">
+                <div>
+                  <span className="block text-[11px] font-bold uppercase tracking-wider text-ink/50">Total Estimation</span>
+                  <span className="font-display font-bold text-2xl">Calculated Rent</span>
+                </div>
+                <div className="text-right">
+                  <span className="font-display text-3xl font-extrabold text-clay tracking-tight">₹{grandTotal.toLocaleString("en-IN")}</span>
+                  <span className="block text-[10px] text-ink/50 font-medium">Includes taxes & all fees</span>
+                </div>
               </div>
 
               {/* Checkout / Booking Action */}
               {bookingConfirmation ? (
-                <div className="text-center py-4 space-y-4 bg-moss/10 p-5 rounded-2xl border border-moss/20">
+                <div className="text-center py-4 space-y-3 bg-moss/10 p-5 rounded-2xl border border-moss/20">
                   <span className="inline-block px-3 py-1 rounded-full bg-moss text-paper text-xs font-bold uppercase tracking-wider">
                     Reservation Confirmed
                   </span>
@@ -659,24 +706,22 @@ export default function ListingDetail({ listing }) {
                 <button 
                   onClick={handleRazorpayPayment}
                   disabled={paymentLoading}
-                  className="w-full rounded-xl bg-clay px-6 py-4 text-base font-bold text-white transition-all duration-300 hover:bg-[#9e442b] hover:shadow-xl active:scale-[.99] disabled:opacity-60 flex items-center justify-center gap-2 shadow-md"
+                  className="w-full rounded-2xl bg-clay hover:bg-[#a6472b] active:scale-[0.99] text-white py-4 px-6 text-sm font-bold tracking-wide shadow-[0_10px_25px_rgba(185,87,56,0.3)] hover:shadow-[0_14px_30px_rgba(185,87,56,0.4)] transition-all duration-200 flex items-center justify-center gap-2.5 disabled:opacity-60 cursor-pointer"
                 >
                   {paymentLoading ? (
                     <span>Opening Razorpay Gateway…</span>
                   ) : (
                     <>
-                      <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-[2]">
-                        <rect x="2" y="5" width="20" height="14" rx="2" />
-                        <line x1="2" y1="10" x2="22" y2="10" />
-                      </svg>
+                      <CreditCardIcon className="w-5 h-5 text-white/90" />
                       <span>Reserve Now via Razorpay (₹{grandTotal.toLocaleString("en-IN")})</span>
                     </>
                   )}
                 </button>
               )}
 
-              <p className="text-xs text-center text-ink/50 font-medium flex items-center justify-center gap-1.5">
-                <LockIcon className="w-3.5 h-3.5" /> Protected by WanderLust Guest Guarantee & Razorpay
+              <p className="text-xs text-center text-ink/55 font-medium flex items-center justify-center gap-1.5 pt-1">
+                <ShieldCheckIcon className="w-4 h-4 text-moss stroke-[2]" />
+                <span>Protected by WanderLust Guest Guarantee & Razorpay</span>
               </p>
             </div>
 
