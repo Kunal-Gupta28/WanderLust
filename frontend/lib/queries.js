@@ -1,5 +1,31 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
 import { getListings, getListing, getCurrentUser } from "./api";
+
+/**
+ * TanStack Query hook for infinite scrolling listings with caching
+ */
+export function useInfiniteListingsQuery(params = {}, initialData = undefined) {
+  const { limit = 12, category = "All", q = "" } = params;
+
+  return useInfiniteQuery({
+    queryKey: ["listings-infinite", { limit, category, q }],
+    queryFn: ({ pageParam = 1 }) => getListings({ page: pageParam, limit, category, q }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage?.pagination?.hasMore) {
+        return (lastPage.pagination.page || 1) + 1;
+      }
+      return undefined;
+    },
+    initialData: initialData
+      ? {
+          pages: [initialData],
+          pageParams: [1],
+        }
+      : undefined,
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
+  });
+}
 
 /**
  * TanStack Query hook for paginated & categorized listings with caching
@@ -12,7 +38,7 @@ export function useListingsQuery(params = {}, initialData = undefined) {
     queryFn: () => getListings({ page, limit, category, q }),
     placeholderData: keepPreviousData,
     initialData,
-    staleTime: 5 * 60 * 1000, // 5 minutes cache
+    staleTime: 5 * 60 * 1000,
   });
 }
 
