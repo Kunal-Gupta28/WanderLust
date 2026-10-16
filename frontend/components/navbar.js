@@ -102,8 +102,6 @@ export default function Navbar({ transparent = false }) {
 
   const links = [
     { href: "/explore", label: "Explore" },
-    { href: "/host/dashboard", label: "Host Hub" },
-    { href: "/admin", label: "Admin CRM" },
     { href: "/philosophy", label: "Philosophy" },
     { href: "/about", label: "About Us" },
     { href: "/faq", label: "FAQ" },
