@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 // 4 Distinct Terrains / Biomes with unique roadside objects & landscape
@@ -176,7 +176,7 @@ function StarIcon({ className = "w-3 h-3" }) {
   );
 }
 
-export default function TravelAnimation({ onSelectDestination }) {
+export default function TravelAnimation({ onSelectDestination, triggerRef }) {
   // 1. Day / Night Atmospheric state (controlled ONLY by Sun / Moon button)
   const [isNight, setIsNight] = useState(false);
 
@@ -237,6 +237,12 @@ export default function TravelAnimation({ onSelectDestination }) {
       onSelectDestination(randomPick.name, randomPick.category, randomPick.id);
     }
   }
+
+  useEffect(() => {
+    if (triggerRef) {
+      triggerRef.current = rollSurpriseStay;
+    }
+  }, [triggerRef]);
 
   return (
     <div

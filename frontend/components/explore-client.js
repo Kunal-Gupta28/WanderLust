@@ -68,6 +68,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
   const listings = initialData?.listings || fallbackListings;
   const featuredStays = listings.slice(0, 4);
   const containerRef = useIntersectionObserver();
+  const surpriseRef = useRef(null);
 
   async function search(event) {
     if (event) event.preventDefault();
@@ -105,6 +106,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
       <div className="floating-search rounded-3xl bg-white/95 shadow-[0_2rem_5rem_rgba(23,34,29,.22)] backdrop-blur-xl border border-white/70 overflow-hidden">
         {/* Cute Travel & Playing Journey Animation */}
         <TravelAnimation
+          triggerRef={surpriseRef}
           onSelectDestination={(val, category) => {
             setQuery(val);
             if (category) setStayType(category);
@@ -114,26 +116,48 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
         <div className="p-3 sm:p-4">
           <form onSubmit={search} className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_auto] items-center gap-2">
           
-          {/* Destination Field */}
-          <div className="group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl hover:bg-sand/30 focus-within:bg-sand/40 focus-within:ring-2 focus-within:ring-clay/25 transition-all cursor-text">
-            <span className="flex items-center justify-center w-11 h-11 rounded-2xl bg-sand/60 text-clay group-hover:scale-105 group-hover:bg-clay group-hover:text-white group-focus-within:bg-clay group-focus-within:text-white transition-all shrink-0">
+          {/* Destination Field (Interactive Display - Not an input field) */}
+          <div 
+            onClick={() => surpriseRef.current && surpriseRef.current()}
+            className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all cursor-pointer ${
+              query ? "bg-sand/30 hover:bg-sand/50 ring-1 ring-clay/20" : "hover:bg-sand/30"
+            }`}
+            title={query ? "Destination selected. Click to re-roll a Surprise Stay." : "Click to draw a Surprise Stay destination"}
+          >
+            <span className={`flex items-center justify-center w-11 h-11 rounded-2xl transition-all shrink-0 ${
+              query ? "bg-clay text-white shadow-sm" : "bg-sand/60 text-clay group-hover:scale-105 group-hover:bg-clay group-hover:text-white"
+            }`}>
               <Pin />
             </span>
             <div className="flex-1 min-w-0">
-              <span className="block text-[.68rem] font-bold tracking-[.15em] text-moss uppercase leading-tight mb-0.5">Destination</span>
-              <input 
-                value={query} 
-                onChange={(e) => setQuery(e.target.value)} 
-                className="w-full bg-transparent text-sm sm:text-base font-bold text-ink border-0 p-0 outline-none focus:outline-none focus:ring-0 focus-visible:outline-none placeholder:text-ink/35 placeholder:font-normal leading-normal" 
-                placeholder="Where do you wish to wake up?" 
-              />
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <span className="block text-[.68rem] font-bold tracking-[.15em] text-moss uppercase leading-tight">Destination</span>
+                {query ? (
+                  <span className="text-[.6rem] font-bold uppercase tracking-wider bg-clay/10 text-clay px-1.5 py-0.2 rounded-full">
+                    Selected
+                  </span>
+                ) : (
+                  <span className="text-[.6rem] font-medium text-ink/40">
+                    (Surprise Stay)
+                  </span>
+                )}
+              </div>
+              {query ? (
+                <div className="text-sm sm:text-base font-bold text-ink truncate leading-normal">
+                  {query}
+                </div>
+              ) : (
+                <div className="text-sm sm:text-base font-medium text-ink/40 truncate leading-normal flex items-center gap-1">
+                  <span>Click &quot;Surprise Stay&quot; to roll</span>
+                </div>
+              )}
             </div>
             {query && (
               <button 
                 type="button" 
                 onClick={(e) => { e.stopPropagation(); setQuery(""); }}
                 className="p-1.5 rounded-full text-ink/40 hover:text-ink hover:bg-sand/80 transition-all shrink-0"
-                title="Clear input"
+                title="Clear destination"
               >
                 <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="18" y1="6" x2="6" y2="18" />
