@@ -21,6 +21,11 @@ const userSchema = new Schema({
         enum: ["traveler", "host", "admin"],
         default: "traveler"
     },
+    phone: {
+        type: String,
+        trim: true,
+        default: ""
+    },
     createdAt: {
         type: Date,
         default: Date.now

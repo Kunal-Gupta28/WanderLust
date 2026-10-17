@@ -46,7 +46,7 @@ module.exports.me = async (req, res) => {
 
 module.exports.signUp = async (req, res, next) => {
   try {
-    const { username, email, password, role } = req.body;
+    const { username, email, password, role, phone } = req.body;
     if (!username || !email || !password) {
       return res.status(400).json({ error: "Username, email, and password are required." });
     }
@@ -55,7 +55,12 @@ module.exports.signUp = async (req, res, next) => {
 
     let user;
     try {
-      const newUser = new userModel({ email, username, role: assignedRole });
+      const newUser = new userModel({
+        email,
+        username,
+        role: assignedRole,
+        phone: phone || "",
+      });
       user = await userModel.register(newUser, password);
     } catch (dbErr) {
       if (memoryUsers.has(username)) {
@@ -66,15 +71,23 @@ module.exports.signUp = async (req, res, next) => {
         username,
         email,
         role: assignedRole,
+        phone: phone || "",
       };
-      memoryUsers.set(username, { ...user, password, role: assignedRole });
+      memoryUsers.set(username, { ...user, password, role: assignedRole, phone: phone || "" });
     }
 
     const token = generateToken(user);
     sendTokenCookie(res, token);
 
     res.status(201).json({
-      user: publicUser(user) || { id: user._id, username: user.username, email: user.email, role: assignedRole },
+      user:
+        publicUser(user) || {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: assignedRole,
+          phone: phone || "",
+        },
       token,
       message: `Welcome to WanderLust as a ${assignedRole === "host" ? "Host" : "Traveler"}!`,
     });

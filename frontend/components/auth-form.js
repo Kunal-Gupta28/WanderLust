@@ -336,6 +336,20 @@ export default function AuthForm({ mode }) {
                 />
               </div>
             )}
+            {signup && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold uppercase tracking-wider text-ink/75 block">
+                  Phone Number *
+                </label>
+                <input
+                  name="phone"
+                  type="tel"
+                  required
+                  className="w-full rounded-xl border border-ink/15 bg-sand/20 px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                  placeholder="+91 98765 43210"
+                />
+              </div>
+            )}
             <div className="space-y-1">
               <label className="text-xs font-bold uppercase tracking-wider text-ink/75 block">
                 Username *

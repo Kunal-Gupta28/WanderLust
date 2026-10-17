@@ -5,6 +5,7 @@ const publicUser = (user) => {
     username: user.username,
     email: user.email,
     role: user.role || "traveler",
+    phone: user.phone || "",
     isAdmin:
       typeof user.isAdmin === "function"
         ? user.isAdmin()
