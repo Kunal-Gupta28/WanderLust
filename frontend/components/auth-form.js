@@ -142,7 +142,7 @@ export default function AuthForm({ mode }) {
       </section>
 
       {/* Right panel — Auth Form */}
-      <section className="mx-auto flex h-full min-h-screen w-full max-w-lg flex-col justify-between px-5 py-4 sm:px-8 bg-paper overflow-y-auto">
+      <section className="mx-auto flex h-full min-h-screen w-full max-w-[480px] flex-col justify-between px-6 py-6 sm:px-10 bg-paper overflow-y-auto">
         {/* Top Bar Navigation */}
         <div className="flex items-center justify-between lg:justify-end pt-1">
           <Link href="/" className="font-display text-2xl tracking-[-.06em] lg:hidden">
@@ -150,7 +150,7 @@ export default function AuthForm({ mode }) {
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-1.5 rounded-full border border-ink/15 bg-white/60 px-3 py-1 text-xs font-bold text-ink/75 hover:bg-white hover:text-clay hover:border-clay/40 transition shadow-sm"
+            className="flex items-center gap-1.5 rounded-full border border-ink/15 bg-white px-3.5 py-1.5 text-xs font-bold text-ink/75 hover:text-clay hover:border-clay/40 transition shadow-sm"
           >
             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 stroke-current fill-none stroke-[2]">
               <line x1="19" y1="12" x2="5" y2="12" />
@@ -161,52 +161,55 @@ export default function AuthForm({ mode }) {
         </div>
 
         {/* Form Body Container */}
-        <div className="my-auto py-2">
-          <span className="text-[10px] font-bold tracking-[.18em] text-clay uppercase">
-            {signup ? "Create Account" : "Welcome Back"}
-          </span>
-          <h1 className="mt-0.5 font-display text-2xl sm:text-3xl font-bold leading-tight tracking-[-.04em] text-ink">
-            {signup
-              ? selectedRole === "host"
-                ? "Become a Property Host"
-                : "Join as a Traveler"
-              : "Sign in to your account"}
-          </h1>
-          <p className="mt-1 text-xs text-ink/65 leading-snug">
-            {signup
-              ? selectedRole === "host"
-                ? "List properties, manage reservations & access Host Hub."
-                : "Explore curated stays, book with Razorpay & message hosts."
-              : "Sign in with your credentials or test any of the 3 platform roles below."}
-          </p>
+        <div className="my-auto py-3">
+          <div className="mb-3.5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-clay/10 text-clay border border-clay/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-clay" />
+              {signup ? "Create Account" : "Welcome Back"}
+            </span>
+            <h1 className="mt-2 font-display text-3xl sm:text-4xl font-bold tracking-tight text-ink leading-tight">
+              {signup
+                ? selectedRole === "host"
+                  ? "Become a Property Host"
+                  : "Join as a Traveler"
+                : "Sign in to WanderLust"}
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-ink/65 leading-relaxed">
+              {signup
+                ? selectedRole === "host"
+                  ? "List properties, manage reservations & access Host Hub."
+                  : "Explore curated slow stays, book with Razorpay & message hosts."
+                : "Sign in with your credentials or test any of the 3 platform roles below."}
+            </p>
+          </div>
 
-          {/* ── Signup: Role Selection Tabs (Compact Segmented Pill) ── */}
+          {/* ── Signup: Role Selection Tabs ── */}
           {signup && (
-            <div className="mt-3.5 mb-2">
-              <div className="grid grid-cols-2 gap-1.5 p-1 bg-sand/35 rounded-xl border border-ink/10">
+            <div className="mb-4">
+              <div className="grid grid-cols-2 p-1.5 bg-sand/40 rounded-2xl border border-ink/10 gap-1.5 shadow-inner">
                 <button
                   type="button"
                   onClick={() => setSelectedRole("traveler")}
-                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                     selectedRole === "traveler"
                       ? "bg-white text-ink shadow-sm ring-1 ring-ink/10"
                       : "text-ink/60 hover:text-ink hover:bg-white/40"
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-moss" />
+                  <span className={`w-2 h-2 rounded-full ${selectedRole === "traveler" ? "bg-moss" : "bg-ink/30"}`} />
                   <span>Traveler (Client)</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setSelectedRole("host")}
-                  className={`py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                     selectedRole === "host"
                       ? "bg-white text-clay shadow-sm ring-1 ring-clay/20"
                       : "text-ink/60 hover:text-clay hover:bg-white/40"
                   }`}
                 >
-                  <span className="w-2 h-2 rounded-full bg-clay" />
+                  <span className={`w-2 h-2 rounded-full ${selectedRole === "host" ? "bg-clay" : "bg-ink/30"}`} />
                   <span>Property Host</span>
                 </button>
               </div>
@@ -215,7 +218,7 @@ export default function AuthForm({ mode }) {
 
           {/* ── Login: 1-Click Quick Demo Login for All 3 Roles ── */}
           {!signup && (
-            <div className="mt-5 p-4 rounded-2xl bg-sand/30 border border-ink/10 space-y-2.5">
+            <div className="mb-4 p-4 rounded-2xl bg-sand/30 border border-ink/10 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-ink/75">
                   1-Click Instant Demo Login (3 Roles)
@@ -277,120 +280,112 @@ export default function AuthForm({ mode }) {
             </div>
           )}
 
-          {/* ── Elegant Divider ── */}
-          <div className="my-2.5 flex items-center gap-3">
-            <span className="h-px flex-1 bg-ink/15" />
-            <span className="text-[.65rem] font-bold tracking-[.12em] text-ink/40 uppercase">
-              {signup ? "account details" : "or continue with credentials"}
-            </span>
-            <span className="h-px flex-1 bg-ink/15" />
-          </div>
-
           {/* ── Form Inputs ── */}
-          <form onSubmit={submit} className="space-y-2">
+          <form onSubmit={submit} className="space-y-3">
             {signup ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <>
                 {/* Full Name */}
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/70 block">
+                <div>
+                  <label className="text-xs font-semibold text-ink/80 block mb-1">
                     Full Name *
                   </label>
                   <input
                     name="fullName"
                     required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3 py-2 text-xs sm:text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                    className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
                     placeholder="e.g. Elena Rostova"
                   />
                 </div>
 
-                {/* Phone Number */}
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/70 block">
-                    Phone Number *
-                  </label>
-                  <input
-                    name="phone"
-                    type="tel"
-                    required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3 py-2 text-xs sm:text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
-                    placeholder="+91 98765 43210"
-                  />
-                </div>
-
                 {/* Email Address */}
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/70 block">
+                <div>
+                  <label className="text-xs font-semibold text-ink/80 block mb-1">
                     Email Address *
                   </label>
                   <input
                     name="email"
                     type="email"
                     required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3 py-2 text-xs sm:text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                    className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
                     placeholder="you@example.com"
                   />
                 </div>
 
-                {/* Username */}
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/70 block">
-                    Username *
-                  </label>
-                  <input
-                    name="username"
-                    type="text"
-                    required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3 py-2 text-xs sm:text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
-                    placeholder="Pick username"
-                  />
+                {/* Phone & Username in 2 Columns */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-ink/80 block mb-1">
+                      Phone Number *
+                    </label>
+                    <input
+                      name="phone"
+                      type="tel"
+                      required
+                      className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
+                      placeholder="+91 98765 43210"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-ink/80 block mb-1">
+                      Username *
+                    </label>
+                    <input
+                      name="username"
+                      type="text"
+                      required
+                      className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
+                      placeholder="Pick username"
+                    />
+                  </div>
                 </div>
 
-                {/* Password (Full Width) */}
-                <div className="space-y-0.5 sm:col-span-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/70 block">
+                {/* Password */}
+                <div>
+                  <label className="text-xs font-semibold text-ink/80 block mb-1">
                     Password *
                   </label>
                   <input
                     name="password"
                     type="password"
                     required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3 py-2 text-xs sm:text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                    className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
                     placeholder="At least 8 characters"
                   />
                 </div>
-              </div>
+              </>
             ) : (
-              <div className="space-y-2.5">
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/75 block">
+              <>
+                <div>
+                  <label className="text-xs font-semibold text-ink/80 block mb-1">
                     Username *
                   </label>
                   <input
                     name="username"
                     type="text"
                     required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                    className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
                     placeholder="Your username"
                   />
                 </div>
-                <div className="space-y-0.5">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-ink/75 block">
+                <div>
+                  <label className="text-xs font-semibold text-ink/80 block mb-1">
                     Password *
                   </label>
                   <input
                     name="password"
                     type="password"
                     required
-                    className="w-full rounded-xl border border-ink/15 bg-sand/20 px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                    className="w-full rounded-xl border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:ring-2 focus:ring-clay/15 placeholder:text-ink/35 shadow-sm"
                     placeholder="Your password"
                   />
                 </div>
-              </div>
+              </>
             )}
 
             <button
               disabled={formLoading}
-              className="mt-2.5 w-full rounded-xl bg-clay py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-white shadow-md transition hover:bg-[#9e442b] active:scale-[.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
+              className="mt-3 w-full rounded-xl bg-clay hover:bg-[#a0462c] py-3 text-sm font-bold text-white shadow-sm hover:shadow-md transition-all active:scale-[.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
             >
               {formLoading ? (
                 <>
@@ -401,20 +396,20 @@ export default function AuthForm({ mode }) {
                   <span>Verifying…</span>
                 </>
               ) : (
-                signup ? `Create ${selectedRole === "host" ? "Host" : "Traveler"} Account` : "Log In"
+                <span>{signup ? `Create ${selectedRole === "host" ? "Host" : "Traveler"} Account →` : "Sign In →"}</span>
               )}
             </button>
           </form>
 
           {/* Status Message */}
           {message && (
-            <div className="mt-2.5 p-2.5 rounded-xl bg-moss/10 border border-moss/20 text-moss text-xs font-bold text-center">
+            <div className="mt-3 p-3 rounded-xl bg-moss/10 border border-moss/20 text-moss text-xs font-bold text-center">
               {message}
             </div>
           )}
 
           {/* Toggle Login/Signup */}
-          <p className="mt-3 text-xs text-ink/65 text-center">
+          <p className="mt-3.5 text-xs text-ink/65 text-center">
             {signup ? "Already have an account?" : "New to WanderLust?"}{" "}
             <Link
               href={signup ? "/login" : "/signup"}
