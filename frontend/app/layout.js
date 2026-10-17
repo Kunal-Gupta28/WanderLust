@@ -10,7 +10,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="font-sans">
+    <html lang="en" className="font-sans" suppressHydrationWarning>
       <head>
         <style>{`
           :root {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
           }
         `}</style>
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <QueryProvider>
           <ErrorBoundary>
             <SmoothScroll>{children}</SmoothScroll>
