@@ -425,7 +425,7 @@ export default function ListingDetail({ listing }) {
   };
 
   return (
-    <main className="min-h-[100svh] flex flex-col bg-paper text-ink selection:bg-clay selection:text-white overflow-hidden pt-16">
+    <main className="min-h-[100svh] flex flex-col bg-paper text-ink selection:bg-clay selection:text-white overflow-x-clip pt-16">
       <Navbar />
 
       {/* Hero Cover Banner */}
@@ -856,6 +856,38 @@ export default function ListingDetail({ listing }) {
                 <ShieldCheckIcon className="w-4 h-4 text-moss stroke-[2]" />
                 <span>Protected by WanderLust Guest Guarantee & Razorpay</span>
               </p>
+            </div>
+
+            {/* Host Connection & Safe Booking Guarantee Card */}
+            <div className="p-6 rounded-[2rem] bg-sand/35 border border-ink/10 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-moss flex items-center justify-center text-white font-display text-base font-bold shadow-sm">
+                    {listing.owner?.username ? listing.owner.username.charAt(0).toUpperCase() : "E"}
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm text-ink">{listing.owner?.username || "Elena Rostova"}</h4>
+                    <p className="text-[11px] text-ink/60">Verified Superhost • 100% response</p>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-moss/10 text-moss text-[10px] font-bold border border-moss/20">
+                  Available
+                </span>
+              </div>
+
+              <p className="text-xs text-ink/75 leading-relaxed">
+                Have questions before booking? Message the host directly to check availability, late check-in, or special requests.
+              </p>
+
+              <button
+                onClick={() => requireAuthAction(() => setShowChatModal(true))}
+                className="w-full rounded-xl border border-ink/20 bg-white hover:bg-sand/60 text-ink py-2.5 px-4 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+              >
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 stroke-current fill-none stroke-[2]">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 1 2 2z" />
+                </svg>
+                <span>Message Host Directly</span>
+              </button>
             </div>
 
           </div>
