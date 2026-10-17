@@ -148,33 +148,82 @@ export default function Navbar({ transparent = false }) {
           })}
           
           {currentUser ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5">
+              {/* Host Portal Link */}
+              {currentUser.role === "host" && (
+                <Link
+                  href="/host/dashboard"
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
+                    isDarkNav
+                      ? "border-sand/40 text-sand hover:bg-sand hover:text-ink"
+                      : "border-clay/30 bg-clay/10 text-clay hover:bg-clay hover:text-white"
+                  }`}
+                >
+                  Host Portal
+                </Link>
+              )}
+              {/* Admin CRM Link */}
+              {(currentUser.role === "admin" || currentUser.isAdmin) && (
+                <Link
+                  href="/admin"
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
+                    isDarkNav
+                      ? "border-sand/40 text-sand hover:bg-sand hover:text-ink"
+                      : "border-amber-500/30 bg-amber-500/10 text-amber-800 hover:bg-amber-600 hover:text-white"
+                  }`}
+                >
+                  Admin CRM
+                </Link>
+              )}
               <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-sand/50 border border-ink/10 text-ink/80 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-moss" />
-                <span>{currentUser.username || "Explorer"}</span>
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    currentUser.role === "admin"
+                      ? "bg-amber-500"
+                      : currentUser.role === "host"
+                      ? "bg-clay"
+                      : "bg-moss"
+                  }`}
+                />
+                <span className="capitalize">{currentUser.username || "Explorer"}</span>
+                <span className="text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
+                  ({currentUser.role || "traveler"})
+                </span>
               </span>
               <button
                 onClick={handleLogout}
-                className={`rounded-full px-4 py-2 text-xs lg:text-sm font-bold transition-all duration-300 ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-300 ${
                   isDarkNav
                     ? "border border-white/50 text-white hover:bg-white hover:text-ink shadow-sm"
-                    : "bg-clay text-white hover:bg-[#9e442b] shadow-sm"
+                    : "bg-ink text-white hover:bg-clay shadow-sm"
                 }`}
               >
                 Log out
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              className={`rounded-full px-5 py-2.5 text-xs lg:text-sm font-bold transition-all duration-300 ${
-                isDarkNav
-                  ? "border border-white/50 text-white hover:bg-white hover:text-ink shadow-sm"
-                  : "bg-ink text-white hover:bg-moss shadow-sm"
-              }`}
-            >
-              Log in
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login"
+                className={`rounded-full px-4 py-2 text-xs lg:text-sm font-semibold transition-all duration-300 ${
+                  isDarkNav
+                    ? "text-white/90 hover:text-white hover:bg-white/10"
+                    : "text-ink/80 hover:text-ink hover:bg-ink/5"
+                }`}
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className={`rounded-full px-4 py-2 text-xs lg:text-sm font-bold transition-all duration-300 ${
+                  isDarkNav
+                    ? "bg-white text-ink hover:bg-sand shadow-sm"
+                    : "bg-clay text-white hover:bg-[#9e442b] shadow-sm"
+                }`}
+              >
+                Sign up
+              </Link>
+            </div>
           )}
         </nav>
 
@@ -209,11 +258,38 @@ export default function Navbar({ transparent = false }) {
           {currentUser && (
             <div className="pb-3 border-b border-ink/10 flex items-center justify-between">
               <span className="text-xs font-bold text-ink/60">Signed in as</span>
-              <span className="text-xs font-bold text-moss">{currentUser.username}</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold text-moss capitalize">{currentUser.username}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sand/60 text-ink/70 uppercase">
+                  {currentUser.role || "traveler"}
+                </span>
+              </div>
             </div>
           )}
 
           <nav className="flex flex-col space-y-3 font-semibold text-base">
+            {currentUser?.role === "host" && (
+              <Link
+                href="/host/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2 rounded-xl bg-clay/10 text-clay font-bold text-sm"
+              >
+                <span>Host Operations Hub</span>
+                <span>→</span>
+              </Link>
+            )}
+
+            {(currentUser?.role === "admin" || currentUser?.isAdmin) && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2 rounded-xl bg-amber-500/10 text-amber-800 font-bold text-sm"
+              >
+                <span>Admin CRM Console</span>
+                <span>→</span>
+              </Link>
+            )}
+
             {links.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -229,6 +305,7 @@ export default function Navbar({ transparent = false }) {
                 </Link>
               );
             })}
+
             <div className="pt-2">
               {currentUser ? (
                 <button
@@ -241,13 +318,22 @@ export default function Navbar({ transparent = false }) {
                   Log out
                 </button>
               ) : (
-                <Link
-                  href="/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block text-center rounded-full bg-ink px-5 py-3 text-sm font-bold text-white transition hover:bg-moss"
-                >
-                  Log in
-                </Link>
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-center rounded-full bg-ink px-5 py-2.5 text-sm font-bold text-white transition hover:bg-moss"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-center rounded-full bg-clay px-5 py-2.5 text-sm font-bold text-white transition hover:bg-[#9e442b]"
+                  >
+                    Sign up
+                  </Link>
+                </div>
               )}
             </div>
           </nav>

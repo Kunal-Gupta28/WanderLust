@@ -148,8 +148,8 @@ export async function signupUser(credentials) {
   return res.data;
 }
 
-export async function demoLoginUser() {
-  const res = await apiClient.post("/auth/demo-login");
+export async function demoLoginUser(role = "traveler") {
+  const res = await apiClient.post(`/auth/demo-login?role=${role}`, { role });
   return res.data;
 }
 

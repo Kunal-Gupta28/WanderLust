@@ -5,13 +5,14 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { API_URL, loginUser, signupUser, demoLoginUser } from "../lib/api";
-import { ZapIcon } from "./icons";
+import { ZapIcon, CheckIcon } from "./icons";
 
 export default function AuthForm({ mode }) {
   const signup = mode === "signup";
   const router = useRouter();
+  const [selectedRole, setSelectedRole] = useState("traveler"); // "traveler" | "host"
+  const [activeDemoRole, setActiveDemoRole] = useState(null); // "traveler" | "host" | "admin"
   const [message, setMessage] = useState("");
-  const [demoLoading, setDemoLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
 
   async function submit(event) {
@@ -20,6 +21,9 @@ export default function AuthForm({ mode }) {
     setMessage("");
     const form = new FormData(event.currentTarget);
     const payload = Object.fromEntries(form);
+    if (signup) {
+      payload.role = selectedRole;
+    }
 
     try {
       const data = signup ? await signupUser(payload) : await loginUser(payload);
@@ -28,7 +32,15 @@ export default function AuthForm({ mode }) {
         if (data.user.role) localStorage.setItem("wanderlust_role", data.user.role);
       }
       setMessage(data.message || "Welcome! Signed in successfully.");
-      setTimeout(() => router.push("/"), 800);
+
+      const destination =
+        data.user?.role === "admin" || data.user?.isAdmin
+          ? "/admin"
+          : data.user?.role === "host"
+          ? "/host/dashboard"
+          : "/explore";
+
+      setTimeout(() => router.push(destination), 800);
     } catch (error) {
       setMessage(
         error.response?.data?.error || error.message || "We could not sign you in. Please check your credentials."
@@ -38,29 +50,53 @@ export default function AuthForm({ mode }) {
     }
   }
 
-  async function handleDemoLogin() {
-    setDemoLoading(true);
+  async function handleRoleDemoLogin(role) {
+    setActiveDemoRole(role);
     setMessage("");
     try {
-      const data = await demoLoginUser();
-      const demoUser = data.user || { username: "demo_explorer", role: "traveler" };
-      localStorage.setItem("wanderlust_user", JSON.stringify(demoUser));
-      setMessage(data.message || "Welcome, demo explorer!");
-      setTimeout(() => router.push("/"), 800);
+      const data = await demoLoginUser(role);
+      const user = data.user || {
+        username: role === "host" ? "elena_host" : role === "admin" ? "wanderlust_admin" : "demo_explorer",
+        role,
+        isAdmin: role === "admin",
+      };
+      localStorage.setItem("wanderlust_user", JSON.stringify(user));
+      localStorage.setItem("wanderlust_role", role);
+      setMessage(data.message || `Welcome! Signed in as ${role}.`);
+
+      const destination =
+        role === "admin"
+          ? "/admin"
+          : role === "host"
+          ? "/host/dashboard"
+          : "/explore";
+
+      setTimeout(() => router.push(destination), 600);
     } catch (error) {
-      // Fallback local session if endpoint delayed
-      localStorage.setItem("wanderlust_user", JSON.stringify({ username: "demo_explorer", role: "traveler" }));
-      setMessage("Welcome! Demo session active.");
-      setTimeout(() => router.push("/"), 800);
+      const fallbackUser = {
+        username: role === "host" ? "elena_host" : role === "admin" ? "wanderlust_admin" : "demo_explorer",
+        role,
+        isAdmin: role === "admin",
+      };
+      localStorage.setItem("wanderlust_user", JSON.stringify(fallbackUser));
+      localStorage.setItem("wanderlust_role", role);
+      setMessage(`Demo session active (${role}).`);
+      const destination =
+        role === "admin"
+          ? "/admin"
+          : role === "host"
+          ? "/host/dashboard"
+          : "/explore";
+      setTimeout(() => router.push(destination), 600);
     } finally {
-      setDemoLoading(false);
+      setActiveDemoRole(null);
     }
   }
 
   return (
-    <main className="h-screen w-screen overflow-hidden bg-paper lg:grid lg:grid-cols-2">
+    <main className="min-h-screen w-screen overflow-x-hidden bg-paper lg:grid lg:grid-cols-2">
       {/* Left panel — Rich Visual & Branding */}
-      <section className="relative hidden h-full overflow-hidden lg:flex lg:flex-col lg:justify-between p-[clamp(2.5rem,5vw,5rem)] text-[#f5f0e5]">
+      <section className="relative hidden h-full min-h-screen overflow-hidden lg:flex lg:flex-col lg:justify-between p-[clamp(2.5rem,5vw,5rem)] text-[#f5f0e5]">
         {/* Background Image & Gradient Overlay */}
         <Image
           src="https://images.unsplash.com/photo-1542718610-a1d656d1884c?auto=format&fit=crop&q=90&w=1400"
@@ -90,7 +126,11 @@ export default function AuthForm({ mode }) {
             The journey starts <em className="font-normal text-sand">before you leave.</em>
           </h2>
           <p className="mt-6 max-w-sm text-sm text-[#f5f0e5]/80 leading-relaxed">
-            Save the stays that catch your eye, connect with independent hosts, and return when the timing is right.
+            {signup
+              ? selectedRole === "host"
+                ? "Share your haven with discerning travelers from across the world. Manage bookings and earn revenue seamlessly."
+                : "Save the stays that catch your eye, connect with independent hosts, and book places worth remembering."
+              : "Access your personalized workspace across Explorer, Host, or Administrator portals."}
           </p>
         </div>
 
@@ -102,7 +142,7 @@ export default function AuthForm({ mode }) {
       </section>
 
       {/* Right panel — Auth Form */}
-      <section className="mx-auto flex h-full w-full max-w-lg flex-col justify-between px-6 py-6 sm:px-10 lg:px-12 bg-paper">
+      <section className="mx-auto flex h-full min-h-screen w-full max-w-lg flex-col justify-between px-6 py-8 sm:px-10 lg:px-12 bg-paper overflow-y-auto">
         {/* Top Bar Navigation */}
         <div className="flex items-center justify-between lg:justify-end pt-2">
           <Link href="/" className="font-display text-2xl tracking-[-.06em] lg:hidden">
@@ -123,57 +163,159 @@ export default function AuthForm({ mode }) {
         {/* Form Body Container */}
         <div className="my-auto py-4">
           <span className="text-xs font-bold tracking-[.18em] text-clay uppercase">
-            {signup ? "A New Chapter" : "Welcome Back"}
+            {signup ? "Create Account" : "Welcome Back"}
           </span>
-          <h1 className="mt-1 font-display text-[clamp(2.2rem,3.8vw,3.2rem)] font-bold leading-[.95] tracking-[-.05em] text-ink">
-            {signup ? "Make room for wonder." : "Your saved stays await."}
+          <h1 className="mt-1 font-display text-[clamp(2.1rem,3.6vw,3rem)] font-bold leading-[.95] tracking-[-.05em] text-ink">
+            {signup
+              ? selectedRole === "host"
+                ? "Become a WanderLust Host."
+                : "Make room for wonder."
+              : "Sign in to your account."}
           </h1>
           <p className="mt-2 text-xs sm:text-sm text-ink/65">
             {signup
-              ? "Create your WanderLust account to unlock saved stays & host messaging."
-              : "Sign in to manage your saved stays and reservation requests."}
+              ? selectedRole === "host"
+                ? "Register as a property host to list stays and receive booking requests."
+                : "Register as a traveler to unlock reservations, saved stays, and direct host messaging."
+              : "Sign in with your credentials or test any of the 3 platform roles below."}
           </p>
 
-          {/* ── 1-Click Demo Login Highlight CTA ── */}
-          <div className="mt-6">
-            <button
-              onClick={handleDemoLogin}
-              disabled={demoLoading}
-              type="button"
-              className="group relative flex w-full items-center justify-center gap-2.5 rounded-2xl bg-moss py-3.5 px-4 text-sm font-bold text-white shadow-md hover:bg-moss/90 transition-all active:scale-[.99] disabled:opacity-60"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                className="h-4 w-4 fill-none stroke-current stroke-[2.2] text-sand group-hover:scale-110 transition-transform"
-                aria-hidden="true"
-              >
-                <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
-              </svg>
-              <span>{demoLoading ? "Starting Demo Session…" : "1-Click Demo Login"}</span>
-            </button>
-            <p className="mt-1.5 text-center text-[.7rem] font-semibold text-moss flex items-center justify-center gap-1">
-              <ZapIcon className="w-3.5 h-3.5 fill-current" /> Instant Recruiter Access — zero registration required
-            </p>
-          </div>
+          {/* ── Signup: Role Selection Tabs ── */}
+          {signup && (
+            <div className="mt-5 mb-4 space-y-1.5">
+              <label className="text-[11px] font-bold uppercase tracking-wider text-ink/75 block">
+                Choose Account Type
+              </label>
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole("traveler")}
+                  className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    selectedRole === "traveler"
+                      ? "border-clay bg-clay/10 shadow-sm ring-1 ring-clay/30"
+                      : "border-ink/15 bg-sand/20 hover:bg-sand/35"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-display font-bold text-sm text-ink">Traveler (Client)</span>
+                    {selectedRole === "traveler" ? (
+                      <span className="w-2.5 h-2.5 rounded-full bg-clay" />
+                    ) : (
+                      <span className="w-2.5 h-2.5 rounded-full border border-ink/25" />
+                    )}
+                  </div>
+                  <p className="text-[11px] text-ink/65 leading-tight">
+                    Explore & book unique stays, leave reviews & message hosts
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole("host")}
+                  className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                    selectedRole === "host"
+                      ? "border-clay bg-clay/10 shadow-sm ring-1 ring-clay/30"
+                      : "border-ink/15 bg-sand/20 hover:bg-sand/35"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-display font-bold text-sm text-ink">Property Host</span>
+                    {selectedRole === "host" ? (
+                      <span className="w-2.5 h-2.5 rounded-full bg-clay" />
+                    ) : (
+                      <span className="w-2.5 h-2.5 rounded-full border border-ink/25" />
+                    )}
+                  </div>
+                  <p className="text-[11px] text-ink/65 leading-tight">
+                    List properties, manage bookings & access Host Operations
+                  </p>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ── Login: 1-Click Quick Demo Login for All 3 Roles ── */}
+          {!signup && (
+            <div className="mt-5 p-4 rounded-2xl bg-sand/30 border border-ink/10 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-ink/75">
+                  1-Click Instant Demo Login (3 Roles)
+                </span>
+                <span className="text-[10px] font-semibold text-moss flex items-center gap-1">
+                  <ZapIcon className="w-3 h-3 fill-current" /> Zero password
+                </span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2">
+                {/* 1. Traveler */}
+                <button
+                  type="button"
+                  disabled={Boolean(activeDemoRole)}
+                  onClick={() => handleRoleDemoLogin("traveler")}
+                  className="p-3 rounded-xl border border-ink/15 bg-white hover:bg-moss/10 hover:border-moss text-left transition active:scale-95 disabled:opacity-60 cursor-pointer flex flex-col justify-between shadow-sm"
+                >
+                  <div>
+                    <span className="block text-[10px] font-extrabold text-moss uppercase tracking-wider">Role 1</span>
+                    <span className="font-display font-bold text-xs text-ink block mt-0.5">Traveler</span>
+                  </div>
+                  <span className="text-[9px] text-ink/60 mt-2 font-medium">Explore & Book</span>
+                </button>
+
+                {/* 2. Host */}
+                <button
+                  type="button"
+                  disabled={Boolean(activeDemoRole)}
+                  onClick={() => handleRoleDemoLogin("host")}
+                  className="p-3 rounded-xl border border-ink/15 bg-white hover:bg-clay/10 hover:border-clay text-left transition active:scale-95 disabled:opacity-60 cursor-pointer flex flex-col justify-between shadow-sm"
+                >
+                  <div>
+                    <span className="block text-[10px] font-extrabold text-clay uppercase tracking-wider">Role 2</span>
+                    <span className="font-display font-bold text-xs text-ink block mt-0.5">Property Host</span>
+                  </div>
+                  <span className="text-[9px] text-ink/60 mt-2 font-medium">Host Dashboard</span>
+                </button>
+
+                {/* 3. Admin */}
+                <button
+                  type="button"
+                  disabled={Boolean(activeDemoRole)}
+                  onClick={() => handleRoleDemoLogin("admin")}
+                  className="p-3 rounded-xl border border-ink/15 bg-white hover:bg-ink/10 hover:border-ink text-left transition active:scale-95 disabled:opacity-60 cursor-pointer flex flex-col justify-between shadow-sm"
+                >
+                  <div>
+                    <span className="block text-[10px] font-extrabold text-ink uppercase tracking-wider">Role 3</span>
+                    <span className="font-display font-bold text-xs text-ink block mt-0.5">Admin CRM</span>
+                  </div>
+                  <span className="text-[9px] text-ink/60 mt-2 font-medium">Platform Hub</span>
+                </button>
+              </div>
+
+              {activeDemoRole && (
+                <p className="text-center text-xs font-bold text-clay animate-pulse pt-1">
+                  Starting {activeDemoRole.toUpperCase()} session…
+                </p>
+              )}
+            </div>
+          )}
 
           {/* ── Elegant Divider ── */}
-          <div className="my-5 flex items-center gap-3">
+          <div className="my-4 flex items-center gap-3">
             <span className="h-px flex-1 bg-ink/15" />
             <span className="text-[.65rem] font-bold tracking-[.12em] text-ink/40 uppercase">
-              or continue with credentials
+              {signup ? "account details" : "or continue with credentials"}
             </span>
             <span className="h-px flex-1 bg-ink/15" />
           </div>
 
           {/* ── Form Inputs ── */}
-          <form onSubmit={submit} className="space-y-3.5">
+          <form onSubmit={submit} className="space-y-3">
             {signup && (
               <div className="space-y-1">
                 <label className="text-xs font-bold uppercase tracking-wider text-ink/75 block">
                   Full Name *
                 </label>
                 <input
-                  name="username"
+                  name="fullName"
                   required
                   className="w-full rounded-xl border border-ink/15 bg-sand/20 px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
                   placeholder="e.g. Elena Rostova"
@@ -196,34 +338,32 @@ export default function AuthForm({ mode }) {
             )}
             <div className="space-y-1">
               <label className="text-xs font-bold uppercase tracking-wider text-ink/75 block">
-                {signup ? "Username *" : "Username *"}
+                Username *
               </label>
               <input
-                name={signup ? "password" : "username"}
-                type={signup ? "password" : "text"}
+                name="username"
+                type="text"
                 required
                 className="w-full rounded-xl border border-ink/15 bg-sand/20 px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
-                placeholder={signup ? "At least 8 characters" : "Your username"}
+                placeholder={signup ? "Pick a unique username" : "Your username"}
               />
             </div>
-            {!signup && (
-              <div className="space-y-1">
-                <label className="text-xs font-bold uppercase tracking-wider text-ink/75 block">
-                  Password *
-                </label>
-                <input
-                  name="password"
-                  type="password"
-                  required
-                  className="w-full rounded-xl border border-ink/15 bg-sand/20 px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
-                  placeholder="Your password"
-                />
-              </div>
-            )}
+            <div className="space-y-1">
+              <label className="text-xs font-bold uppercase tracking-wider text-ink/75 block">
+                Password *
+              </label>
+              <input
+                name="password"
+                type="password"
+                required
+                className="w-full rounded-xl border border-ink/15 bg-sand/20 px-4 py-2.5 text-sm text-ink outline-none transition focus:border-clay focus:bg-white focus:ring-1 focus:ring-clay/20 placeholder:text-ink/35"
+                placeholder={signup ? "At least 8 characters" : "Your password"}
+              />
+            </div>
 
             <button
               disabled={formLoading}
-              className="mt-3 w-full rounded-xl bg-clay py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#9e442b] active:scale-[.99] disabled:opacity-60 flex items-center justify-center gap-2"
+              className="mt-3 w-full rounded-xl bg-clay py-3.5 text-sm font-bold text-white shadow-md transition hover:bg-[#9e442b] active:scale-[.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
             >
               {formLoading ? (
                 <>
@@ -234,7 +374,7 @@ export default function AuthForm({ mode }) {
                   <span>Verifying…</span>
                 </>
               ) : (
-                signup ? "Create Account" : "Log In"
+                signup ? `Create ${selectedRole === "host" ? "Host" : "Traveler"} Account` : "Log In"
               )}
             </button>
           </form>
@@ -253,7 +393,7 @@ export default function AuthForm({ mode }) {
               href={signup ? "/login" : "/signup"}
               className="font-bold text-clay underline underline-offset-4 hover:text-ink transition"
             >
-              {signup ? "Log in" : "Create one"}
+              {signup ? "Log in" : "Create an account"}
             </Link>
           </p>
         </div>

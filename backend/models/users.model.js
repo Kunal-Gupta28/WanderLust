@@ -18,7 +18,7 @@ const userSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ["traveler", "host"],
+        enum: ["traveler", "host", "admin"],
         default: "traveler"
     },
     createdAt: {
@@ -42,7 +42,7 @@ userSchema.plugin(passportLocalMongoose, {
 });
 
 userSchema.methods.isAdmin = function() {
-    return this.email === process.env.ADMIN_EMAIL;
+    return this.role === "admin" || (process.env.ADMIN_EMAIL && this.email === process.env.ADMIN_EMAIL);
 };
 
 userSchema.index({ email: 1 });

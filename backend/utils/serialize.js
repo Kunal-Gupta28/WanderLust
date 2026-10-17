@@ -5,7 +5,10 @@ const publicUser = (user) => {
     username: user.username,
     email: user.email,
     role: user.role || "traveler",
-    isAdmin: typeof user.isAdmin === "function" ? user.isAdmin() : false,
+    isAdmin:
+      typeof user.isAdmin === "function"
+        ? user.isAdmin()
+        : Boolean(user.role === "admin" || user.isAdmin),
   };
 };
 

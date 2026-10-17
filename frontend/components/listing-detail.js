@@ -916,7 +916,7 @@ export default function ListingDetail({ listing }) {
                   href="/login"
                   className="px-4 py-2 bg-clay text-white font-bold text-xs rounded-xl hover:bg-[#9e442b] transition shadow-sm shrink-0"
                 >
-                  Sign In / Login
+                  Sign In
                 </Link>
               </div>
             )}
@@ -935,7 +935,7 @@ export default function ListingDetail({ listing }) {
               <span className="text-xs font-bold text-clay uppercase tracking-widest">Authentication Required</span>
               <h3 className="font-display text-2xl font-bold mt-1">Sign in to Message Host</h3>
               <p className="text-xs text-ink/70 mt-2 leading-relaxed">
-                Host ko direct message karne, reservations karne ya reviews post karne ke liye pehle sign in ya 1-click demo login karein.
+                Host ko direct message karne, reservations karne ya reviews post karne ke liye pehle sign in karein.
               </p>
             </div>
 
@@ -944,7 +944,7 @@ export default function ListingDetail({ listing }) {
                 href="/login"
                 className="block w-full py-3.5 rounded-xl bg-clay text-white font-bold text-sm hover:bg-[#9e442b] transition shadow-md"
               >
-                Sign In / 1-Click Demo Login
+                Sign In
               </Link>
               <button
                 onClick={() => setShowAuthModal(false)}
