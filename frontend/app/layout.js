@@ -1,6 +1,7 @@
 import "./globals.css";
 import SmoothScroll from "../components/smooth-scroll";
 import QueryProvider from "../components/query-provider";
+import ErrorBoundary from "../components/error-boundary";
 
 export const metadata = {
   title: "WanderLust — Stays with a story",
@@ -20,7 +21,9 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <QueryProvider>
-          <SmoothScroll>{children}</SmoothScroll>
+          <ErrorBoundary>
+            <SmoothScroll>{children}</SmoothScroll>
+          </ErrorBoundary>
         </QueryProvider>
       </body>
     </html>
