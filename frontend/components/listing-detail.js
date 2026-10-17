@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
 import ListingImage from "./listing-image";
+import { getListingGallery } from "../lib/listing-gallery";
 import {
   API_URL,
   createPaymentOrder,
@@ -123,6 +124,12 @@ function getListingSocialProof(listingId, listingTitle, location) {
 
 export default function ListingDetail({ listing }) {
   const image = listing.image?.url;
+  const gallery = useMemo(() => getListingGallery(listing), [listing]);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
+  const [mobilePhotoIndex, setMobilePhotoIndex] = useState(0);
+  const [copiedLink, setCopiedLink] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
@@ -235,6 +242,30 @@ export default function ListingDetail({ listing }) {
       }
     };
   }, []);
+
+  // Keyboard navigation and body scroll lock for lightbox modal
+  useEffect(() => {
+    if (!showGalleryModal) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setShowGalleryModal(false);
+      if (e.key === "ArrowRight") {
+        setActivePhotoIndex((prev) => (prev + 1) % gallery.length);
+      }
+      if (e.key === "ArrowLeft") {
+        setActivePhotoIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+      }
+    };
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showGalleryModal, gallery.length]);
 
   const requireAuthAction = (actionCallback) => {
     const stored = typeof window !== "undefined" ? localStorage.getItem("wanderlust_user") : null;
@@ -428,54 +459,181 @@ export default function ListingDetail({ listing }) {
     <main className="min-h-[100svh] flex flex-col bg-paper text-ink selection:bg-clay selection:text-white overflow-x-clip pt-16">
       <Navbar />
 
-      {/* Hero Cover Banner */}
-      <section className="relative pt-[120px] px-[clamp(1.25rem,4vw,4.5rem)] max-w-[90rem] mx-auto w-full">
-        <div 
-          className="relative w-full h-[65vh] min-h-[450px] max-h-[750px] rounded-[2rem] overflow-hidden bg-sand shadow-lg"
-          style={{
-            clipPath: loaded ? 'polygon(0 0, 100% 0, 100% 100%, 0 100%)' : 'polygon(5% 5%, 95% 5%, 95% 95%, 5% 95%)',
-            transition: 'clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1)',
-          }}
-        >
-          {image && (
-            <ListingImage 
-              src={image} 
-              alt={listing.title} 
-              fill 
-              priority 
-              sizes="100vw" 
-              className={`object-cover transition-transform duration-[2s] ease-out ${loaded ? 'scale-100' : 'scale-110'}`} 
+      {/* Stay Header & Multi-Photo Gallery Grid */}
+      <section className="relative pt-[104px] px-[clamp(1.25rem,4vw,4.5rem)] max-w-[90rem] mx-auto w-full">
+        {/* Header Metadata Bar */}
+        <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <div className="flex flex-wrap items-center gap-2.5 mb-2.5">
+              <span className="px-3 py-1 rounded-full bg-sand text-ink text-xs font-bold uppercase tracking-wider border border-ink/10">
+                {listing.category}
+              </span>
+              <span className="px-3 py-1 rounded-full bg-moss/15 text-moss text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <CheckIcon className="w-3.5 h-3.5 stroke-[3]" /> Verified WanderLust Stay
+              </span>
+            </div>
+            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] text-ink leading-[1.12] tracking-[-.02em]">
+              {listing.title}
+            </h1>
+            <div className="mt-3 flex flex-wrap items-center gap-x-3.5 gap-y-2 text-sm text-ink/80 font-medium">
+              <span className="flex items-center gap-1.5 font-bold text-ink">
+                <StarIcon className="w-4 h-4 text-amber-500 fill-current" />
+                <span>{displayRating}</span>
+              </span>
+              <span>•</span>
+              <button
+                type="button"
+                className="underline cursor-pointer hover:text-clay transition font-medium"
+                onClick={() => {
+                  document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                {totalVerifiedReviews} verified reviews
+              </button>
+              <span>•</span>
+              <span className="font-semibold text-moss">Superhost</span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-clay" />
+                <span>{listing.location}, {listing.country}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Quick Action Buttons (Share & Save) */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  navigator.clipboard?.writeText(window.location.href);
+                  setCopiedLink(true);
+                  setTimeout(() => setCopiedLink(false), 2000);
+                }
+              }}
+              className="px-4 py-2.5 rounded-full border border-ink/15 hover:border-ink/40 bg-white/80 hover:bg-white text-xs font-bold text-ink transition shadow-sm flex items-center gap-2 cursor-pointer"
+              title="Share stay link"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              <span>{copiedLink ? "Link Copied!" : "Share"}</span>
+            </button>
+            <button
+              onClick={() => setIsSaved(!isSaved)}
+              className="px-4 py-2.5 rounded-full border border-ink/15 hover:border-ink/40 bg-white/80 hover:bg-white text-xs font-bold text-ink transition shadow-sm flex items-center gap-2 cursor-pointer"
+              title="Save to favorites"
+            >
+              <svg className={`w-4 h-4 ${isSaved ? "text-clay fill-clay" : "text-ink"}`} viewBox="0 0 24 24" fill={isSaved ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              <span>{isSaved ? "Saved" : "Save"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop 5-Photo Collage Grid (md+) */}
+        <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-2.5 h-[500px] lg:h-[560px] rounded-[2rem] overflow-hidden bg-sand shadow-lg relative">
+          {/* Main Large Hero (Index 0) */}
+          <div
+            onClick={() => { setActivePhotoIndex(0); setShowGalleryModal(true); }}
+            className="col-span-2 row-span-2 relative group overflow-hidden cursor-pointer bg-sand"
+          >
+            {gallery[0]?.url && (
+              <ListingImage
+                src={gallery[0].url}
+                alt={gallery[0].caption || listing.title}
+                fill
+                priority
+                sizes="(max-width: 1024px) 50vw, 45vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+            )}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
+            <div className="absolute bottom-4 left-4 right-4 text-white text-xs font-semibold px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-1 pointer-events-none w-fit">
+              {gallery[0]?.caption || "Main Sanctuary"}
+            </div>
+          </div>
+
+          {/* Sub Photos 1, 2, 3, 4 */}
+          {gallery.slice(1, 5).map((photo, idx) => (
+            <div
+              key={photo.url + idx}
+              onClick={() => { setActivePhotoIndex(idx + 1); setShowGalleryModal(true); }}
+              className="relative group overflow-hidden cursor-pointer bg-sand"
+            >
+              <ListingImage
+                src={photo.url}
+                alt={photo.caption || `Stay photo ${idx + 2}`}
+                fill
+                sizes="(max-width: 1024px) 25vw, 22vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/15 transition-colors duration-300" />
+              <div className="absolute bottom-3 left-3 text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 line-clamp-1 pointer-events-none">
+                {photo.caption}
+              </div>
+            </div>
+          ))}
+
+          {/* Floating Action Button: View All Photos */}
+          <button
+            onClick={() => { setActivePhotoIndex(0); setShowGalleryModal(true); }}
+            className="absolute bottom-5 right-5 z-10 px-4 py-2.5 rounded-2xl bg-white/95 hover:bg-white text-ink text-xs font-bold shadow-xl backdrop-blur-md flex items-center gap-2 border border-ink/15 transition-all hover:scale-[1.03] active:scale-95 cursor-pointer"
+          >
+            <svg className="w-4 h-4 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>Show all {gallery.length} photos</span>
+          </button>
+        </div>
+
+        {/* Mobile Interactive Photo Carousel (< md) */}
+        <div className="md:hidden relative w-full h-[55vh] min-h-[380px] rounded-3xl overflow-hidden bg-sand shadow-lg group">
+          {gallery[mobilePhotoIndex]?.url && (
+            <ListingImage
+              src={gallery[mobilePhotoIndex].url}
+              alt={gallery[mobilePhotoIndex].caption || listing.title}
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+              onClick={() => { setActivePhotoIndex(mobilePhotoIndex); setShowGalleryModal(true); }}
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none" />
-          <div className="absolute bottom-0 left-0 p-8 md:p-12 lg:p-16 w-full flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-4">
-                <span className="px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-widest">
-                  {listing.category}
-                </span>
-                <span className="px-3 py-1.5 rounded-full bg-moss text-paper text-xs font-bold uppercase tracking-widest flex items-center gap-1.5">
-                  <CheckIcon className="w-3.5 h-3.5 stroke-[3]" /> Verified WanderLust Stay
-                </span>
-              </div>
-              <h1 className="font-display text-4xl md:text-6xl lg:text-[4.8rem] text-white leading-[1.05] tracking-[-.03em] max-w-4xl">
-                {listing.title}
-              </h1>
-              <div className="mt-4 flex items-center gap-3 text-white/90">
-                <span className="h-2 w-2 rounded-full bg-clay" />
-                <span className="text-base md:text-xl font-medium">{listing.location}, {listing.country}</span>
-              </div>
-            </div>
 
-            {/* Quick Rating Badge */}
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 p-5 rounded-2xl text-white text-right shrink-0 hidden sm:block shadow-lg">
-              <span className="font-display text-3xl font-bold flex items-center justify-end gap-1.5 text-sand">
-                {displayRating} <StarIcon className="w-6 h-6 text-sand fill-current" />
-              </span>
-              <span className="text-xs text-white/90 font-medium tracking-wide">
-                Superhost • {totalVerifiedReviews} Verified Reviews
-              </span>
-            </div>
+          {/* Mobile Arrows */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setMobilePhotoIndex((prev) => (prev - 1 + gallery.length) % gallery.length);
+            }}
+            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition shadow-md"
+            aria-label="Previous photo"
+          >
+            ‹
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setMobilePhotoIndex((prev) => (prev + 1) % gallery.length);
+            }}
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md text-white flex items-center justify-center hover:bg-black/70 transition shadow-md"
+            aria-label="Next photo"
+          >
+            ›
+          </button>
+
+          {/* Bottom badge and View all button */}
+          <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+            <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-xs font-semibold">
+              {mobilePhotoIndex + 1} / {gallery.length}
+            </span>
+            <button
+              onClick={() => { setActivePhotoIndex(mobilePhotoIndex); setShowGalleryModal(true); }}
+              className="px-3.5 py-1.5 rounded-full bg-white text-ink text-xs font-bold shadow-md flex items-center gap-1.5"
+            >
+              <span>All photos</span>
+            </button>
           </div>
         </div>
       </section>
@@ -523,6 +681,52 @@ export default function ListingDetail({ listing }) {
             <h2 className="font-display text-3xl md:text-4xl mb-6">About this stay</h2>
             <div className="prose prose-lg text-ink/80 leading-relaxed whitespace-pre-wrap text-lg">
               {listing.description}
+            </div>
+          </AnimatedSection>
+
+          {/* Explore Rooms & Spaces Tour */}
+          <AnimatedSection>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6">
+              <div>
+                <span className="text-xs font-bold text-clay uppercase tracking-widest">Architectural Tour</span>
+                <h2 className="font-display text-3xl md:text-4xl mt-1">Explore Rooms & Spaces</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setActivePhotoIndex(0); setShowGalleryModal(true); }}
+                className="text-xs font-bold text-moss hover:text-clay transition flex items-center gap-1.5 cursor-pointer underline"
+              >
+                <span>View all {gallery.length} photos</span>
+                <span>→</span>
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {gallery.slice(0, 6).map((item, idx) => (
+                <div
+                  key={item.url + idx}
+                  onClick={() => { setActivePhotoIndex(idx); setShowGalleryModal(true); }}
+                  className="group rounded-2xl overflow-hidden border border-ink/10 bg-white shadow-sm hover:shadow-md transition cursor-pointer"
+                >
+                  <div className="relative h-44 overflow-hidden bg-sand">
+                    <ListingImage
+                      src={item.url}
+                      alt={item.caption}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-sm text-[11px] font-bold text-white">
+                      Photo {idx + 1}
+                    </div>
+                  </div>
+                  <div className="p-3.5">
+                    <p className="font-bold text-sm text-ink line-clamp-1 group-hover:text-clay transition">
+                      {item.caption}
+                    </p>
+                    <p className="text-xs text-ink/60 mt-0.5">Click to inspect in high-res</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </AnimatedSection>
 
@@ -984,6 +1188,100 @@ export default function ListingDetail({ listing }) {
               >
                 Continue Browsing
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Full-Screen Photo Gallery Lightbox Modal */}
+      {showGalleryModal && (
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col text-white select-none">
+          {/* Lightbox Top Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 shrink-0">
+            <div className="flex items-center gap-3">
+              <span className="font-display font-bold text-base md:text-lg text-white line-clamp-1 max-w-[50vw]">
+                {listing.title}
+              </span>
+              <span className="text-xs text-white/70 font-semibold px-3 py-1 rounded-full bg-white/10 shrink-0">
+                {activePhotoIndex + 1} / {gallery.length}
+              </span>
+            </div>
+
+            <button
+              onClick={() => setShowGalleryModal(false)}
+              className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs md:text-sm flex items-center gap-2 transition cursor-pointer"
+            >
+              <CloseIcon className="w-4 h-4 stroke-[2.5]" />
+              <span>Close (ESC)</span>
+            </button>
+          </div>
+
+          {/* Lightbox Main Stage */}
+          <div className="relative flex-1 flex items-center justify-center px-4 md:px-16 py-4 min-h-0">
+            {/* Prev Button */}
+            <button
+              onClick={() => setActivePhotoIndex((prev) => (prev - 1 + gallery.length) % gallery.length)}
+              className="absolute left-3 md:left-6 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full bg-black/50 hover:bg-white/25 border border-white/20 backdrop-blur-md text-white flex items-center justify-center transition hover:scale-110 active:scale-95 cursor-pointer shadow-xl"
+              aria-label="Previous photo"
+            >
+              <svg className="w-6 h-6 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            {/* Active Image Box */}
+            <div className="relative w-full h-full max-w-5xl flex flex-col items-center justify-center">
+              <div className="relative w-full flex-1 max-h-[68vh] rounded-2xl overflow-hidden shadow-2xl">
+                <ListingImage
+                  src={gallery[activePhotoIndex]?.url}
+                  alt={gallery[activePhotoIndex]?.caption || listing.title}
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-contain"
+                />
+              </div>
+              {gallery[activePhotoIndex]?.caption && (
+                <p className="mt-3 text-center text-xs md:text-sm font-medium text-white/90 tracking-wide bg-black/50 px-4 py-1.5 rounded-full backdrop-blur-md border border-white/10">
+                  {gallery[activePhotoIndex].caption}
+                </p>
+              )}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={() => setActivePhotoIndex((prev) => (prev + 1) % gallery.length)}
+              className="absolute right-3 md:right-6 z-20 w-11 h-11 md:w-14 md:h-14 rounded-full bg-black/50 hover:bg-white/25 border border-white/20 backdrop-blur-md text-white flex items-center justify-center transition hover:scale-110 active:scale-95 cursor-pointer shadow-xl"
+              aria-label="Next photo"
+            >
+              <svg className="w-6 h-6 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Bottom Thumbnails Strip */}
+          <div className="border-t border-white/10 px-4 py-3 shrink-0 bg-black/70">
+            <div className="flex items-center justify-center gap-2.5 overflow-x-auto max-w-4xl mx-auto py-1">
+              {gallery.map((photo, idx) => (
+                <button
+                  key={photo.url + idx}
+                  onClick={() => setActivePhotoIndex(idx)}
+                  className={`relative w-16 h-12 md:w-20 md:h-14 rounded-xl overflow-hidden shrink-0 transition-all cursor-pointer ${
+                    activePhotoIndex === idx
+                      ? "ring-2 ring-clay scale-105 opacity-100 shadow-lg"
+                      : "opacity-40 hover:opacity-80"
+                  }`}
+                >
+                  <ListingImage
+                    src={photo.url}
+                    alt={photo.caption || `Thumbnail ${idx + 1}`}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
             </div>
           </div>
         </div>

@@ -42,6 +42,7 @@ const publicListing = (listing) => {
     createdAt: listing.createdAt,
     owner,
     reviews,
+    images: Array.isArray(listing.images) ? listing.images : [],
   };
 };
 
