@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
 import ListingImage from "./listing-image";
+import ListingMap from "./listing-map";
 import { getListingGallery } from "../lib/listing-gallery";
 import {
   API_URL,
@@ -773,6 +774,11 @@ export default function ListingDetail({ listing }) {
                 </div>
               ))}
             </div>
+          </AnimatedSection>
+
+          {/* Where you'll be - Location & Map */}
+          <AnimatedSection>
+            <ListingMap listing={listing} />
           </AnimatedSection>
 
           {/* House Rules & Policies */}
