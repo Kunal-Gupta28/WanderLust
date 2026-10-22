@@ -393,13 +393,6 @@ const faqs = [
 ];
 
 const categoryIcons = {
-  "All Categories": (
-    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-      <path d="M2 12h20" />
-    </svg>
-  ),
   "General & Philosophy": (
     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -469,14 +462,13 @@ const categoryIcons = {
 };
 
 export default function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState("All Categories");
+  const [activeCategory, setActiveCategory] = useState("General & Philosophy");
   const [searchQuery, setSearchQuery] = useState("");
   const [openIndices, setOpenIndices] = useState({});
   const [helpfulFeedback, setHelpfulFeedback] = useState({});
   const revealRefs = useRef([]);
 
   const categories = [
-    "All Categories",
     "General & Philosophy",
     "Booking & Reservations",
     "Stays & Amenities",
@@ -496,7 +488,6 @@ export default function FAQPage() {
       faq.category.toLowerCase().includes(searchQuery.toLowerCase());
 
     if (searchQuery.trim()) return matchesSearch;
-    if (activeCategory === "All Categories") return true;
     return faq.category === activeCategory;
   });
 
@@ -642,10 +633,10 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* Quick Jump Category Cards */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-10 max-w-[90rem] mx-auto w-full">
+      {/* Category Navigation Cards */}
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-8 max-w-[90rem] mx-auto w-full">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2.5">
-          {categories.filter(c => c !== "All Categories").slice(0, 10).map((cat, i) => {
+          {categories.map((cat, i) => {
             const count = faqs.filter(f => f.category === cat).length;
             const isSelected = activeCategory === cat && !searchQuery;
             return (
@@ -656,7 +647,7 @@ export default function FAQPage() {
                   setSearchQuery("");
                   setOpenIndices({});
                 }}
-                className={`p-3.5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between group ${
+                className={`p-3.5 rounded-2xl text-left border transition-all duration-200 flex flex-col justify-between group cursor-pointer ${
                   isSelected 
                     ? "bg-ink text-paper border-ink shadow-md translate-y-[-2px]" 
                     : "bg-white hover:bg-sand/30 text-ink border-ink/10 hover:border-ink/20 shadow-sm"
@@ -681,66 +672,44 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* Category Pills Navigation */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-8 max-w-[90rem] mx-auto w-full">
-        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-ink/10 mb-6">
-          <div className="flex flex-wrap items-center gap-2">
-            {categories.map((cat, i) => {
-              const isSelected = activeCategory === cat && !searchQuery;
-              const count = cat === "All Categories" ? faqs.length : faqs.filter(f => f.category === cat).length;
-              return (
-                <button
-                  key={i}
-                  onClick={() => { 
-                    setActiveCategory(cat); 
-                    setSearchQuery("");
-                    setOpenIndices({}); 
-                  }}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all duration-200 ${
-                    isSelected
-                      ? "bg-ink text-paper shadow-sm"
-                      : "bg-sand/40 text-ink/70 hover:bg-sand hover:text-ink"
-                  }`}
-                >
-                  <span className="opacity-80">{categoryIcons[cat]}</span>
-                  <span>{cat}</span>
-                  <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-paper/20 text-paper" : "bg-ink/10 text-ink/70"}`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+      {/* Category Header & Controls */}
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-6 max-w-[90rem] mx-auto w-full">
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-ink/10">
+          {searchQuery ? (
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-moss animate-pulse" />
+              <p className="text-sm font-bold text-moss uppercase tracking-wider">
+                Search Results: <span className="text-ink normal-case">Found {activeCount} {activeCount === 1 ? "answer" : "answers"} matching &ldquo;{searchQuery}&rdquo;</span>
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <span className="w-9 h-9 rounded-xl bg-clay/10 text-clay grid place-items-center">
+                {categoryIcons[activeCategory]}
+              </span>
+              <div>
+                <h3 className="font-display text-xl font-bold text-ink">{activeCategory}</h3>
+                <span className="text-xs text-ink/60">{activeCount} questions in this topic • Click any question to expand details</span>
+              </div>
+            </div>
+          )}
 
           {/* Expand / Collapse Controls */}
           <div className="flex items-center gap-2 text-xs font-semibold">
             <button
               onClick={handleExpandAll}
-              className="px-3 py-1.5 rounded-lg border border-ink/15 hover:border-ink/40 text-ink transition bg-white"
+              className="px-3.5 py-1.5 rounded-xl border border-ink/15 hover:border-ink/40 text-ink transition bg-white shadow-sm cursor-pointer"
             >
               Expand All
             </button>
             <button
               onClick={handleCollapseAll}
-              className="px-3 py-1.5 rounded-lg border border-ink/15 hover:border-ink/40 text-ink transition bg-white"
+              className="px-3.5 py-1.5 rounded-xl border border-ink/15 hover:border-ink/40 text-ink transition bg-white shadow-sm cursor-pointer"
             >
               Collapse All
             </button>
           </div>
         </div>
-
-        {searchQuery ? (
-          <div className="text-center py-2">
-            <p className="text-xs font-bold text-moss uppercase tracking-wider">
-              Found {activeCount} {activeCount === 1 ? "answer" : "answers"} matching "{searchQuery}"
-            </p>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between text-xs text-ink/60 px-1">
-            <span>Showing {activeCount} questions in <strong className="text-ink">{activeCategory}</strong></span>
-            <span>Click any question to view complete details</span>
-          </div>
-        )}
       </section>
 
       {/* FAQ Accordion Section */}
@@ -758,10 +727,10 @@ export default function FAQPage() {
               We couldn't find any FAQs matching "{searchQuery}". Try searching for terms like "refund", "WiFi", "dogs", "deposit", or "heating".
             </p>
             <button 
-              onClick={() => { setSearchQuery(""); setActiveCategory("All Categories"); }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-clay text-white rounded-full text-xs font-bold hover:bg-[#9e442b] transition shadow-sm"
+              onClick={() => { setSearchQuery(""); setActiveCategory("General & Philosophy"); }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-clay text-white rounded-full text-xs font-bold hover:bg-[#9e442b] transition shadow-sm cursor-pointer"
             >
-              Reset Search & Show All
+              Reset Search & Show General FAQs
             </button>
           </div>
         ) : (
