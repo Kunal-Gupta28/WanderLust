@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { API_URL, getCurrentUser, logoutUser, apiClient } from "../lib/api";
 import { CloseIcon } from "./icons";
 
@@ -11,8 +11,6 @@ export default function Navbar({ transparent = false }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
-  const profileMenuRef = useRef(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   
@@ -51,16 +49,6 @@ export default function Navbar({ transparent = false }) {
       .catch(() => {});
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
-        setProfileMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -105,7 +93,7 @@ export default function Navbar({ transparent = false }) {
 
   const isDarkNav = transparent && !scrolled && !mobileMenuOpen;
 
-  const links = [
+  const baseLinks = [
     { href: "/explore", label: "Explore" },
     { href: "/philosophy", label: "Philosophy" },
     { href: "/about", label: "About Us" },
@@ -113,10 +101,10 @@ export default function Navbar({ transparent = false }) {
     { href: "/contact", label: "Contact" },
   ];
 
-  // When logged in, hide options from top navbar that exist in the profile dropdown
-  const visibleNavLinks = currentUser
-    ? links.filter((link) => link.href !== "/explore" && link.href !== "/faq")
-    : links;
+  // Hide FAQ in nav for all logged-in users/travellers
+  const links = currentUser
+    ? baseLinks.filter((link) => link.href !== "/faq")
+    : baseLinks;
 
   return (
     <header
@@ -136,7 +124,44 @@ export default function Navbar({ transparent = false }) {
 
         {/* Desktop Nav Links */}
         <nav className="hidden items-center gap-5 lg:gap-6 text-xs lg:text-sm font-semibold md:flex">
-          {visibleNavLinks.map((link) => {
+          {/* Wishlist Link (shown before Explore when logged in) */}
+          {currentUser && (
+            <Link
+              href="/wishlist"
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-300 cursor-pointer ${
+                isDarkNav
+                  ? pathname === "/wishlist"
+                    ? "bg-white text-ink shadow-sm"
+                    : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                  : pathname === "/wishlist"
+                  ? "bg-clay text-white shadow-sm"
+                  : "bg-[#ede9df] hover:bg-sand text-ink border border-ink/10"
+              }`}
+              title="View your curated wishlist"
+            >
+              <svg
+                className={`w-3.5 h-3.5 transition-colors ${
+                  pathname === "/wishlist"
+                    ? isDarkNav
+                      ? "fill-clay text-clay"
+                      : "fill-white text-white"
+                    : "text-clay fill-clay"
+                }`}
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+              <span>Wishlist</span>
+            </Link>
+          )}
+
+          {links.map((link) => {
             const isActive = pathname === link.href;
             return (
               <Link
@@ -165,253 +190,43 @@ export default function Navbar({ transparent = false }) {
           })}
           
           {currentUser ? (
-            <div
-              ref={profileMenuRef}
-              className="relative"
-              onMouseEnter={() => setProfileMenuOpen(true)}
-              onMouseLeave={() => setProfileMenuOpen(false)}
-            >
-              {/* Circular Profile Avatar Button */}
-              <button
-                type="button"
-                onClick={() => setProfileMenuOpen((prev) => !prev)}
-                className={`group flex items-center gap-2.5 rounded-full pl-3 pr-1.5 py-1.5 border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md ${
-                  isDarkNav
-                    ? profileMenuOpen
-                      ? "border-sand bg-white/20 text-white shadow-md ring-2 ring-sand/30"
-                      : "border-white/30 bg-white/10 hover:bg-white/20 text-white"
-                    : profileMenuOpen
-                    ? "border-clay bg-white text-ink shadow-md ring-2 ring-clay/20"
-                    : "border-ink/15 bg-white/80 hover:bg-white hover:border-ink/30 text-ink"
-                }`}
-                aria-label="User profile options"
-                aria-expanded={profileMenuOpen}
-              >
-                {/* 3-line subtle menu bars */}
-                <svg
-                  className="w-4 h-4 stroke-current fill-none stroke-[2] opacity-75 group-hover:opacity-100 transition-opacity"
-                  viewBox="0 0 24 24"
+            <div className="flex items-center gap-2.5">
+              {/* Host Portal Link */}
+              {currentUser.role === "host" && (
+                <Link
+                  href="/host/dashboard"
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
+                    isDarkNav
+                      ? "border-sand/40 text-sand hover:bg-sand hover:text-ink"
+                      : "border-clay/30 bg-clay/10 text-clay hover:bg-clay hover:text-white"
+                  }`}
                 >
-                  <line x1="4" y1="7" x2="20" y2="7" />
-                  <line x1="4" y1="12" x2="20" y2="12" />
-                  <line x1="4" y1="17" x2="20" y2="17" />
-                </svg>
-
-                {/* Circular Initial Avatar */}
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-clay via-[#b34c32] to-[#c85a3d] text-white flex items-center justify-center font-display font-bold text-sm tracking-wide shadow-xs group-hover:scale-105 transition-transform">
-                  {currentUser.username ? currentUser.username.charAt(0).toUpperCase() : "U"}
-                </div>
-              </button>
-
-              {/* Hover & Click Dropdown Menu */}
-              {profileMenuOpen && (
-                <div className="absolute right-0 top-full pt-2 z-50 w-72 animate-[rise-in_0.2s_cubic-bezier(.16,1,.3,1)_both]">
-                  <div className="rounded-3xl bg-paper/98 backdrop-blur-2xl border border-ink/10 shadow-[0_16px_48px_rgba(23,34,29,0.16)] p-3 text-ink overflow-hidden max-h-[85vh] overflow-y-auto [scrollbar-width:thin]">
-                    {/* User Header Profile Card */}
-                    <div className="px-3.5 py-3 rounded-2xl bg-sand/60 border border-ink/8 mb-2">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-clay text-white flex items-center justify-center font-display font-bold text-base shadow-sm shrink-0">
-                          {currentUser.username ? currentUser.username.charAt(0).toUpperCase() : "U"}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-bold text-ink truncate leading-tight">
-                            {currentUser.username || "Traveler"}
-                          </p>
-                          <p className="text-xs text-ink/55 truncate">
-                            {currentUser.email || "wanderer@wanderlust.com"}
-                          </p>
-                          <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider text-moss bg-moss/10 px-2 py-0.5 rounded-full">
-                            {currentUser.role === "admin" || currentUser.isAdmin
-                              ? "Administrator"
-                              : currentUser.role === "host"
-                              ? "Verified Host"
-                              : "Explorer"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Navigation Options List */}
-                    <div className="space-y-0.5 text-xs font-semibold">
-                      {/* Wishlist */}
-                      <Link
-                        href="/wishlist"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-clay/10 text-clay flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 fill-clay" viewBox="0 0 24 24">
-                            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Saved Wishlist</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Bookmarked retreats</span>
-                        </div>
-                      </Link>
-
-                      {/* Travel History */}
-                      <Link
-                        href="/history"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-moss/10 text-moss flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Travel History</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Past trips & bookings</span>
-                        </div>
-                      </Link>
-
-                      {/* Explore Directory */}
-                      <Link
-                        href="/explore"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10" />
-                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Explore Stays</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Browse 900+ places</span>
-                        </div>
-                      </Link>
-
-                      {/* Philosophy */}
-                      <Link
-                        href="/philosophy"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Philosophy</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Our travel philosophy</span>
-                        </div>
-                      </Link>
-
-                      {/* About Us */}
-                      <Link
-                        href="/about"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">About Us</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Our story & curation</span>
-                        </div>
-                      </Link>
-
-                      {/* Contact */}
-                      <Link
-                        href="/contact"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Contact</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Concierge & support</span>
-                        </div>
-                      </Link>
-
-                      {/* Host Operations Hub */}
-                      <Link
-                        href="/host/dashboard"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-[#ded7c8] text-ink flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Host Operations Hub</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Listings & analytics</span>
-                        </div>
-                      </Link>
-
-                      {/* Admin Console (if admin) */}
-                      {(currentUser.role === "admin" || currentUser.isAdmin) && (
-                        <Link
-                          href="/admin"
-                          onClick={() => setProfileMenuOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-amber-500/10 transition-colors text-amber-900 cursor-pointer"
-                        >
-                          <span className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-800 flex items-center justify-center shrink-0">
-                            <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                            </svg>
-                          </span>
-                          <div className="flex-1">
-                            <span className="block font-bold">Admin Console</span>
-                            <span className="block text-[11px] text-amber-700/80 font-normal">Platform management</span>
-                          </div>
-                        </Link>
-                      )}
-
-                      {/* Help & FAQ */}
-                      <Link
-                        href="/faq"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
-                      >
-                        <span className="w-7 h-7 rounded-lg bg-ink/5 text-ink/70 flex items-center justify-center shrink-0">
-                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        </span>
-                        <div className="flex-1">
-                          <span className="block font-bold">Help & FAQ</span>
-                          <span className="block text-[11px] text-ink/50 font-normal">Assistance & policies</span>
-                        </div>
-                      </Link>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="my-2 border-t border-ink/10" />
-
-                    {/* Logout Option */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setProfileMenuOpen(false);
-                        handleLogout();
-                      }}
-                      className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors cursor-pointer text-left"
-                    >
-                      <span className="w-7 h-7 rounded-lg bg-red-100/70 text-red-600 flex items-center justify-center shrink-0">
-                        <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                        </svg>
-                      </span>
-                      <span>Log out</span>
-                    </button>
-                  </div>
-                </div>
+                  Host Portal
+                </Link>
               )}
+              {/* Admin CRM Link */}
+              {(currentUser.role === "admin" || currentUser.isAdmin) && (
+                <Link
+                  href="/admin"
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
+                    isDarkNav
+                      ? "border-sand/40 text-sand hover:bg-sand hover:text-ink"
+                      : "border-amber-500/30 bg-amber-500/10 text-amber-800 hover:bg-amber-600 hover:text-white"
+                  }`}
+                >
+                  Admin CRM
+                </Link>
+              )}
+              <button
+                onClick={handleLogout}
+                className={`rounded-full px-4 py-2 text-xs lg:text-sm font-bold transition-all duration-300 cursor-pointer ${
+                  isDarkNav
+                    ? "border border-white/50 text-white hover:bg-white hover:text-ink shadow-sm"
+                    : "bg-ink text-white hover:bg-clay shadow-sm"
+                }`}
+              >
+                Log out
+              </button>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -468,51 +283,19 @@ export default function Navbar({ transparent = false }) {
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-ink/10 bg-paper px-6 py-6 space-y-4 shadow-xl text-ink">
           {currentUser && (
-            <div className="p-3.5 rounded-2xl bg-sand/60 border border-ink/10 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-clay text-white flex items-center justify-center font-display font-bold text-base shadow-sm shrink-0">
-                {currentUser.username ? currentUser.username.charAt(0).toUpperCase() : "U"}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-ink truncate leading-tight">
-                  {currentUser.username || "Traveler"}
-                </p>
-                <p className="text-xs text-ink/55 truncate">
-                  {currentUser.email || "wanderer@wanderlust.com"}
-                </p>
-                <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider text-moss bg-moss/10 px-2 py-0.5 rounded-full">
-                  {currentUser.role === "admin" || currentUser.isAdmin
-                    ? "Administrator"
-                    : currentUser.role === "host"
-                    ? "Verified Host"
-                    : "Explorer"}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {currentUser && (
-            <div className="grid grid-cols-2 gap-2">
-              <Link
-                href="/wishlist"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-sand/60 text-ink font-bold text-xs"
-              >
-                <svg className="w-4 h-4 text-clay fill-clay shrink-0" viewBox="0 0 24 24">
+            <Link
+              href="/wishlist"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-sand/60 text-ink font-bold text-sm"
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-clay fill-clay" viewBox="0 0 24 24">
                   <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
                 <span>Wishlist</span>
-              </Link>
-              <Link
-                href="/history"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-sand/60 text-ink font-bold text-xs"
-              >
-                <svg className="w-4 h-4 text-moss stroke-current fill-none stroke-2 shrink-0" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-                <span>Travel History</span>
-              </Link>
-            </div>
+              </span>
+              <span>→</span>
+            </Link>
           )}
 
           <nav className="flex flex-col space-y-3 font-semibold text-base">
@@ -538,7 +321,7 @@ export default function Navbar({ transparent = false }) {
               </Link>
             )}
 
-            {visibleNavLinks.map((link) => {
+            {links.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
@@ -561,12 +344,9 @@ export default function Navbar({ transparent = false }) {
                     setMobileMenuOpen(false);
                     handleLogout();
                   }}
-                  className="w-full text-center rounded-full bg-red-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-700 shadow-sm flex items-center justify-center gap-2"
+                  className="w-full text-center rounded-full bg-clay px-5 py-3 text-sm font-bold text-white transition hover:bg-[#9e442b]"
                 >
-                  <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span>Log out</span>
+                  Log out
                 </button>
               ) : (
                 <div className="flex flex-col gap-2">
