@@ -9,8 +9,9 @@ export default async function ExplorePage({ searchParams }) {
   const sp = await searchParams;
   const initialQuery = sp?.q || "";
   const initialCategory = sp?.category || "All";
+  const initialPage = Number(sp?.page) || 1;
   const initialData = await getListings({
-    page: 1,
+    page: initialPage,
     limit: 12,
     category: initialCategory,
     q: initialQuery,
@@ -21,6 +22,7 @@ export default async function ExplorePage({ searchParams }) {
       initialData={initialData}
       initialActive={initialCategory}
       initialQuery={initialQuery}
+      initialPage={initialPage}
     />
   );
 }

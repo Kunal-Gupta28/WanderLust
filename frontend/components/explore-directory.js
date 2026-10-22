@@ -2,19 +2,37 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useRef, useTransition, useMemo } from "react";
+import { useState, useEffect, useRef, useTransition } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
 import ListingImage from "./listing-image";
 import { categories, fallbackListings } from "../lib/api";
-import { useInfiniteListingsQuery } from "../lib/queries";
+import { useListingsQuery } from "../lib/queries";
 
 const slug = (value) => value.toLowerCase().replaceAll(" ", "-");
+
+// Smart pagination range generator with ellipsis (e.g. [1, 2, 3, 4, 5, '...', 10])
+function getPaginationRange(currentPage, totalPages) {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  if (currentPage <= 4) {
+    return [1, 2, 3, 4, 5, "...", totalPages];
+  }
+
+  if (currentPage >= totalPages - 3) {
+    return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+  }
+
+  return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+}
 
 export default function ExploreDirectory({
   initialData,
   initialActive = "All",
   initialQuery = "",
+  initialPage = 1,
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -22,77 +40,65 @@ export default function ExploreDirectory({
 
   const [active, setActive] = useState(initialActive);
   const [query, setQuery] = useState(initialQuery);
+  const [page, setPage] = useState(initialPage);
   const limit = 12;
 
-  const loadMoreTriggerRef = useRef(null);
+  const listingsSectionRef = useRef(null);
 
-  // Sync with URL params on mount or when URL changes
+  // Sync with URL params on mount or when browser back/forward is used
   useEffect(() => {
     if (typeof window !== "undefined") {
       const sp = new URLSearchParams(window.location.search);
       const urlQuery = sp.get("q");
       const urlCat = sp.get("category");
+      const urlPage = parseInt(sp.get("page"), 10);
 
       if (urlQuery !== null && urlQuery !== query) setQuery(urlQuery);
       if (urlCat) {
         const match = categories.find((c) => c.toLowerCase() === urlCat.toLowerCase());
         if (match && match !== active) setActive(match);
       }
+      if (urlPage && !isNaN(urlPage) && urlPage !== page) {
+        setPage(urlPage);
+      } else if (!urlPage && page !== 1 && !searchParams?.get("page")) {
+        setPage(1);
+      }
     }
   }, [searchParams]);
 
-  // Use TanStack Query Infinite Query for Unlimited Scrolling
-  const isInitialParams = active === initialActive && query === initialQuery;
+  // Use TanStack Query hook for cached, paginated listings
+  const isInitialParams = active === initialActive && query === initialQuery && page === initialPage;
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetching,
-    isFetchingNextPage,
-    isLoading,
-  } = useInfiniteListingsQuery(
-    { limit, category: active, q: query },
+  const { data, isFetching, isLoading } = useListingsQuery(
+    { page, limit, category: active, q: query },
     isInitialParams ? initialData : undefined
   );
 
-  // Flatten all pages into one continuous stream
-  const allListings = useMemo(() => {
-    if (!data?.pages || data.pages.length === 0) {
-      return initialData?.listings || fallbackListings.slice(0, limit);
+  const currentListings = data?.listings || (isInitialParams ? initialData?.listings : fallbackListings.slice(0, limit)) || [];
+  const total = data?.total ?? (isInitialParams ? initialData?.total : currentListings.length) ?? 0;
+  const totalPages = data?.totalPages ?? Math.max(1, Math.ceil(total / limit));
+
+  // Compute item count range for the current page
+  const startItem = total === 0 ? 0 : (page - 1) * limit + 1;
+  const endItem = Math.min(page * limit, total);
+
+  // Smooth scroll back to listings section when page changes
+  const scrollToGrid = () => {
+    if (listingsSectionRef.current) {
+      const yOffset = -90;
+      const y = listingsSectionRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
-    return data.pages.flatMap((page) => page.listings || []);
-  }, [data?.pages, initialData?.listings]);
+  };
 
-  const total = data?.pages?.[0]?.total ?? (initialData?.total || allListings.length);
-
-  // IntersectionObserver for Unlimited Scrolling (prefetches 300px before bottom)
-  useEffect(() => {
-    const trigger = loadMoreTriggerRef.current;
-    if (!trigger) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const target = entries[0];
-        if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "300px",
-      }
-    );
-
-    observer.observe(trigger);
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // Shallow URL sync
-  const syncUrl = (newCategory, newQuery) => {
+  // URL state synchronization
+  const syncUrl = (newCategory, newQuery, newPage) => {
     startTransition(() => {
       const sp = new URLSearchParams();
       if (newQuery) sp.set("q", newQuery);
+      if (newPage && newPage > 1) sp.set("page", String(newPage));
 
       let basePath = "/explore";
       if (newCategory && newCategory !== "All") {
@@ -107,16 +113,23 @@ export default function ExploreDirectory({
 
   const handleCategorySelect = (category) => {
     setActive(category);
-    syncUrl(category, query);
+    setPage(1);
+    syncUrl(category, query, 1);
+    scrollToGrid();
   };
 
   const handleQueryChange = (val) => {
     setQuery(val);
-    syncUrl(active, val);
+    setPage(1);
+    syncUrl(active, val, 1);
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const handlePageChange = (newPage) => {
+    const target = Math.max(1, Math.min(newPage, totalPages));
+    if (target === page) return;
+    setPage(target);
+    syncUrl(active, query, target);
+    scrollToGrid();
   };
 
   return (
@@ -138,10 +151,15 @@ export default function ExploreDirectory({
           <div className="mt-12 flex flex-wrap items-center justify-between gap-5 border-y border-ink/12 py-5 animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_0.08s_both]">
             <div className="flex items-center gap-3 text-sm text-ink/55">
               <p>
-                Showing <span className="font-bold text-ink">{allListings.length}</span> of{" "}
+                Showing <span className="font-bold text-ink">{startItem}–{endItem}</span> of{" "}
                 <span className="font-bold text-ink">{total}</span> places to linger
+                {totalPages > 1 && (
+                  <span className="ml-2 font-medium text-ink/40">
+                    (Page <span className="font-bold text-ink/75">{page}</span> of {totalPages})
+                  </span>
+                )}
               </p>
-              {isFetching && !isFetchingNextPage && (
+              {isFetching && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-sand px-2.5 py-0.5 text-xs font-semibold text-ink/75 animate-pulse">
                   <span className="h-1.5 w-1.5 rounded-full bg-clay animate-ping" />
                   Updating...
@@ -161,7 +179,7 @@ export default function ExploreDirectory({
                 <button
                   type="button"
                   onClick={() => handleQueryChange("")}
-                  className="text-xs text-ink/40 hover:text-ink px-1"
+                  className="text-xs text-ink/40 hover:text-ink px-1 cursor-pointer"
                 >
                   Clear
                 </button>
@@ -171,7 +189,10 @@ export default function ExploreDirectory({
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-[90rem] flex-1 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)]">
+      <section
+        ref={listingsSectionRef}
+        className="mx-auto w-full max-w-[90rem] flex-1 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)]"
+      >
         {/* Categories Horizontal Scroll */}
         <div className="-mx-1 mb-10 flex gap-2 overflow-x-auto px-1 pb-3 [scrollbar-width:none] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_0.16s_both]">
           {categories.map((category) => (
@@ -190,11 +211,11 @@ export default function ExploreDirectory({
           ))}
         </div>
 
-        {/* Continuous Listings Grid */}
-        {allListings.length ? (
+        {/* Listings Grid */}
+        {currentListings.length ? (
           <>
-            <div className="grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-              {allListings.map((stay, index) => (
+            <div className={`grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${isFetching ? "opacity-75" : "opacity-100"}`}>
+              {currentListings.map((stay, index) => (
                 <article key={`${stay.id}-${index}`} className="listing-reveal group" style={{ "--order": index % limit }}>
                   <Link href={`/listings/${stay.id}`}>
                     <div className="image-zoom relative aspect-[1.05/1] overflow-hidden rounded-2xl bg-sand/70">
@@ -232,44 +253,127 @@ export default function ExploreDirectory({
               ))}
             </div>
 
-            {/* Unlimited Scrolling Sentinel & States */}
-            <div ref={loadMoreTriggerRef} className="mt-16 flex flex-col items-center justify-center">
-              {isFetchingNextPage ? (
-                <div className="flex flex-col items-center justify-center py-8 gap-3 animate-fade-in">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2.5 w-2.5 rounded-full bg-clay animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="h-2.5 w-2.5 rounded-full bg-clay animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="h-2.5 w-2.5 rounded-full bg-clay animate-bounce" style={{ animationDelay: "300ms" }} />
+            {/* Classic WanderLust Pagination Bar */}
+            {totalPages > 1 ? (
+              <nav
+                aria-label="Stays Pagination"
+                className="mt-16 pt-10 border-t border-ink/10 flex flex-col md:flex-row items-center justify-between gap-6"
+              >
+                {/* Page Status / Summary */}
+                <div className="text-xs sm:text-sm text-ink/65">
+                  Showing <span className="font-bold text-ink">{startItem}–{endItem}</span> of{" "}
+                  <span className="font-bold text-ink">{total}</span> stays • Page{" "}
+                  <span className="font-bold text-ink">{page}</span> of{" "}
+                  <span className="font-bold text-ink">{totalPages}</span>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex items-center gap-2">
+                  {/* Previous Page Button */}
+                  <button
+                    type="button"
+                    onClick={() => handlePageChange(page - 1)}
+                    disabled={page <= 1}
+                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-xs sm:text-sm font-bold transition-all ${
+                      page <= 1
+                        ? "opacity-30 cursor-not-allowed bg-ink/5 text-ink/40"
+                        : "bg-[#ede9df] text-ink hover:bg-sand hover:text-ink active:scale-95 cursor-pointer shadow-xs"
+                    }`}
+                    aria-label="Previous Page"
+                  >
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path
+                        fillRule="evenodd"
+                        d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>Previous</span>
+                  </button>
+
+                  {/* Number Pills */}
+                  <div className="flex items-center gap-1 sm:gap-1.5">
+                    {getPaginationRange(page, totalPages).map((item, idx) => {
+                      if (item === "...") {
+                        return (
+                          <span
+                            key={`ellipsis-${idx}`}
+                            className="w-8 text-center text-xs sm:text-sm font-bold text-ink/35 select-none"
+                          >
+                            ...
+                          </span>
+                        );
+                      }
+
+                      const pageNum = Number(item);
+                      const isActive = pageNum === page;
+
+                      return (
+                        <button
+                          key={`page-${pageNum}`}
+                          type="button"
+                          onClick={() => handlePageChange(pageNum)}
+                          aria-current={isActive ? "page" : undefined}
+                          className={`h-9 min-w-[2.25rem] sm:min-w-[2.5rem] px-2.5 rounded-full text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                            isActive
+                              ? "bg-ink text-white shadow-sm scale-105"
+                              : "bg-[#ede9df] text-ink/75 hover:bg-sand hover:text-ink active:scale-95"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
                   </div>
-                  <p className="text-xs font-bold tracking-widest text-ink/50 uppercase">
-                    Loading more places to linger...
-                  </p>
-                </div>
-              ) : hasNextPage ? (
-                <div className="py-6">
+
+                  {/* Next Page Button */}
                   <button
                     type="button"
-                    onClick={() => fetchNextPage()}
-                    className="rounded-full border border-ink/20 px-6 py-2.5 text-xs font-bold text-ink/75 hover:bg-sand hover:text-ink transition-all cursor-pointer shadow-sm active:scale-95"
+                    onClick={() => handlePageChange(page + 1)}
+                    disabled={page >= totalPages}
+                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 text-xs sm:text-sm font-bold transition-all ${
+                      page >= totalPages
+                        ? "opacity-30 cursor-not-allowed bg-ink/5 text-ink/40"
+                        : "bg-[#ede9df] text-ink hover:bg-sand hover:text-ink active:scale-95 cursor-pointer shadow-xs"
+                    }`}
+                    aria-label="Next Page"
                   >
-                    Scroll down or tap to load more
+                    <span>Next</span>
+                    <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                      <path
+                        fillRule="evenodd"
+                        d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010-1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   </button>
                 </div>
-              ) : (
-                <div className="w-full mt-10 border-t border-ink/10 pt-10 text-center">
-                  <div className="mx-auto h-2 w-2 rounded-full bg-clay/50 mb-3" />
-                  <p className="font-display text-2xl text-ink">You have explored all {total} places to linger.</p>
-                  <p className="mt-1 text-sm text-ink/50">Looking for a specific destination? Try searching above.</p>
-                  <button
-                    type="button"
-                    onClick={scrollToTop}
-                    className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#ede9df] px-5 py-2 text-xs font-bold text-ink hover:bg-sand transition-all cursor-pointer"
-                  >
-                    ↑ Back to top
-                  </button>
-                </div>
-              )}
-            </div>
+
+                {/* Quick Page Jump Selector */}
+                {totalPages > 5 && (
+                  <div className="flex items-center gap-2 text-xs text-ink/60">
+                    <span>Jump to:</span>
+                    <select
+                      value={page}
+                      onChange={(e) => handlePageChange(Number(e.target.value))}
+                      className="rounded-lg border border-ink/20 bg-white/90 px-2.5 py-1 text-xs font-bold text-ink outline-none focus:border-clay cursor-pointer"
+                    >
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                        <option key={p} value={p}>
+                          Page {p} of {totalPages}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </nav>
+            ) : (
+              <div className="mt-16 pt-10 border-t border-ink/10 text-center">
+                <p className="text-xs text-ink/50 uppercase tracking-wider font-semibold">
+                  Showing all {total} places to linger in {active}
+                </p>
+              </div>
+            )}
           </>
         ) : (
           <div className="py-20 text-center animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
@@ -280,7 +384,8 @@ export default function ExploreDirectory({
               onClick={() => {
                 setQuery("");
                 setActive("All");
-                syncUrl("All", "");
+                setPage(1);
+                syncUrl("All", "", 1);
               }}
               className="mt-6 inline-flex rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-clay cursor-pointer"
             >

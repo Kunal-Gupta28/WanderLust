@@ -8,21 +8,27 @@ const bySlug = Object.fromEntries(
 
 export const dynamic = "force-dynamic";
 
-export default async function CategoryPage({ params }) {
+export default async function CategoryPage({ params, searchParams }) {
   const { category } = await params;
+  const sp = await searchParams;
+  const initialPage = Number(sp?.page) || 1;
+  const initialQuery = sp?.q || "";
   const selected = bySlug[category];
   if (!selected || selected === "All") notFound();
 
   const initialData = await getListings({
-    page: 1,
+    page: initialPage,
     limit: 12,
     category: selected,
+    q: initialQuery,
   });
 
   return (
     <ExploreDirectory
       initialData={initialData}
       initialActive={selected}
+      initialQuery={initialQuery}
+      initialPage={initialPage}
     />
   );
 }
