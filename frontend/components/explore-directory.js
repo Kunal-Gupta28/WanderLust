@@ -41,9 +41,27 @@ export default function ExploreDirectory({
   const [active, setActive] = useState(initialActive);
   const [query, setQuery] = useState(initialQuery);
   const [page, setPage] = useState(initialPage);
+  const [jumpInput, setJumpInput] = useState(String(initialPage));
   const limit = 12;
 
   const listingsSectionRef = useRef(null);
+
+  // Keep jump input in sync with current page
+  useEffect(() => {
+    setJumpInput(String(page));
+  }, [page]);
+
+  const handleJumpSubmit = (e) => {
+    if (e) e.preventDefault();
+    const target = parseInt(jumpInput, 10);
+    if (!isNaN(target)) {
+      const clamped = Math.max(1, Math.min(target, totalPages));
+      handlePageChange(clamped);
+      setJumpInput(String(clamped));
+    } else {
+      setJumpInput(String(page));
+    }
+  };
 
   // Sync with URL params on mount or when browser back/forward is used
   useEffect(() => {
@@ -349,22 +367,38 @@ export default function ExploreDirectory({
                   </button>
                 </div>
 
-                {/* Quick Page Jump Selector */}
+                {/* Elegant Jump to Page Pill */}
                 {totalPages > 5 && (
-                  <div className="flex items-center gap-2 text-xs text-ink/60">
-                    <span>Jump to:</span>
-                    <select
-                      value={page}
-                      onChange={(e) => handlePageChange(Number(e.target.value))}
-                      className="rounded-lg border border-ink/20 bg-white/90 px-2.5 py-1 text-xs font-bold text-ink outline-none focus:border-clay cursor-pointer"
+                  <form
+                    onSubmit={handleJumpSubmit}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#ede9df]/85 border border-ink/10 pl-3.5 pr-1.5 py-1 text-xs text-ink/70 shadow-2xs transition-all hover:border-ink/20"
+                  >
+                    <span className="font-semibold text-ink/65">Page</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={jumpInput}
+                      onChange={(e) => setJumpInput(e.target.value.replace(/[^0-9]/g, ""))}
+                      className="w-12 h-7 rounded-full bg-white text-center font-bold text-ink text-xs border border-ink/15 shadow-2xs outline-none focus:border-clay focus:ring-2 focus:ring-clay/20 transition-all"
+                      aria-label="Target page number"
+                    />
+                    <span className="font-medium text-ink/50">of {totalPages}</span>
+                    <button
+                      type="submit"
+                      className="h-7 px-3 rounded-full bg-ink text-white font-bold text-[11px] hover:bg-clay active:scale-95 transition-all cursor-pointer shadow-2xs flex items-center justify-center gap-1"
+                      title="Jump to page"
                     >
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                        <option key={p} value={p}>
-                          Page {p} of {totalPages}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      <span>Go</span>
+                      <svg viewBox="0 0 16 16" fill="currentColor" className="w-3 h-3">
+                        <path
+                          fillRule="evenodd"
+                          d="M6.22 3.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 0 1 0-1.06Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </form>
                 )}
               </nav>
             ) : (
