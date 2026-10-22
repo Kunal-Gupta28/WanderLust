@@ -183,7 +183,8 @@ module.exports.getSearchSuggestions = async (req, res) => {
       $or: [{ title: searchRegex }, { location: searchRegex }, { country: searchRegex }],
     })
     .select("title location country")
-    .limit(5);
+    .limit(5)
+    .lean();
 
   res.json(
     suggestions.map((item) => ({
@@ -215,10 +216,16 @@ module.exports.createRoute = async (req, res, next) => {
 
 module.exports.showRoute = async (req, res, next) => {
   try {
+    // Optimized: Only project needed public review and owner fields; lean() avoids Mongoose overhead
     const listing = await listingModel
       .findById(req.params.id)
-      .populate({ path: "reviews", populate: { path: "author" } })
-      .populate("owner");
+      .populate({
+        path: "reviews",
+        select: "comment rating createdAt author",
+        populate: { path: "author", select: "username role" },
+      })
+      .populate("owner", "username role")
+      .lean();
 
     if (listing) {
       return res.json({ listing: publicListing(listing) });
@@ -256,8 +263,13 @@ module.exports.updateRoute = async (req, res, next) => {
     }
     const populated = await listingModel
       .findById(id)
-      .populate({ path: "reviews", populate: { path: "author" } })
-      .populate("owner");
+      .populate({
+        path: "reviews",
+        select: "comment rating createdAt author",
+        populate: { path: "author", select: "username role" },
+      })
+      .populate("owner", "username role")
+      .lean();
     res.json({ listing: publicListing(populated), message: "Stay updated." });
   } catch (err) {
     next(err);

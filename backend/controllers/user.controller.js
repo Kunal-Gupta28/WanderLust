@@ -26,7 +26,7 @@ module.exports.me = async (req, res) => {
       return res.json({ user: null });
     }
     try {
-      const user = await userModel.findById(decoded.id);
+      const user = await userModel.findById(decoded.id).select("username email role phone").lean();
       if (user) return res.json({ user: publicUser(user) });
     } catch {}
     
@@ -236,7 +236,7 @@ module.exports.getWishlist = async (req, res) => {
     if (!decoded) return res.json({ wishlist: [] });
 
     try {
-      const user = await userModel.findById(decoded.id);
+      const user = await userModel.findById(decoded.id).select("wishlist").lean();
       if (user) return res.json({ wishlist: user.wishlist || [] });
     } catch {}
 
@@ -265,7 +265,7 @@ module.exports.toggleWishlist = async (req, res) => {
     let currentWishlist = [];
 
     try {
-      const user = await userModel.findById(decoded.id);
+      const user = await userModel.findById(decoded.id).select("wishlist");
       if (user) {
         if (!user.wishlist) user.wishlist = [];
         if (user.wishlist.includes(idStr)) {

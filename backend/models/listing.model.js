@@ -77,6 +77,7 @@ listingSchema.index({ title: 'text', description: 'text' });
 listingSchema.index({ geometry: '2dsphere' });
 listingSchema.index({ category: 1 });
 listingSchema.index({ price: 1 });
+listingSchema.index({ location: 1, country: 1 });
 
 // Middleware to delete associated reviews when a listing is deleted
 listingSchema.post('findOneAndDelete', async (listing) => {

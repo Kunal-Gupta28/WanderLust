@@ -23,7 +23,7 @@ module.exports.isLoggedIN = async (req, res, next) => {
     }
 
     try {
-      const user = await userModel.findById(decoded.id);
+      const user = await userModel.findById(decoded.id).select("username email role phone").lean();
       req.user = user || { _id: decoded.id, id: decoded.id, username: decoded.username, email: decoded.email };
     } catch {
       req.user = { _id: decoded.id, id: decoded.id, username: decoded.username, email: decoded.email };
@@ -37,31 +37,35 @@ module.exports.isLoggedIN = async (req, res, next) => {
 
 module.exports.isOwner = async (req, res, next) => {
   try {
-    const listing = await listingModel.findById(req.params.id);
+    const listing = await listingModel.findById(req.params.id).select("owner").lean();
     if (!listing) {
       return res.status(404).json({ error: "That stay is no longer listed." });
     }
-    if (!req.user || (listing.owner && !listing.owner.equals(req.user._id))) {
+    const ownerId = listing.owner?._id || listing.owner;
+    const userId = req.user?._id || req.user?.id;
+    if (!userId || String(ownerId) !== String(userId)) {
       return res.status(403).json({ error: "You do not own this stay." });
     }
     next();
   } catch (e) {
-    next();
+    next(e);
   }
 };
 
 module.exports.isReviewAuthor = async (req, res, next) => {
   try {
-    const review = await reviewModel.findById(req.params.reviewId);
+    const review = await reviewModel.findById(req.params.reviewId).select("author").lean();
     if (!review) {
       return res.status(404).json({ error: "Review not found." });
     }
-    if (!review.author.equals(req.user._id)) {
+    const authorId = review.author?._id || review.author;
+    const userId = req.user?._id || req.user?.id;
+    if (!userId || String(authorId) !== String(userId)) {
       return res.status(403).json({ error: "You did not write this review." });
     }
     next();
   } catch (e) {
-    next();
+    next(e);
   }
 };
 

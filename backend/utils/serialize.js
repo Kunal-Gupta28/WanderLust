@@ -33,20 +33,25 @@ const publicCardListing = (listing) => {
 
 /**
  * Full serializer for Stay Detail page (/listings/:id).
- * Includes all room photos, full description, geometry/map, reviews, and host info.
+ * Includes all room photos, full description, geometry/map, reviews, and safe host info (no PII).
  */
 const publicListing = (listing) => {
   if (!listing) return null;
-  const owner = listing.owner && listing.owner.username ? publicUser(listing.owner) : listing.owner;
+  const owner = listing.owner && listing.owner.username
+    ? { id: listing.owner._id || listing.owner.id, username: listing.owner.username, role: listing.owner.role || "host" }
+    : listing.owner;
+
   const reviews = Array.isArray(listing.reviews)
     ? listing.reviews.map((review) => {
         if (!review || !review.comment) return review;
         return {
-          id: review._id,
+          id: review._id || review.id,
           comment: review.comment,
           rating: review.rating,
           createdAt: review.createdAt,
-          author: publicUser(review.author),
+          author: review.author && review.author.username
+            ? { id: review.author._id || review.author.id, username: review.author.username, role: review.author.role || "traveler" }
+            : null,
         };
       })
     : [];
