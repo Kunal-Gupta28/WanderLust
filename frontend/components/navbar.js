@@ -206,7 +206,7 @@ export default function Navbar({ transparent = false }) {
               {/* Hover & Click Dropdown Menu */}
               {profileMenuOpen && (
                 <div className="absolute right-0 top-full pt-2 z-50 w-72 animate-[rise-in_0.2s_cubic-bezier(.16,1,.3,1)_both]">
-                  <div className="rounded-3xl bg-paper/98 backdrop-blur-2xl border border-ink/10 shadow-[0_16px_48px_rgba(23,34,29,0.16)] p-3 text-ink overflow-hidden">
+                  <div className="rounded-3xl bg-paper/98 backdrop-blur-2xl border border-ink/10 shadow-[0_16px_48px_rgba(23,34,29,0.16)] p-3 text-ink overflow-hidden max-h-[85vh] overflow-y-auto [scrollbar-width:thin]">
                     {/* User Header Profile Card */}
                     <div className="px-3.5 py-3 rounded-2xl bg-sand/60 border border-ink/8 mb-2">
                       <div className="flex items-center gap-3">
@@ -282,6 +282,57 @@ export default function Navbar({ transparent = false }) {
                         <div className="flex-1">
                           <span className="block font-bold">Explore Stays</span>
                           <span className="block text-[11px] text-ink/50 font-normal">Browse 900+ places</span>
+                        </div>
+                      </Link>
+
+                      {/* Philosophy */}
+                      <Link
+                        href="/philosophy"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
+                      >
+                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                        </span>
+                        <div className="flex-1">
+                          <span className="block font-bold">Philosophy</span>
+                          <span className="block text-[11px] text-ink/50 font-normal">Our travel philosophy</span>
+                        </div>
+                      </Link>
+
+                      {/* About Us */}
+                      <Link
+                        href="/about"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
+                      >
+                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                          </svg>
+                        </span>
+                        <div className="flex-1">
+                          <span className="block font-bold">About Us</span>
+                          <span className="block text-[11px] text-ink/50 font-normal">Our story & curation</span>
+                        </div>
+                      </Link>
+
+                      {/* Contact */}
+                      <Link
+                        href="/contact"
+                        onClick={() => setProfileMenuOpen(false)}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-sand/70 transition-colors text-ink/85 hover:text-ink cursor-pointer"
+                      >
+                        <span className="w-7 h-7 rounded-lg bg-sand text-ink flex items-center justify-center shrink-0">
+                          <svg className="w-4 h-4 stroke-current fill-none stroke-2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                          </svg>
+                        </span>
+                        <div className="flex-1">
+                          <span className="block font-bold">Contact</span>
+                          <span className="block text-[11px] text-ink/50 font-normal">Concierge & support</span>
                         </div>
                       </Link>
 
