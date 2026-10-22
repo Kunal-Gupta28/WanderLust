@@ -1,10 +1,5 @@
-import SavedClient from "../../components/saved-client";
-
-export const metadata = {
-  title: "Saved Retreats & Wishlist — WanderLust",
-  description: "View your saved stays, hideaways, and curated travel destinations.",
-};
+import { redirect } from "next/navigation";
 
 export default function SavedPage() {
-  return <SavedClient />;
+  redirect("/wishlist");
 }

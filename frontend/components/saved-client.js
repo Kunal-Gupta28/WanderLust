@@ -139,7 +139,7 @@ export default function SavedClient() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <h1 className="font-display text-[clamp(2.8rem,5.5vw,5.5rem)] leading-[.88] tracking-[-.06em]">
-                Your Saved <em className="font-normal text-clay">Retreats</em>
+                Your Personal <em className="font-normal text-clay">Wishlist</em>
               </h1>
               <p className="mt-4 max-w-lg text-base text-ink/65 leading-relaxed">
                 Places you want to linger. Review your curated hideaways, mountain cabins, and seaside villas.
@@ -150,7 +150,7 @@ export default function SavedClient() {
               <div className="inline-flex items-center gap-2 rounded-full bg-sand/70 border border-ink/10 px-4 py-2 text-xs font-bold text-ink/75">
                 <span className="w-2 h-2 rounded-full bg-clay" />
                 <span>
-                  {savedStays.length} {savedStays.length === 1 ? "Stay" : "Stays"} Saved
+                  {savedStays.length} {savedStays.length === 1 ? "Stay" : "Stays"} in Wishlist
                 </span>
               </div>
             )}
