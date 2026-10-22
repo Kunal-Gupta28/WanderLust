@@ -1,5 +1,5 @@
 const listingModel = require("../models/listing.model.js");
-const { publicListing } = require("../utils/serialize.js");
+const { publicListing, publicCardListing } = require("../utils/serialize.js");
 
 let listingsData;
 try {
@@ -40,19 +40,19 @@ module.exports.index = async (req, res) => {
     const query = {};
     if (targetCategory) query.category = new RegExp(`^${category}$`, "i");
     const total = await listingModel.countDocuments(query);
-    let mongoQuery = listingModel.find(query).populate("owner");
+    // Optimized: Only project fields needed by listing cards; avoids loading heavy room images, reviews, & owner PII
+    let mongoQuery = listingModel
+      .find(query)
+      .select("title price location country category image");
     if (page && limit) {
       mongoQuery = mongoQuery.skip((page - 1) * limit).limit(limit);
     }
-    const allListings = await mongoQuery;
+    const allListings = await mongoQuery.lean();
     if (allListings && allListings.length > 0) {
-      const categories = await listingModel.distinct("category");
       const totalPages = limit ? Math.max(1, Math.ceil(total / limit)) : 1;
       return res.json({
-        listings: allListings.map(publicListing),
+        listings: allListings.map(publicCardListing),
         selectedCategory: category || "all",
-        categories: categories.length ? categories : CATEGORIES,
-        allCategories: CATEGORIES,
         page: page || 1,
         limit: limit || allListings.length,
         total,
@@ -82,10 +82,8 @@ module.exports.index = async (req, res) => {
   const paginated = (page && limit) ? filtered.slice((page - 1) * limit, page * limit) : filtered;
 
   res.json({
-    listings: paginated,
+    listings: paginated.map(publicCardListing),
     selectedCategory: category || "all",
-    categories: CATEGORIES,
-    allCategories: CATEGORIES,
     page: page || 1,
     limit: limit || total,
     total,
@@ -113,18 +111,19 @@ module.exports.searchListings = async (req, res) => {
       query.$or = [{ title: searchRegex }, { location: searchRegex }, { country: searchRegex }, { category: searchRegex }];
     }
     const total = await listingModel.countDocuments(query);
-    let mongoQuery = listingModel.find(query).populate("owner");
+    // Optimized: Only project card fields
+    let mongoQuery = listingModel
+      .find(query)
+      .select("title price location country category image");
     if (page && limit) {
       mongoQuery = mongoQuery.skip((page - 1) * limit).limit(limit);
     }
-    const listings = await mongoQuery;
+    const listings = await mongoQuery.lean();
     if (listings && listings.length > 0) {
-      const categories = await listingModel.distinct("category");
       const totalPages = limit ? Math.max(1, Math.ceil(total / limit)) : 1;
       return res.json({
-        listings: listings.map(publicListing),
+        listings: listings.map(publicCardListing),
         selectedCategory: "all",
-        categories: categories.length ? categories : CATEGORIES,
         query: q || "",
         page: page || 1,
         limit: limit || listings.length,
@@ -156,9 +155,8 @@ module.exports.searchListings = async (req, res) => {
   const paginated = (page && limit) ? filtered.slice((page - 1) * limit, page * limit) : filtered;
 
   res.json({
-    listings: paginated,
+    listings: paginated.map(publicCardListing),
     selectedCategory: "all",
-    categories: CATEGORIES,
     query: q || "",
     page: page || 1,
     limit: limit || total,
