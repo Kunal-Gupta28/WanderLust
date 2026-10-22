@@ -175,24 +175,9 @@ export default function Navbar({ transparent = false }) {
                   Admin CRM
                 </Link>
               )}
-              <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-sand/50 border border-ink/10 text-ink/80 flex items-center gap-1.5">
-                <span
-                  className={`w-2 h-2 rounded-full ${
-                    currentUser.role === "admin"
-                      ? "bg-amber-500"
-                      : currentUser.role === "host"
-                      ? "bg-clay"
-                      : "bg-moss"
-                  }`}
-                />
-                <span className="capitalize">{currentUser.username || "Explorer"}</span>
-                <span className="text-[10px] font-semibold text-ink/50 uppercase tracking-wider">
-                  ({currentUser.role || "traveler"})
-                </span>
-              </span>
               <button
                 onClick={handleLogout}
-                className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-300 ${
+                className={`rounded-full px-4 py-2 text-xs lg:text-sm font-bold transition-all duration-300 cursor-pointer ${
                   isDarkNav
                     ? "border border-white/50 text-white hover:bg-white hover:text-ink shadow-sm"
                     : "bg-ink text-white hover:bg-clay shadow-sm"
@@ -255,18 +240,6 @@ export default function Navbar({ transparent = false }) {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-ink/10 bg-paper px-6 py-6 space-y-4 shadow-xl text-ink">
-          {currentUser && (
-            <div className="pb-3 border-b border-ink/10 flex items-center justify-between">
-              <span className="text-xs font-bold text-ink/60">Signed in as</span>
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-moss capitalize">{currentUser.username}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sand/60 text-ink/70 uppercase">
-                  {currentUser.role || "traveler"}
-                </span>
-              </div>
-            </div>
-          )}
-
           <nav className="flex flex-col space-y-3 font-semibold text-base">
             {currentUser?.role === "host" && (
               <Link
