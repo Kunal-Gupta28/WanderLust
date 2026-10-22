@@ -559,8 +559,8 @@ export default function FAQPage() {
       <Navbar />
 
       {/* Top Banner Stats */}
-      <section className="bg-sand/35 border-b border-ink/10 py-3 px-4">
-        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-ink/75">
+      <section className="bg-sand/35 border-b border-ink/10 py-3 px-[clamp(1.25rem,4vw,4.5rem)]">
+        <div className="max-w-[90rem] mx-auto w-full flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-ink/75">
           <div className="flex items-center gap-2.5">
             <span className="relative flex h-2.5 w-2.5 items-center justify-center">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -598,7 +598,7 @@ export default function FAQPage() {
       </section>
 
       {/* Hero & Search Header */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-16 pb-12 max-w-4xl mx-auto text-center">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-16 pb-12 max-w-[90rem] mx-auto w-full text-center">
         <span ref={addToRefs} className="text-xs font-bold tracking-[.2em] text-clay uppercase block mb-3 opacity-0 translate-y-8 transition-all duration-700 ease-out">
           Knowledge Base & Policies
         </span>
@@ -610,13 +610,13 @@ export default function FAQPage() {
         </h1>
         <p 
           ref={addToRefs}
-          className="text-base md:text-lg text-ink/75 max-w-2xl mx-auto mb-10 opacity-0 translate-y-8 transition-all duration-1000 delay-100 ease-out"
+          className="text-base md:text-lg text-ink/75 max-w-3xl mx-auto mb-10 opacity-0 translate-y-8 transition-all duration-1000 delay-100 ease-out"
         >
           Explore in-depth guidance on Slow Travel, architectural curation, off-grid workations, transparent booking rules, host partnerships, and guest protection.
         </p>
 
         {/* Live Search Input */}
-        <div ref={addToRefs} className="relative max-w-2xl mx-auto opacity-0 translate-y-8 transition-all duration-1000 delay-200 ease-out">
+        <div ref={addToRefs} className="relative max-w-3xl mx-auto opacity-0 translate-y-8 transition-all duration-1000 delay-200 ease-out">
           <input 
             type="text" 
             placeholder="Search all 70 questions (e.g. WiFi speed, cancellation, dog friendly, solar power)..." 
@@ -643,8 +643,8 @@ export default function FAQPage() {
       </section>
 
       {/* Quick Jump Category Cards */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-10 max-w-6xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-10 max-w-[90rem] mx-auto w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2.5">
           {categories.filter(c => c !== "All Categories").slice(0, 10).map((cat, i) => {
             const count = faqs.filter(f => f.category === cat).length;
             const isSelected = activeCategory === cat && !searchQuery;
@@ -682,7 +682,7 @@ export default function FAQPage() {
       </section>
 
       {/* Category Pills Navigation */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-8 max-w-6xl mx-auto">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-8 max-w-[90rem] mx-auto w-full">
         <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-ink/10 mb-6">
           <div className="flex flex-wrap items-center gap-2">
             {categories.map((cat, i) => {
@@ -744,7 +744,7 @@ export default function FAQPage() {
       </section>
 
       {/* FAQ Accordion Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-28 max-w-4xl mx-auto min-h-[450px]">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-28 max-w-[90rem] mx-auto w-full min-h-[450px]">
         {filteredFaqs.length === 0 ? (
           <div className="text-center py-20 bg-sand/20 rounded-3xl border border-ink/10">
             <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-sand/50 grid place-items-center text-clay">
@@ -860,7 +860,7 @@ export default function FAQPage() {
 
       {/* Still Have Questions CTA */}
       <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-20 bg-moss text-paper text-center border-t border-ink/10 relative overflow-hidden">
-        <div className="max-w-2xl mx-auto relative z-10">
+        <div className="max-w-4xl mx-auto relative z-10">
           <span className="text-xs font-bold tracking-[.2em] text-sand uppercase block mb-2">Can't find your answer?</span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Our Concierge Team is Here</h2>
           <p className="text-paper/80 text-base mb-8 max-w-lg mx-auto">
