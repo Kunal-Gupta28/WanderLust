@@ -118,7 +118,44 @@ export default function Navbar({ transparent = false }) {
         </div>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden items-center gap-6 text-xs lg:text-sm font-semibold md:flex">
+        <nav className="hidden items-center gap-5 lg:gap-6 text-xs lg:text-sm font-semibold md:flex">
+          {/* Wishlist Link (shown before Explore when logged in) */}
+          {currentUser && (
+            <Link
+              href="/wishlist"
+              className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-300 cursor-pointer ${
+                isDarkNav
+                  ? pathname === "/wishlist"
+                    ? "bg-white text-ink shadow-sm"
+                    : "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                  : pathname === "/wishlist"
+                  ? "bg-clay text-white shadow-sm"
+                  : "bg-[#ede9df] hover:bg-sand text-ink border border-ink/10"
+              }`}
+              title="View your curated wishlist"
+            >
+              <svg
+                className={`w-3.5 h-3.5 transition-colors ${
+                  pathname === "/wishlist"
+                    ? isDarkNav
+                      ? "fill-clay text-clay"
+                      : "fill-white text-white"
+                    : "text-clay fill-clay"
+                }`}
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+              <span>Wishlist</span>
+            </Link>
+          )}
+
           {links.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -149,31 +186,6 @@ export default function Navbar({ transparent = false }) {
           
           {currentUser ? (
             <div className="flex items-center gap-2.5">
-              {/* Wishlist Link for logged in travelers */}
-              <Link
-                href="/wishlist"
-                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-300 cursor-pointer ${
-                  isDarkNav
-                    ? "bg-white/10 hover:bg-white/20 text-white border border-white/20"
-                    : "bg-[#ede9df] hover:bg-sand text-ink border border-ink/10"
-                }`}
-                title="View your curated wishlist"
-              >
-                <svg
-                  className="w-3.5 h-3.5 text-clay fill-clay"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-                <span>Wishlist</span>
-              </Link>
-
               {/* Host Portal Link */}
               {currentUser.role === "host" && (
                 <Link
