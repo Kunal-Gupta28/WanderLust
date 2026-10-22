@@ -4,17 +4,17 @@ const crypto = require("crypto");
 const Razorpay = require("razorpay");
 const { isLoggedIN } = require("../middleware/middleware.js");
 
-const KEY_ID = process.env.RAZORPAY_KEY_ID || "rzp_test_wanderlust123";
-const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "wanderlust_secret_123";
-
-let razorpayInstance;
-try {
-  razorpayInstance = new Razorpay({
-    key_id: KEY_ID,
-    key_secret: KEY_SECRET,
-  });
-} catch (e) {
-  console.warn("Razorpay initialization warning:", e.message);
+function getRazorpayInstance() {
+  const key_id = process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_API_KEY;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_Secret_KEY;
+  if (key_id && key_secret) {
+    try {
+      return new Razorpay({ key_id, key_secret });
+    } catch (e) {
+      console.warn("Razorpay initialization error:", e.message);
+    }
+  }
+  return null;
 }
 
 // Create Razorpay Order
@@ -31,15 +31,21 @@ router.post("/create-order", isLoggedIN, async (req, res) => {
       receipt: `rcpt_${Date.now().toString().slice(-8)}`,
       notes: {
         listingId: listingId || "",
-        userId: req.user.id || req.user._id,
+        userId: String(req.user.id || req.user._id || ""),
       },
     };
 
+    const razorpay = getRazorpayInstance();
+    const activeKeyId = process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_API_KEY;
+
     let order;
-    if (razorpayInstance && process.env.RAZORPAY_KEY_ID) {
-      order = await razorpayInstance.orders.create(options);
+    let isMock = false;
+
+    if (razorpay && activeKeyId) {
+      order = await razorpay.orders.create(options);
     } else {
       // Mock order for testing / demo environment
+      isMock = true;
       order = {
         id: `order_demo_${Date.now()}`,
         entity: "order",
@@ -52,10 +58,12 @@ router.post("/create-order", isLoggedIN, async (req, res) => {
 
     res.json({
       ok: true,
-      keyId: KEY_ID,
+      keyId: activeKeyId || "rzp_test_wanderlust123",
+      isMock,
       order,
     });
   } catch (error) {
+    console.error("Error creating Razorpay order:", error);
     res.status(500).json({ error: error.message || "Failed to create Razorpay order." });
   }
 });
@@ -72,11 +80,13 @@ router.post("/verify-payment", isLoggedIN, async (req, res) => {
       amount,
     } = req.body;
 
+    const activeSecret = process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_Secret_KEY;
     let isValid = true;
-    if (razorpay_signature && process.env.RAZORPAY_KEY_SECRET) {
+
+    if (razorpay_signature && activeSecret && !razorpay_order_id?.startsWith("order_demo_")) {
       const body = razorpay_order_id + "|" + razorpay_payment_id;
       const expectedSignature = crypto
-        .createHmac("sha256", KEY_SECRET)
+        .createHmac("sha256", activeSecret)
         .update(body.toString())
         .digest("hex");
       isValid = expectedSignature === razorpay_signature;
@@ -100,6 +110,7 @@ router.post("/verify-payment", isLoggedIN, async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error verifying payment:", error);
     res.status(500).json({ error: "Payment verification failed." });
   }
 });

@@ -360,8 +360,24 @@ export default function ListingDetail({ listing }) {
           listingTitle: listing.title,
         });
 
+        // If backend returns a mock order (keys not set), complete booking instantly
+        if (orderData.isMock || !window.Razorpay) {
+          setTimeout(() => {
+            setBookingConfirmation({
+              bookingId: `BK-${Date.now().toString().slice(-6)}`,
+              listingTitle: listing.title,
+              amount: grandTotal,
+              paymentId: `pay_demo_${Date.now()}`,
+              status: "CONFIRMED",
+              createdAt: new Date().toISOString(),
+            });
+            setPaymentLoading(false);
+          }, 800);
+          return;
+        }
+
         const options = {
-          key: orderData.keyId || "rzp_test_wanderlust123",
+          key: orderData.keyId,
           amount: orderData.order.amount,
           currency: orderData.order.currency || "INR",
           name: "WanderLust Stay Reservation",
@@ -383,34 +399,22 @@ export default function ListingDetail({ listing }) {
               alert(err.response?.data?.error || "Payment verification failed.");
             }
           },
-          prefill: { name: "Traveler", email: "traveler@example.com", contact: "+919876543210" },
+          prefill: {
+            name: currentUser?.username || "Traveler",
+            email: currentUser?.email || "traveler@wanderlust.com",
+            contact: "+919876543210",
+          },
           theme: { color: "#b95738" },
         };
 
-        if (window.Razorpay) {
-          const rzp = new window.Razorpay(options);
-          rzp.open();
-        } else {
-          setTimeout(() => {
-            setBookingConfirmation({
-              bookingId: `BK-${Date.now().toString().slice(-6)}`,
-              listingTitle: listing.title,
-              amount: grandTotal,
-              paymentId: `pay_demo_${Date.now()}`,
-              status: "CONFIRMED",
-              createdAt: new Date().toISOString()
-            });
-          }, 1000);
-        }
-      } catch (err) {
-        setBookingConfirmation({
-          bookingId: `BK-${Date.now().toString().slice(-6)}`,
-          listingTitle: listing.title,
-          amount: grandTotal,
-          paymentId: `pay_demo_${Date.now()}`,
-          status: "CONFIRMED",
-          createdAt: new Date().toISOString()
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (response) {
+          alert(`Payment Failed: ${response.error?.description || response.error?.reason || "Transaction declined"}`);
         });
+        rzp.open();
+      } catch (err) {
+        console.error("Booking error:", err);
+        alert(err.response?.data?.error || "Could not initiate payment. Please try again.");
       } finally {
         setPaymentLoading(false);
       }
