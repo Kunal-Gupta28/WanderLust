@@ -149,6 +149,31 @@ export default function Navbar({ transparent = false }) {
           
           {currentUser ? (
             <div className="flex items-center gap-2.5">
+              {/* Saved / Wishlist Link for logged in travelers */}
+              <Link
+                href="/saved"
+                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-300 ${
+                  isDarkNav
+                    ? "bg-white/10 hover:bg-white/20 text-white border border-white/20"
+                    : "bg-[#ede9df] hover:bg-sand text-ink border border-ink/10"
+                }`}
+                title="View your saved stays"
+              >
+                <svg
+                  className="w-3.5 h-3.5 text-clay fill-clay"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                  />
+                </svg>
+                <span>Saved</span>
+              </Link>
+
               {/* Host Portal Link */}
               {currentUser.role === "host" && (
                 <Link
@@ -240,6 +265,22 @@ export default function Navbar({ transparent = false }) {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-ink/10 bg-paper px-6 py-6 space-y-4 shadow-xl text-ink">
+          {currentUser && (
+            <Link
+              href="/saved"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-sand/60 text-ink font-bold text-sm"
+            >
+              <span className="flex items-center gap-2">
+                <svg className="w-4 h-4 text-clay fill-clay" viewBox="0 0 24 24">
+                  <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span>Saved Wishlist</span>
+              </span>
+              <span>→</span>
+            </Link>
+          )}
+
           <nav className="flex flex-col space-y-3 font-semibold text-base">
             {currentUser?.role === "host" && (
               <Link

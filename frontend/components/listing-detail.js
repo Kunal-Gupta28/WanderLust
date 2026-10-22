@@ -16,6 +16,7 @@ import {
   sendMessage,
   getCurrentUser,
   apiClient,
+  toggleWishlist,
 } from "../lib/api";
 import {
   LockIcon,
@@ -310,9 +311,17 @@ export default function ListingDetail({ listing }) {
   };
 
   const handleSaveToggle = () => {
-    requireAuthAction(() => {
+    requireAuthAction(async () => {
       const nextSaved = !isSaved;
       setIsSaved(nextSaved);
+      const listingId = String(listing.id || listing._id);
+
+      // 1. Sync with backend API
+      try {
+        await toggleWishlist(listingId);
+      } catch {}
+
+      // 2. Sync with localStorage for offline/instant speed
       if (typeof window !== "undefined") {
         const stored = localStorage.getItem("wanderlust_user");
         let userObj = currentUser;
@@ -327,7 +336,6 @@ export default function ListingDetail({ listing }) {
           try {
             const raw = localStorage.getItem(key);
             const savedList = raw ? JSON.parse(raw) : [];
-            const listingId = String(listing.id || listing._id);
             let updatedList;
             if (nextSaved) {
               updatedList = Array.from(new Set([...savedList, listingId]));
@@ -335,6 +343,7 @@ export default function ListingDetail({ listing }) {
               updatedList = savedList.filter((id) => String(id) !== listingId);
             }
             localStorage.setItem(key, JSON.stringify(updatedList));
+            window.dispatchEvent(new Event("wanderlust_wishlist_updated"));
           } catch {}
         }
       }

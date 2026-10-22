@@ -11,6 +11,9 @@ router.post("/login", wrapAsync(userController.login));
 
 router.post("/demo-login", wrapAsync(userController.demoLogin));
 
+router.get("/wishlist", wrapAsync(userController.getWishlist));
+router.post("/wishlist/toggle", wrapAsync(userController.toggleWishlist));
+
 router.post("/logout", userController.logout);
 
 module.exports = router;

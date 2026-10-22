@@ -185,4 +185,22 @@ export async function createListing(formData) {
   return res.data;
 }
 
+export async function getWishlist() {
+  try {
+    const res = await apiClient.get("/auth/wishlist");
+    return res.data?.wishlist || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function toggleWishlist(listingId) {
+  try {
+    const res = await apiClient.post("/auth/wishlist/toggle", { listingId });
+    return res.data;
+  } catch {
+    return null;
+  }
+}
+
 export { API_URL, apiClient };

@@ -224,3 +224,77 @@ module.exports.demoLogin = async (req, res, next) => {
     res.status(500).json({ error: "Could not start demo session. Please try again." });
   }
 };
+
+module.exports.getWishlist = async (req, res) => {
+  try {
+    let token = req.cookies?.token;
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) return res.json({ wishlist: [] });
+    const decoded = verifyToken(token);
+    if (!decoded) return res.json({ wishlist: [] });
+
+    try {
+      const user = await userModel.findById(decoded.id);
+      if (user) return res.json({ wishlist: user.wishlist || [] });
+    } catch {}
+
+    const memUser = memoryUsers.get(decoded.username);
+    return res.json({ wishlist: memUser?.wishlist || [] });
+  } catch (err) {
+    return res.json({ wishlist: [] });
+  }
+};
+
+module.exports.toggleWishlist = async (req, res) => {
+  try {
+    let token = req.cookies?.token;
+    if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer ")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) return res.status(401).json({ error: "Please sign in to save stays to your wishlist." });
+    const decoded = verifyToken(token);
+    if (!decoded) return res.status(401).json({ error: "Session expired. Please sign in again." });
+
+    const { listingId } = req.body;
+    if (!listingId) return res.status(400).json({ error: "listingId is required." });
+
+    const idStr = String(listingId);
+    let isSaved = false;
+    let currentWishlist = [];
+
+    try {
+      const user = await userModel.findById(decoded.id);
+      if (user) {
+        if (!user.wishlist) user.wishlist = [];
+        if (user.wishlist.includes(idStr)) {
+          user.wishlist = user.wishlist.filter((id) => id !== idStr);
+          isSaved = false;
+        } else {
+          user.wishlist.push(idStr);
+          isSaved = true;
+        }
+        await user.save();
+        return res.json({ isSaved, wishlist: user.wishlist });
+      }
+    } catch {}
+
+    let memUser = memoryUsers.get(decoded.username);
+    if (!memUser) {
+      memUser = { username: decoded.username, wishlist: [] };
+      memoryUsers.set(decoded.username, memUser);
+    }
+    if (!memUser.wishlist) memUser.wishlist = [];
+    if (memUser.wishlist.includes(idStr)) {
+      memUser.wishlist = memUser.wishlist.filter((id) => id !== idStr);
+      isSaved = false;
+    } else {
+      memUser.wishlist.push(idStr);
+      isSaved = true;
+    }
+    return res.json({ isSaved, wishlist: memUser.wishlist });
+  } catch (err) {
+    return res.status(500).json({ error: "Could not update wishlist." });
+  }
+};

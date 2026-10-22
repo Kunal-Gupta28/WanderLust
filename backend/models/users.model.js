@@ -26,6 +26,10 @@ const userSchema = new Schema({
         trim: true,
         default: ""
     },
+    wishlist: [{
+        type: String,
+        trim: true
+    }],
     createdAt: {
         type: Date,
         default: Date.now
