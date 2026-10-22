@@ -74,7 +74,7 @@ export default function ContactPage() {
         localStorage.setItem("wanderlust_inquiries", JSON.stringify(prev));
       } catch {}
 
-      if (response.ok) {
+      if (data && data.ok) {
         setStatusMsg({
           type: "success",
           text: data.message || "Thank you! Your message has been received by our concierge team."

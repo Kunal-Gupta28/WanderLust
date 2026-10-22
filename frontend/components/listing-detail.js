@@ -804,7 +804,7 @@ export default function ListingDetail({ listing }) {
                   <LockIcon className="w-5 h-5" />
                 </div>
                 <h3 className="font-bold text-base mb-1">100% Protected Payment</h3>
-                <p className="text-xs text-ink/65 leading-relaxed">Encrypted 256-bit Razorpay Gateway with instant payment receipt.</p>
+                <p className="text-xs text-ink/65 leading-relaxed">Encrypted 256-bit Secure Gateway with instant payment receipt.</p>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-ink/10 shadow-sm">
@@ -1107,7 +1107,7 @@ export default function ListingDetail({ listing }) {
                     Reservation Confirmed
                   </span>
                   <h3 className="font-display text-xl font-bold text-ink">Booking ID: {bookingConfirmation.bookingId}</h3>
-                  <p className="text-xs text-ink/70">Razorpay Payment ID: {bookingConfirmation.paymentId}</p>
+                  <p className="text-xs text-ink/70">Payment ID: {bookingConfirmation.paymentId}</p>
                 </div>
               ) : (
                 <button 
@@ -1116,11 +1116,11 @@ export default function ListingDetail({ listing }) {
                   className="w-full rounded-2xl bg-clay hover:bg-[#a6472b] active:scale-[0.99] text-white py-4 px-6 text-sm font-bold tracking-wide shadow-[0_10px_25px_rgba(185,87,56,0.3)] hover:shadow-[0_14px_30px_rgba(185,87,56,0.4)] transition-all duration-200 flex items-center justify-center gap-2.5 disabled:opacity-60 cursor-pointer"
                 >
                   {paymentLoading ? (
-                    <span>Opening Razorpay Gateway…</span>
+                    <span>Opening Secure Gateway…</span>
                   ) : (
                     <>
                       <CreditCardIcon className="w-5 h-5 text-white/90" />
-                      <span>Reserve Now via Razorpay (₹{grandTotal.toLocaleString("en-IN")})</span>
+                      <span>Reserve Now (₹{grandTotal.toLocaleString("en-IN")})</span>
                     </>
                   )}
                 </button>
@@ -1128,7 +1128,7 @@ export default function ListingDetail({ listing }) {
 
               <p className="text-xs text-center text-ink/55 font-medium flex items-center justify-center gap-1.5 pt-1">
                 <ShieldCheckIcon className="w-4 h-4 text-moss stroke-[2]" />
-                <span>Protected by WanderLust Guest Guarantee & Razorpay</span>
+                <span>Protected by WanderLust Guest Guarantee</span>
               </p>
             </div>
 
@@ -1283,7 +1283,7 @@ export default function ListingDetail({ listing }) {
                 {authModalReason === "save"
                   ? "Apne favorite stays ko wishlist me save karne aur kabhi bhi easily access karne ke liye WanderLust par free account banayein."
                   : authModalReason === "book"
-                  ? "Instant confirmed booking aur Razorpay protected checkout ke liye pehle sign up ya sign in karein."
+                  ? "Instant confirmed booking aur secure checkout ke liye pehle sign up ya sign in karein."
                   : authModalReason === "chat"
                   ? "Host ke sath direct chat karne aur custom requests send karne ke liye pehle sign up ya sign in karein."
                   : "Is feature ko access karne ke liye WanderLust par apna account banayein ya sign in karein."}

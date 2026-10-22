@@ -178,7 +178,7 @@ export default function AuthForm({ mode }) {
               {signup
                 ? selectedRole === "host"
                   ? "List properties, manage reservations & access Host Hub."
-                  : "Explore curated slow stays, book with Razorpay & message hosts."
+                  : "Explore curated slow stays, book securely & message hosts."
                 : "Sign in with your credentials or test any of the 3 platform roles below."}
             </p>
           </div>

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Navbar from "../../components/navbar";
 import Footer from "../../components/footer";
-import { API_URL, getCurrentUser } from "../../lib/api";
+import { API_URL, getCurrentUser, apiClient } from "../../lib/api";
 import { LockIcon, ZapIcon, FlameIcon, StarIcon, CloseIcon } from "../../components/icons";
 
 export default function AdminCRMPage() {
@@ -58,15 +58,34 @@ export default function AdminCRMPage() {
     if (userStr) {
       setIsAuthenticated(true);
       setCheckingAuth(false);
-      return;
+    } else {
+      getCurrentUser()
+        .then((user) => {
+          if (user) setIsAuthenticated(true);
+        })
+        .catch(() => {})
+        .finally(() => setCheckingAuth(false));
     }
 
-    getCurrentUser()
-      .then((user) => {
-        if (user) setIsAuthenticated(true);
+    // Load Live Inquiries from Backend API & LocalStorage
+    apiClient
+      .get("/contact/inquiries")
+      .then((res) => {
+        if (Array.isArray(res.data) && res.data.length > 0) {
+          setInquiries(res.data);
+        } else {
+          try {
+            const local = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
+            if (local.length > 0) setInquiries(local);
+          } catch {}
+        }
       })
-      .catch(() => {})
-      .finally(() => setCheckingAuth(false));
+      .catch(() => {
+        try {
+          const local = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
+          if (local.length > 0) setInquiries(local);
+        } catch {}
+      });
   }, []);
 
   const handleUnlockDemoAdmin = () => {
@@ -332,12 +351,24 @@ export default function AdminCRMPage() {
               </div>
               <button
                 onClick={() => {
-                  try {
-                    const local = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
-                    if (local.length > 0) setInquiries(local);
-                  } catch {}
+                  apiClient
+                    .get("/contact/inquiries")
+                    .then((res) => {
+                      if (Array.isArray(res.data) && res.data.length > 0) {
+                        setInquiries(res.data);
+                      } else {
+                        const local = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
+                        if (local.length > 0) setInquiries(local);
+                      }
+                    })
+                    .catch(() => {
+                      try {
+                        const local = JSON.parse(localStorage.getItem("wanderlust_inquiries") || "[]");
+                        if (local.length > 0) setInquiries(local);
+                      } catch {}
+                    });
                 }}
-                className="px-4 py-2 rounded-full border border-ink/20 text-xs font-bold hover:bg-sand transition self-start sm:self-auto"
+                className="px-4 py-2 rounded-full border border-ink/20 text-xs font-bold hover:bg-sand transition self-start sm:self-auto cursor-pointer"
               >
                 Refresh Messages
               </button>
