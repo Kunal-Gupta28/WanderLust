@@ -25,7 +25,7 @@ if (process.env.ATLASDB_URL) {
   try {
     sessionStore = MongoStore.create({
       mongoUrl: process.env.ATLASDB_URL,
-      crypto: { secret: process.env.SECRET || "mysupersecretcode" },
+      crypto: { secret: process.env.SECRET || process.env.SECRECT || "mysupersecretcode" },
       touchAfter: 24 * 3600,
     });
     sessionStore.on("error", (err) => console.log("Error in MONGO SESSION STORE:", err));
@@ -59,7 +59,7 @@ app.use(cookieParser());
 
 const sessionOption = {
   ...(sessionStore ? { store: sessionStore } : {}),
-  secret: process.env.SECRET || "mysupersecretcode",
+  secret: process.env.SECRET || process.env.SECRECT || "mysupersecretcode",
   resave: false,
   saveUninitialized: false,
   cookie: {
