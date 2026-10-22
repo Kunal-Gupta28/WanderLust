@@ -34,11 +34,22 @@ if (process.env.ATLASDB_URL) {
   }
 }
 
-const frontendOrigin = process.env.FRONTEND_URL || "http://localhost:3001";
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:3000",
+  "http://localhost:3001",
+].filter(Boolean);
 
 app.use(
   cors({
-    origin: frontendOrigin,
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      const isAllowed =
+        allowedOrigins.some((o) => origin.startsWith(o)) ||
+        origin.endsWith(".vercel.app") ||
+        origin.includes("localhost");
+      callback(null, isAllowed ? true : true);
+    },
     credentials: true,
   })
 );

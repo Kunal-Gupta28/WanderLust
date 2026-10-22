@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: wanderlust-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SECRET
+        generateValue: true
