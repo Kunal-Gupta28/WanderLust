@@ -175,7 +175,7 @@ export default function PhilosophyExperience() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative mx-auto grid min-h-[85svh] max-w-[90rem] gap-12 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)] pt-[clamp(4rem,8vw,8rem)] lg:grid-cols-[1.2fr_.8fr] lg:items-end overflow-hidden">
+      <section className="relative mx-auto grid min-h-[85svh] w-full gap-12 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)] pt-[clamp(4rem,8vw,8rem)] lg:grid-cols-[1.2fr_.8fr] lg:items-end overflow-hidden">
         {/* Subtle soaring travel glider across hero */}
         <div className="absolute top-12 left-0 right-0 overflow-hidden pointer-events-none h-14">
           <div className="w-7 h-7 text-clay/60" style={{ animation: "gliderFly 24s linear infinite" }}>
@@ -213,7 +213,7 @@ export default function PhilosophyExperience() {
 
       {/* Principles Grid */}
       <section className="border-y border-ink/12 bg-[#eee8dc] px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(6rem,12vw,12rem)]">
-        <div className="mx-auto max-w-[90rem]">
+        <div className="mx-auto w-full">
           <div data-reveal className="philosophy-reveal max-w-3xl mb-16">
             <span className="text-xs font-bold tracking-[.18em] text-moss uppercase">Core Philosophy</span>
             <h2 className="font-display text-[clamp(2.8rem,5vw,5.5rem)] leading-[.88] tracking-[-.06em] mt-3">
@@ -242,7 +242,7 @@ export default function PhilosophyExperience() {
       </section>
 
       {/* Interactive Pillars Explorer */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(7rem,12vw,12rem)] max-w-[90rem] mx-auto">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(7rem,12vw,12rem)] w-full mx-auto">
         <div data-reveal className="philosophy-reveal text-center max-w-3xl mx-auto mb-16">
           <span className="text-xs font-bold tracking-[.18em] text-clay uppercase">Interactive Perspective</span>
           <h2 className="font-display text-4xl md:text-6xl font-bold tracking-[-.05em] text-ink mt-3">
@@ -299,7 +299,7 @@ export default function PhilosophyExperience() {
       </section>
 
       {/* Chapters Timeline */}
-      <section className="relative mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(6rem,12vw,12rem)] border-t border-ink/10">
+      <section className="relative mx-auto w-full px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(6rem,12vw,12rem)] border-t border-ink/10">
         <div className="philosophy-route" aria-hidden="true" />
         <div className="text-center max-w-xl mx-auto mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sand/70 border border-ink/10 text-xs font-semibold text-clay mb-3 animate-[markerBounce_3s_ease-in-out_infinite]">
@@ -436,7 +436,7 @@ export default function PhilosophyExperience() {
 
       {/* Commitments */}
       <section className="bg-ink px-[clamp(1.25rem,4vw,4.5rem)] py-[clamp(6rem,12vw,12rem)] text-paper">
-        <div className="mx-auto max-w-[90rem]">
+        <div className="mx-auto w-full">
           <div data-reveal className="philosophy-reveal text-center max-w-3xl mx-auto mb-16">
             <span className="text-xs font-bold tracking-[.18em] text-sand uppercase">Ethical Standard</span>
             <h2 className="font-display text-[clamp(2.5rem,5vw,4.8rem)] leading-none tracking-[-.05em] text-paper mt-2">
@@ -464,7 +464,7 @@ export default function PhilosophyExperience() {
       </section>
 
       {/* Field Notes / Quotes from Travelers */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 max-w-[90rem] mx-auto">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 w-full mx-auto">
         <div data-reveal className="philosophy-reveal text-center max-w-xl mx-auto mb-16">
           <span className="text-xs font-bold tracking-[.18em] text-clay uppercase">Field Notes</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold tracking-[-.05em] text-ink mt-2">

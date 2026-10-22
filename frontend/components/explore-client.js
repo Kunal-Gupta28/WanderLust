@@ -111,7 +111,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     <section className="relative min-h-[min(49rem,100svh)] bg-ink px-[clamp(1.25rem,4vw,4.5rem)] pb-10 pt-32 text-white">
       <Image className="hero-photo absolute inset-0 h-full w-full object-cover opacity-75" src="https://images.unsplash.com/photo-1518022525094-218670c9b745?auto=format&fit=crop&w=2200&q=90" alt="Warmly lit mountain cabin in a forest" fill priority sizes="100vw" />
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(12,22,16,.78)_0%,rgba(12,22,16,.35)_56%,rgba(12,22,16,.15)_100%)]" />
-      <div className="relative mx-auto flex min-h-[calc(min(49rem,100svh)-10rem)] max-w-[90rem] flex-col justify-end pb-[clamp(7rem,13vh,11rem)]">
+      <div className="relative mx-auto flex min-h-[calc(min(49rem,100svh)-10rem)] w-full flex-col justify-end pb-[clamp(7rem,13vh,11rem)]">
         <div className="hero-copy max-w-3xl">
           <p className="mb-5 text-sm font-semibold tracking-[.14em] text-sand uppercase">For the places that stay with you</p>
           <h1 className="font-display text-[clamp(3.6rem,8.4vw,8.5rem)] leading-[.84] tracking-[-.065em] text-balance">Take the <em className="font-normal text-sand">long way</em> there.</h1>
@@ -306,7 +306,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* Stats Bar */}
-    <section className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-16">
+    <section className="mx-auto w-full px-[clamp(1.25rem,3.5vw,5rem)] py-16">
       <div className="section-reveal grid grid-cols-2 gap-8 divide-x divide-ink/10 border-y border-ink/10 py-10 md:grid-cols-4">
         <div className="flex flex-col items-center text-center">
           <span className="font-display text-4xl text-clay"><AnimatedCounter end={200} suffix="+" /></span>
@@ -328,17 +328,17 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* Featured Stays */}
-    <section id="featured-stays" className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-16">
+    <section id="featured-stays" className="mx-auto w-full px-[clamp(1.25rem,3.5vw,5rem)] py-16">
       <div className="section-reveal mb-12 flex flex-wrap items-end justify-between gap-5">
         <h2 className="font-display text-[clamp(2.75rem,5vw,4.5rem)] leading-[1] tracking-[-.04em]">Featured <em className="font-normal text-clay">stays</em></h2>
         <Link href="/explore" className="group flex items-center gap-2 text-sm font-bold transition hover:text-clay">View all stays <span className="transition-transform group-hover:translate-x-1"><Arrow /></span></Link>
       </div>
-      <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         {featuredStays.map((stay, index) => (
           <article key={stay.id} className="section-reveal group" style={{ "--order": index }}>
             <Link href={`/listings/${stay.id}`} className="block">
               <div className="image-zoom relative aspect-[4/5] overflow-hidden rounded-2xl bg-sand">
-                <ListingImage src={stay.image?.url || fallbackListings[0].image.url} alt={stay.title} fill sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 23vw" className="object-cover" />
+                <ListingImage src={stay.image?.url || fallbackListings[0].image.url} alt={stay.title} fill sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 20vw" className="object-cover" />
                 <span className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1.5 text-xs font-bold text-ink backdrop-blur-sm">{stay.category}</span>
               </div>
               <div className="mt-5">
@@ -353,8 +353,8 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* How It Works */}
-    <section className="bg-sand px-[clamp(1.25rem,4vw,4.5rem)] py-24">
-      <div className="mx-auto max-w-[90rem]">
+    <section className="bg-sand px-[clamp(1.25rem,3.5vw,5rem)] py-24">
+      <div className="mx-auto w-full">
         <div className="section-reveal mb-16 text-center">
           <h2 className="font-display text-[clamp(2.5rem,4vw,4rem)] leading-[1] tracking-[-.04em]">How it <em className="font-normal text-clay">works</em></h2>
           <p className="mx-auto mt-4 max-w-lg text-ink/70">Your journey to the perfect stay, simplified into three easy steps.</p>
@@ -376,7 +376,7 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* Destinations Highlight */}
-    <section className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] py-24">
+    <section className="mx-auto w-full px-[clamp(1.25rem,3.5vw,5rem)] py-24">
       <div className="section-reveal mb-12 text-center">
         <h2 className="font-display text-[clamp(2.75rem,5vw,4.5rem)] leading-[1] tracking-[-.04em]">Trending <em className="font-normal text-clay">destinations</em></h2>
         <p className="mx-auto mt-4 max-w-lg text-ink/70">Find yourself in the world's most captivating corners.</p>
@@ -400,8 +400,8 @@ export default function ExploreClient({ initialData, initialActive = "All" }) {
     </section>
 
     {/* Testimonials */}
-    <section className="bg-moss px-[clamp(1.25rem,4vw,4.5rem)] py-24 text-[#f5f0e5]">
-      <div className="mx-auto max-w-[90rem]">
+    <section className="bg-moss px-[clamp(1.25rem,3.5vw,5rem)] py-24 text-[#f5f0e5]">
+      <div className="mx-auto w-full">
         <div className="section-reveal mb-16 text-center">
           <h2 className="font-display text-[clamp(2.5rem,4vw,4rem)] leading-[1] tracking-[-.04em]">Stories from <em className="font-normal text-sand">travelers</em></h2>
         </div>

@@ -128,7 +128,7 @@ export default function SavedClient() {
 
       {/* Header Banner */}
       <section className="bg-gradient-to-b from-[#ede9df]/60 to-transparent">
-        <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-8 pt-[clamp(3rem,6vw,5.5rem)] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
+        <div className="mx-auto w-full px-[clamp(1.25rem,3.5vw,5rem)] pb-8 pt-[clamp(3rem,6vw,5.5rem)] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
           <div className="flex items-center gap-2 text-xs font-bold tracking-[.14em] text-clay uppercase mb-3">
             <svg className="w-4 h-4 fill-clay" viewBox="0 0 24 24">
               <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -159,7 +159,7 @@ export default function SavedClient() {
       </section>
 
       {/* Main Content */}
-      <section className="mx-auto w-full max-w-[90rem] flex-1 px-[clamp(1.25rem,4vw,4.5rem)] pb-24 pt-6">
+      <section className="mx-auto w-full flex-1 px-[clamp(1.25rem,3.5vw,5rem)] pb-24 pt-6">
         {isLoading ? (
           <div className="py-24 flex flex-col items-center justify-center gap-3">
             <div className="flex items-center gap-2">
@@ -218,7 +218,7 @@ export default function SavedClient() {
           </div>
         ) : (
           /* Stays Grid */
-          <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
             {savedStays.map((stay, index) => {
               const stayId = String(stay.id || stay._id);
               return (

@@ -155,7 +155,7 @@ export default function ExploreDirectory({
       <Navbar />
 
       <section className="bg-gradient-to-b from-[#ede9df]/50 to-transparent">
-        <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-10 pt-[clamp(3rem,7vw,7rem)] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
+        <div className="mx-auto w-full px-[clamp(1.25rem,3.5vw,5rem)] pb-10 pt-[clamp(3rem,7vw,7rem)] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_both]">
           <p className="text-sm font-bold tracking-[.14em] text-clay uppercase">The WanderLust collection</p>
           <div className="mt-5 flex flex-wrap items-end justify-between gap-8">
             <h1 className="max-w-4xl font-display text-[clamp(3.6rem,7vw,7.5rem)] leading-[.84] tracking-[-.07em]">
@@ -209,7 +209,7 @@ export default function ExploreDirectory({
 
       <section
         ref={listingsSectionRef}
-        className="mx-auto w-full max-w-[90rem] flex-1 px-[clamp(1.25rem,4vw,4.5rem)] pb-[clamp(5rem,10vw,10rem)]"
+        className="mx-auto w-full flex-1 px-[clamp(1.25rem,3.5vw,5rem)] pb-[clamp(5rem,10vw,10rem)]"
       >
         {/* Categories Horizontal Scroll */}
         <div className="-mx-1 mb-10 flex gap-2 overflow-x-auto px-1 pb-3 [scrollbar-width:none] animate-[rise-in_0.5s_cubic-bezier(.16,1,.3,1)_0.16s_both]">
@@ -232,7 +232,7 @@ export default function ExploreDirectory({
         {/* Listings Grid */}
         {currentListings.length ? (
           <>
-            <div className={`grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 transition-opacity duration-200 ${isFetching ? "opacity-75" : "opacity-100"}`}>
+            <div className={`grid gap-x-6 gap-y-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 transition-opacity duration-200 ${isFetching ? "opacity-75" : "opacity-100"}`}>
               {currentListings.map((stay, index) => (
                 <article key={`${stay.id}-${index}`} className="listing-reveal group" style={{ "--order": index % limit }}>
                   <Link href={`/listings/${stay.id}`}>
@@ -242,7 +242,7 @@ export default function ExploreDirectory({
                         alt={stay.title}
                         fill
                         priority={index < 4}
-                        sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 30vw"
+                        sizes="(max-width: 640px) 94vw, (max-width: 1024px) 46vw, 25vw"
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
                       <span className="absolute left-4 top-4 rounded-full bg-white/92 px-3 py-1.5 text-xs font-bold backdrop-blur-sm">

@@ -524,7 +524,7 @@ export default function ListingDetail({ listing }) {
       <Navbar />
 
       {/* Stay Header & Multi-Photo Gallery Grid */}
-      <section className="relative pt-[104px] px-[clamp(1.25rem,4vw,4.5rem)] max-w-[90rem] mx-auto w-full">
+      <section className="relative pt-[104px] px-[clamp(1.25rem,3.5vw,5rem)] w-full mx-auto">
         {/* Header Metadata Bar */}
         <div className="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
@@ -713,7 +713,7 @@ export default function ListingDetail({ listing }) {
       </section>
 
       {/* Main Content Layout */}
-      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] mt-16 md:mt-24 pb-20 md:pb-28 grid lg:grid-cols-[1.5fr_1fr] gap-16 lg:gap-24 relative flex-1">
+      <div className="mx-auto w-full px-[clamp(1.25rem,3.5vw,5rem)] mt-16 md:mt-24 pb-20 md:pb-28 grid lg:grid-cols-[1.5fr_1fr] gap-16 lg:gap-24 relative flex-1">
         <div className="space-y-20">
           
           {/* Host Profile & Trust Header */}

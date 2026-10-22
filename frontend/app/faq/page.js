@@ -551,7 +551,7 @@ export default function FAQPage() {
 
       {/* Top Banner Stats */}
       <section className="bg-sand/35 border-b border-ink/10 py-3 px-[clamp(1.25rem,4vw,4.5rem)]">
-        <div className="max-w-[90rem] mx-auto w-full flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-ink/75">
+        <div className="w-full mx-auto w-full flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-ink/75">
           <div className="flex items-center gap-2.5">
             <span className="relative flex h-2.5 w-2.5 items-center justify-center">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -589,7 +589,7 @@ export default function FAQPage() {
       </section>
 
       {/* Hero & Search Header */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-16 pb-12 max-w-[90rem] mx-auto w-full text-center">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-16 pb-12 w-full mx-auto w-full text-center">
         <span ref={addToRefs} className="text-xs font-bold tracking-[.2em] text-clay uppercase block mb-3 opacity-0 translate-y-8 transition-all duration-700 ease-out">
           Knowledge Base & Policies
         </span>
@@ -634,7 +634,7 @@ export default function FAQPage() {
       </section>
 
       {/* Category Navigation Cards */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-8 max-w-[90rem] mx-auto w-full">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-8 w-full mx-auto w-full">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2.5">
           {categories.map((cat, i) => {
             const count = faqs.filter(f => f.category === cat).length;
@@ -673,7 +673,7 @@ export default function FAQPage() {
       </section>
 
       {/* Category Header & Controls */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-6 max-w-[90rem] mx-auto w-full">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-6 w-full mx-auto w-full">
         <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-ink/10">
           {searchQuery ? (
             <div className="flex items-center gap-2">
@@ -713,7 +713,7 @@ export default function FAQPage() {
       </section>
 
       {/* FAQ Accordion Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-28 max-w-[90rem] mx-auto w-full min-h-[450px]">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-28 w-full mx-auto w-full min-h-[450px]">
         {filteredFaqs.length === 0 ? (
           <div className="text-center py-20 bg-sand/20 rounded-3xl border border-ink/10">
             <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-sand/50 grid place-items-center text-clay">

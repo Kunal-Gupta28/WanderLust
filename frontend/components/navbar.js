@@ -109,7 +109,7 @@ export default function Navbar({ transparent = false }) {
           : "bg-paper/95 backdrop-blur-md shadow-sm border-b border-ink/10 py-4 text-ink"
       }`}
     >
-      <div className="mx-auto flex max-w-[90rem] items-center justify-between px-[clamp(1.25rem,4vw,4.5rem)]">
+      <div className="mx-auto flex w-full items-center justify-between px-[clamp(1.25rem,3.5vw,5rem)]">
         {/* Brand Logo Only — Tag removed per request */}
         <div className="flex items-center gap-4">
           <Link href="/" className="font-display text-2xl tracking-[-.06em] shrink-0">

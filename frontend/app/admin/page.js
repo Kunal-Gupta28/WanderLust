@@ -181,7 +181,7 @@ export default function AdminCRMPage() {
     <main className="min-h-screen flex flex-col bg-paper text-ink selection:bg-clay selection:text-white pt-24">
       <Navbar />
 
-      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-20 flex-1">
+      <div className="mx-auto w-full px-[clamp(1.25rem,4vw,4.5rem)] pb-20 flex-1">
         
         {/* Live Broadcast Banner Notice */}
         {broadcastActive && (

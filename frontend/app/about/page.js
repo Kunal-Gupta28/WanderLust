@@ -105,7 +105,7 @@ export default function AboutPage() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-20 pb-28 max-w-[90rem] mx-auto text-center">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-20 pb-28 w-full mx-auto text-center">
         <p ref={addToRefs} className="text-xs font-bold tracking-[.18em] text-clay uppercase mb-4 opacity-0 translate-y-8 transition-all duration-700 ease-out">
           About WanderLust
         </p>
@@ -124,7 +124,7 @@ export default function AboutPage() {
       </section>
 
       {/* Hero Visual Image Banner with Waypoint Badge */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-24 max-w-[90rem] mx-auto relative">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-24 w-full mx-auto relative">
         {/* Subtle soaring glider in sky */}
         <div className="absolute -top-12 left-0 right-0 overflow-hidden pointer-events-none h-16">
           <div className="w-8 h-8 text-clay/70" style={{ animation: "gliderFly 22s linear infinite" }}>
@@ -160,7 +160,7 @@ export default function AboutPage() {
 
       {/* Our Story & Manifesto */}
       <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-24 bg-sand/30 border-y border-ink/10">
-        <div className="max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div ref={addToRefs} className="opacity-0 translate-y-8 transition-all duration-1000 ease-out">
             <span className="text-xs font-bold tracking-[.14em] text-moss uppercase">The Origin Story</span>
             <h2 className="font-display text-4xl md:text-6xl tracking-[-.05em] font-bold mt-2 mb-8 text-ink">
@@ -206,7 +206,7 @@ export default function AboutPage() {
       <AboutTravelAnimation />
 
       {/* Stats Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 max-w-[90rem] mx-auto">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {[
             { number: "250+", label: "Handpicked Stays", desc: "Curated with strict quality & aesthetic criteria" },
@@ -230,7 +230,7 @@ export default function AboutPage() {
 
       {/* Core Values Section with SVG Icons */}
       <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 bg-moss text-paper">
-        <div className="max-w-[90rem] mx-auto">
+        <div className="w-full mx-auto">
           <div ref={addToRefs} className="text-center max-w-2xl mx-auto mb-20 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
             <span className="text-xs font-bold tracking-[.18em] text-sand uppercase">Guiding Principles</span>
             <h2 className="font-display text-4xl md:text-6xl font-bold tracking-[-.05em] mt-3 mb-4">Our Core Values</h2>
@@ -280,7 +280,7 @@ export default function AboutPage() {
       </section>
 
       {/* How We Curate Section */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 max-w-[90rem] mx-auto relative overflow-hidden">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 w-full mx-auto relative overflow-hidden">
         {/* Micro moving object: Gentle drifting leaf across section */}
         <div className="absolute top-8 left-0 right-0 overflow-hidden pointer-events-none h-10">
           <div className="w-5 h-5 text-moss/40" style={{ animation: "leafDrift 26s linear infinite" }}>
@@ -340,7 +340,7 @@ export default function AboutPage() {
 
       {/* Team & Curators Section */}
       <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-28 bg-sand/20 border-t border-ink/10 relative overflow-hidden">
-        <div className="max-w-[90rem] mx-auto">
+        <div className="w-full mx-auto">
           <div ref={addToRefs} className="text-center max-w-xl mx-auto mb-20 opacity-0 translate-y-8 transition-all duration-1000 ease-out">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-paper border border-ink/10 text-xs font-semibold text-moss mb-3">
               <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-moss animate-[compassWobble_4s_ease-in-out_infinite]" fill="none" stroke="currentColor" strokeWidth="2">

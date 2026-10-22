@@ -112,7 +112,7 @@ export default function ContactPage() {
       <Navbar />
 
       {/* Hero */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-20 pb-12 max-w-[90rem] mx-auto text-center md:text-left">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pt-20 pb-12 w-full mx-auto text-center md:text-left">
         <span ref={addToRefs} className="text-xs font-bold tracking-[.18em] text-clay uppercase block mb-3 opacity-0 translate-y-8 transition-all duration-700 ease-out">
           Concierge & Support
         </span>
@@ -131,7 +131,7 @@ export default function ContactPage() {
       </section>
 
       {/* Content Grid */}
-      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-28 max-w-[90rem] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+      <section className="px-[clamp(1.25rem,4vw,4.5rem)] pb-28 w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         
         {/* Left Info Panel */}
         <div ref={addToRefs} className="space-y-12 opacity-0 translate-y-8 transition-all duration-1000 delay-200 ease-out">

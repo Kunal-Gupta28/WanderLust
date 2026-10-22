@@ -54,7 +54,7 @@ export default function PhilosophyTravelAnimation() {
   const isNight = currentHour.isDark;
 
   return (
-    <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-20 max-w-[90rem] mx-auto select-none">
+    <section className="px-[clamp(1.25rem,4vw,4.5rem)] py-20 w-full mx-auto select-none">
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto mb-10">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sand/60 border border-ink/10 text-xs font-semibold text-moss mb-3 animate-[markerBounce_3s_ease-in-out_infinite]">

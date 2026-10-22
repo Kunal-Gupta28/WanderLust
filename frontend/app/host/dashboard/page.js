@@ -153,7 +153,7 @@ export default function HostDashboardPage() {
     <main className="min-h-screen flex flex-col bg-paper text-ink selection:bg-clay selection:text-white pt-24">
       <Navbar />
 
-      <div className="mx-auto max-w-[90rem] px-[clamp(1.25rem,4vw,4.5rem)] pb-20 flex-1">
+      <div className="mx-auto w-full px-[clamp(1.25rem,4vw,4.5rem)] pb-20 flex-1">
         
         {/* Host Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-ink/10">
